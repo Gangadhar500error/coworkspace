@@ -4,6 +4,8 @@ import Coworkspace from "@/components/Coworkspace";
 import Pricing from "@/components/Pricing";
 import SpacesSection from "@/components/SpacesSection";
 import Services from "@/components/Services";
+import CTASection from "@/components/CTASection";
+import AboutUs from "@/components/AboutUs";
 
 export const metadata = {
   title: "CoworkSpace - Modern Workspace Solutions",
@@ -17,9 +19,11 @@ export default function Home() {
     <main>
       <HeroSection />
       <Coworkspace />
+      <AboutUs />
       <SpacesSection />
+      <CTASection />
       <Services />
-      <Pricing />
+      {/* <Pricing /> */}
       <ImageScroller />
     </main>
   );

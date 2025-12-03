@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ChevronDown } from "lucide-react";
 
 export default function Coworkspace() {
@@ -20,6 +20,45 @@ export default function Coworkspace() {
       [e.target.name]: e.target.value,
     });
   };
+
+  // Generate map URL based on city and location
+  const mapUrl = useMemo(() => {
+    if (!formData.city && !formData.location) {
+      // Default map (Tampa)
+      return "https://www.google.com/maps?q=Tampa+Florida+USA&output=embed";
+    }
+
+    const cityMap: { [key: string]: string } = {
+      tampa: "Tampa",
+      orlando: "Orlando",
+      miami: "Miami",
+      jacksonville: "Jacksonville",
+      atlanta: "Atlanta",
+    };
+
+    const locationMap: { [key: string]: string } = {
+      downtown: "Downtown",
+      "business-district": "Business District",
+      "airport-area": "Airport Area",
+      suburban: "Suburban",
+    };
+
+    let searchQuery = "";
+    
+    if (formData.city && formData.location) {
+      const cityName = cityMap[formData.city] || formData.city;
+      const locationName = locationMap[formData.location] || formData.location;
+      searchQuery = `${locationName}, ${cityName}, Florida, USA`;
+    } else if (formData.city) {
+      const cityName = cityMap[formData.city] || formData.city;
+      searchQuery = `${cityName}, Florida, USA`;
+    } else if (formData.location) {
+      const locationName = locationMap[formData.location] || formData.location;
+      searchQuery = `${locationName}, Florida, USA`;
+    }
+
+    return `https://www.google.com/maps?q=${encodeURIComponent(searchQuery)}&output=embed`;
+  }, [formData.city, formData.location]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +89,8 @@ export default function Coworkspace() {
             {/* Google Map Embed */}
             <div className="w-full h-[300px] md:h-[350px] rounded-lg overflow-hidden shadow-md border border-gray-200">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3525.272314692283!2d-82.47427731530478!3d27.94818898804448!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88c2c7c8b5c8b5c8%3A0x1234567890abcdef!2sCoworkSpace%20-%20Tampa!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus"
+                key={mapUrl}
+                src={mapUrl}
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

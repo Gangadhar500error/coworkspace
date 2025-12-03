@@ -4,20 +4,20 @@ import Link from "next/link";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronRight, ChevronLeft, Search } from "lucide-react";
 import {
-  Building2,
-  Users,
-  Briefcase,
-  Presentation,
-  CreditCard,
-  Monitor,
-  Shield,
-  Calendar,
   MapPin,
-  Headphones,
-  Ruler,
-  RefreshCw,
-  Laptop,
-  Home
+  Building2,
+  Landmark,
+  Waves,
+  Mountain,
+  Plane,
+  Ship,
+  Sun,
+  Cloud,
+  Zap,
+  TreePine,
+  Factory,
+  Briefcase,
+  Building,
 } from "lucide-react";
 
 interface NavItem {
@@ -31,19 +31,24 @@ interface SecondaryNavProps {
 }
 
 const navigationItems: NavItem[] = [
-  { name: "Office Space", icon: Building2, href: "/office-space" },
-  { name: "Coworking", icon: Users, href: "/coworking" },
-  { name: "Virtual Offices", icon: Briefcase, href: "/virtual-offices" },
-  { name: "Meeting Rooms", icon: Presentation, href: "/meeting-rooms" },
-  { name: "Membership", icon: CreditCard, href: "/membership" },
-  { name: "Business Address", icon: MapPin, href: "/business-address" },
-  { name: "Event Space", icon: Monitor, href: "/event-space" },
-  { name: "Private Offices", icon: Shield, href: "/private-offices" },
-  { name: "Custom Offices", icon: Ruler, href: "/custom-offices" },
-  { name: "Day Offices", icon: Calendar, href: "/day-offices" },
-  { name: "Hot Desks", icon: Laptop, href: "/hot-desks" },
-  { name: "Dedicated Desks", icon: Home, href: "/dedicated-desks" },
-  { name: "Workplace Recovery", icon: RefreshCw, href: "/workplace-recovery" },
+  { name: "New York", icon: Building2, href: "/new-york" },
+  { name: "Los Angeles", icon: Sun, href: "/los-angeles" },
+  { name: "Chicago", icon: Building, href: "/chicago" },
+  { name: "Miami", icon: Waves, href: "/miami" },
+  { name: "San Francisco", icon: Landmark, href: "/san-francisco" },
+  { name: "Boston", icon: Building2, href: "/boston" },
+  { name: "Seattle", icon: Cloud, href: "/seattle" },
+  { name: "Dallas", icon: Briefcase, href: "/dallas" },
+  { name: "Houston", icon: Factory, href: "/houston" },
+  { name: "Atlanta", icon: TreePine, href: "/atlanta" },
+  { name: "Phoenix", icon: Sun, href: "/phoenix" },
+  { name: "Philadelphia", icon: Landmark, href: "/philadelphia" },
+  { name: "San Diego", icon: Waves, href: "/san-diego" },
+  { name: "Denver", icon: Mountain, href: "/denver" },
+  { name: "Washington DC", icon: Landmark, href: "/washington-dc" },
+  { name: "Tampa", icon: MapPin, href: "/tampa" },
+  { name: "Orlando", icon: Zap, href: "/orlando" },
+  { name: "Las Vegas", icon: Zap, href: "/las-vegas" },
 ];
 
 export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) {

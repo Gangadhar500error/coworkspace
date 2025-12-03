@@ -56,7 +56,7 @@ const featureCards = [
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full bg-white py-12 md:py-10 lg:py-14 overflow-hidden">
+    <section className="relative w-full bg-white py-12 md:py-10 lg:pt-24 lg:pb-14 overflow-hidden">
       {/* Dotted Grid Background Pattern */}
       <div 
         className="absolute inset-0 opacity-20"
