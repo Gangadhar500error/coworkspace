@@ -1,0 +1,28 @@
+@theme {
+  /* Brand Orange scale (base ~ #ff5a22) */
+  --color-orange-50:  #fff3ee;
+  --color-orange-100: #ffe5db;
+  --color-orange-200: #ffc8b5;
+  --color-orange-300: #ff9f82;
+  --color-orange-400: #ff7a4b;
+  --color-orange-500: #ff5a22; /* brand */
+  --color-orange-600: #e14f1f;
+  --color-orange-700: #b64119;
+  --color-orange-800: #8c3313;
+  --color-orange-900: #66250e;
+
+  /* Brand Purple scale (base ~ #7E22CE) */
+  --color-purple-50:  #f4e8ff;
+  --color-purple-100: #ead6ff;
+  --color-purple-200: #d2adff;
+  --color-purple-300: #b97fff;
+  --color-purple-400: #9f4ff7;
+  --color-purple-500: #892be2;
+  --color-purple-600: #7E22CE; /* brand */
+  --color-purple-700: #661aa7;
+  --color-purple-800: #4e147f;
+  --color-purple-900: #370e59;
+}
+
+
+

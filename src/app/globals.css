@@ -1,0 +1,202 @@
+@import "tailwindcss";
+@import "../styles/theme.css";
+
+/* Font CDN Imports */
+@import url('https://www-static.wework.com/apercu/apercu.css');
+
+/* Font Face Declarations */
+/* Romana-Bold - Update the URL with your actual font file location */
+@font-face {
+  font-family: 'Romana-Bold';
+  src: url('/fonts/Romana-Bold.woff2') format('woff2'),
+       url('/fonts/Romana-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --font-romana-bold: 'Romana-Bold';
+  --font-apercu-regular: 'Apercu';
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-apercu-regular);
+  --font-display: var(--font-romana-bold);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-apercu-regular) !important;
+}
+
+p, div, a, button, input, textarea, select, label, li, td, th {
+  font-family: var(--font-apercu-regular) !important;
+}
+
+/* Spans inherit from parent, but headings override */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-romana-bold) !important;
+  font-weight: 700 !important;
+}
+
+/* Ensure all children of headings use Romana-Bold */
+h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
+  font-family: inherit !important;
+}
+
+/* Ensure Hero Section uses Romana-Bold */
+section h1,
+section h2,
+section h3,
+section h4,
+section h5,
+section h6 {
+  font-family: var(--font-romana-bold) !important;
+  font-weight: 700 !important;
+}
+
+section h1 *,
+section h2 *,
+section h3 *,
+section h4 *,
+section h5 *,
+section h6 * {
+  font-family: inherit !important;
+}
+
+/* Global keyframes for animations */
+@keyframes fadeIn { 
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes modalIn { to { opacity: 1; transform: translateY(0) } }
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Smooth color-changing gradient animation - snake effect left to right */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.text-gradient-animate {
+  background: linear-gradient(
+    90deg,
+    #000000 0%,
+    #000000 15%,
+    #FF5A22 25%,
+    #FF8C42 35%,
+    #F5A623 45%,
+    #4ECDC4 55%,
+    #3ab5ad 65%,
+    #FF5A22 75%,
+    #000000 85%,
+    #000000 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 8s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* Smooth color transitions helpers */
+.transition-colors, .transition-all {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-duration: 300ms;
+}
+
+/* Utility: force Apercu in a scope (overrides heading default) */
+.font-body {
+  font-family: var(--font-apercu-regular);
+}
+.font-body h1,
+.font-body h2,
+.font-body h3,
+.font-body h4,
+.font-body h5,
+.font-body h6 {
+  font-family: var(--font-apercu-regular);
+}
+
+/* auth routes use a dedicated layout; no CSS hacks needed */
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  html:not(.light) {
+    color-scheme: dark;
+  }
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
+}
+
+/* Focus rings for accessibility */
+a:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #FF5A22;
+  outline-offset: 2px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Container with custom max-width 1440px - reusable across website */
+.container-custom {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+@media screen and (max-width: 520px) {
+  .container-custom {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+/* Scrollbar Hide Utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
