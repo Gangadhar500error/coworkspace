@@ -8,7 +8,7 @@ import {
   Tags,
   TrendingUp,
 } from "lucide-react";
-import WorkspaceSearch from "./WorkspaceSearch";
+import WorkspaceSearch from "../WorkspaceSearch";
 
 const features = [
   {

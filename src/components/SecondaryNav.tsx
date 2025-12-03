@@ -1,28 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronRight, ChevronLeft, Search } from "lucide-react";
-import {
-  MapPin,
-  Building2,
-  Landmark,
-  Waves,
-  Mountain,
-  Plane,
-  Ship,
-  Sun,
-  Cloud,
-  Zap,
-  TreePine,
-  Factory,
-  Briefcase,
-  Building,
-} from "lucide-react";
 
 interface NavItem {
   name: string;
-  icon: React.ComponentType<{ className?: string }>;
+  image: string;
   href: string;
 }
 
@@ -31,24 +16,24 @@ interface SecondaryNavProps {
 }
 
 const navigationItems: NavItem[] = [
-  { name: "New York", icon: Building2, href: "/new-york" },
-  { name: "Los Angeles", icon: Sun, href: "/los-angeles" },
-  { name: "Chicago", icon: Building, href: "/chicago" },
-  { name: "Miami", icon: Waves, href: "/miami" },
-  { name: "San Francisco", icon: Landmark, href: "/san-francisco" },
-  { name: "Boston", icon: Building2, href: "/boston" },
-  { name: "Seattle", icon: Cloud, href: "/seattle" },
-  { name: "Dallas", icon: Briefcase, href: "/dallas" },
-  { name: "Houston", icon: Factory, href: "/houston" },
-  { name: "Atlanta", icon: TreePine, href: "/atlanta" },
-  { name: "Phoenix", icon: Sun, href: "/phoenix" },
-  { name: "Philadelphia", icon: Landmark, href: "/philadelphia" },
-  { name: "San Diego", icon: Waves, href: "/san-diego" },
-  { name: "Denver", icon: Mountain, href: "/denver" },
-  { name: "Washington DC", icon: Landmark, href: "/washington-dc" },
-  { name: "Tampa", icon: MapPin, href: "/tampa" },
-  { name: "Orlando", icon: Zap, href: "/orlando" },
-  { name: "Las Vegas", icon: Zap, href: "/las-vegas" },
+  { name: "New York", image: "/assets/cityilogos/newyork.png", href: "/new-york" },
+  { name: "Los Angeles", image: "/assets/jfif/download (1).jfif", href: "/los-angeles" },
+  { name: "Chicago", image: "/assets/jfif/download.jfif", href: "/chicago" },
+  { name: "Miami", image: "/assets/jfif/miani.jfif", href: "/miami" },
+  { name: "San Francisco", image: "/assets/jfif/San-Francisco.jfif", href: "/san-francisco" },
+  { name: "Boston", image: "/assets/jfif/Boston.jfif", href: "/boston" },
+  { name: "Seattle", image: "/assets/jfif/Seattle.jfif", href: "/seattle" },
+  { name: "Dallas", image: "/assets/jfif/Dallas.jfif", href: "/dallas" },
+  { name: "Houston", image: "/assets/jfif/Houston.jfif", href: "/houston" },
+  { name: "Atlanta", image: "/assets/jfif/Atlanta.jfif", href: "/atlanta" },
+  { name: "Phoenix", image: "/assets/jfif/Phoenix.jfif", href: "/phoenix" },
+  { name: "Philadelphia", image: "/assets/jfif/Philadelphia.jfif", href: "/philadelphia" },
+  { name: "San Diego", image: "/assets/jfif/San-Diego.jfif", href: "/san-diego" },
+  { name: "Denver", image: "/assets/jfif/Denver.jfif", href: "/denver" },
+  { name: "Washington DC", image: "/assets/jfif/Washington DC.jfif", href: "/washington-dc" },
+  { name: "Tampa", image: "/assets/jfif/download.jfif", href: "/tampa" },
+  { name: "Orlando", image: "/assets/jfif/Orlando.jfif", href: "/orlando" },
+  { name: "Las Vegas", image: "/assets/jfif/download (1).jfif", href: "/las-vegas" },
 ];
 
 export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) {
@@ -164,7 +149,7 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
 
           <div 
             ref={navScrollRef}
-            className={`flex items-center lg:gap-10 gap-5 overflow-x-auto scrollbar-hide py-4 ${
+            className={`flex items-center lg:gap-6 gap-4 overflow-x-auto scrollbar-hide py-4 ${
               showScrollLeft ? 'lg:pl-20' : 'lg:pl-4'
             } ${
               showScrollRight ? 'lg:pr-20' : 'lg:pr-4'
@@ -172,15 +157,22 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
             onScroll={checkScrollability}
           >
             {navigationItems.map((item) => {
-              const Icon = item.icon;
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="flex flex-col items-center gap-3 min-w-[90px] shrink-0 text-gray-700 hover:text-orange-500 transition-colors group"
+                  className="flex flex-col items-center gap-2.5 min-w-[85px] shrink-0 text-gray-700 hover:text-orange-500 transition-colors group"
                 >
-                  <Icon className="h-6 w-6 text-gray-600 group-hover:text-orange-500 transition-colors stroke-[1.5]" />
-                  <span className="text-xs font-medium text-center whitespace-nowrap mb-1">{item.name}</span>
+                  <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden border-none border-gray-200 group-hover:border-orange-500 transition-all duration-300 ">
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-300"
+                      sizes="(max-width: 768px) 56px, 64px"
+                    />
+                  </div>
+                  <span className="text-xs font-semibold text-center whitespace-nowrap leading-tight">{item.name}</span>
                 </Link>
               );
             })}
