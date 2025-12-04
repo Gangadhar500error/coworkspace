@@ -6,7 +6,7 @@ export default function ImageScroller() {
   const video = "https://www.yudiz.com/codepen/studio-r/bg-video.mp4";
 
   return (
-    <div className="bg-white text-white overflow-x-hidden h-[80vh] relative isolate my-10">
+    <div className="bg-white text-white overflow-x-hidden h-[80vh] relative isolate mb-10">
       {/* BACKGROUND IMAGE CONTAINER (WITH SPACING) */}
       <div className="absolute left-6 md:left-10 right-6 md:right-10 top-0 h-full z-0">
         <div className="absolute inset-0 overflow-hidden rounded-[12px]">

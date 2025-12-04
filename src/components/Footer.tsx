@@ -1,58 +1,194 @@
+"use client";
+
+import { MapPin, Mail, Phone, Facebook, Twitter, Globe, Linkedin, Instagram } from "lucide-react";
+
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer
-      className="relative bg-cover bg-center bg-no-repeat text-white"
-      style={{ backgroundImage: "url(https://siddharthpetro.com/wp-content/uploads/2019/09/Footer-Background-Image.png)" }}
-    >
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          <div className="col-span-1 sm:col-span-2 lg:col-span-2">
-            <div className="mb-4 text-2xl font-bold">CoworkSpace</div>
-            <p className="text-sm leading-relaxed mb-2">Modern workspace solutions for businesses and professionals.</p>
-            <a href="mailto:info@coworkspaces.us" className="text-sm text-white/80 hover:underline">info@coworkspaces.us</a>
-          </div>
+    <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
+      {/* Subtle pattern overlay */}
+      <div 
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: `radial-gradient(circle, #4ECDC4 1px, transparent 1px)`,
+          backgroundSize: '32px 32px',
+        }}
+      />
+      
+      {/* Gradient accent */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#4ECDC4]/20 to-[#FF5A22]/10 rounded-full blur-3xl" />
 
-          <div>
-            <h4 className="text-base font-bold mb-4">SERVICES</h4>
-            <ul className="space-y-2 text-sm text-white/90">
-              <li><a href="#" className="hover:underline">Workspace Solutions</a></li>
-              <li><a href="#" className="hover:underline">Meeting Rooms</a></li>
-              <li><a href="#" className="hover:underline">Virtual Offices</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-base font-bold mb-4">LEGAL</h4>
-            <ul className="space-y-2 text-sm text-white/90">
-              <li><a href="#" className="hover:underline">Privacy Policy</a></li>
-              <li><a href="#" className="hover:underline">Terms of Use</a></li>
-              <li><a href="#" className="hover:underline">Data Protection</a></li>
-            </ul>
+      <div className="relative z-10 container-custom px-4 sm:px-6 lg:px-8 py-5 lg:py-5">
+        {/* Our Presence Section - First */}
+        <div className="mb-8 pb-6 border-b border-white/10">
+          <h3 className="text-lg font-bold text-white mb-4 font-display uppercase tracking-wide">
+            Our Presence
+          </h3>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-base text-white/80 font-body">
+            {[
+              "New York",
+              "Chicago",
+              "Los Angeles",
+              "Houston",
+              "Phoenix",
+              "Philadelphia",
+              "San Antonio",
+              "San Diego",
+              "Dallas",
+              "San Jose",
+              "Austin",
+              "Jacksonville",
+              "Fort Worth",
+              "Columbus",
+              "Charlotte",
+              "San Francisco",
+              "Indianapolis",
+              "Seattle",
+              "Denver",
+              "Washington",
+              "Boston",
+              "El Paso",
+              "Nashville",
+              "Detroit",
+              "Oklahoma City",
+              "Portland",
+              "Las Vegas",
+              "Memphis",
+              "Louisville",
+              "Baltimore"
+            ].map((city, index, array) => (
+              <span key={city} className="flex items-center">
+                <span className="hover:text-[#FF5A22] transition-colors cursor-default">{city}</span>
+                {index < array.length - 1 && <span className="text-white/30 mx-2">|</span>}
+              </span>
+            ))}
           </div>
         </div>
 
-        <div className="border-t border-white/20 my-10" />
-
-        <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
-          <div className="flex space-x-4">
-            <a href="https://www.facebook.com/ConquerorsSoftwareTechnologiesPvtLimited" aria-label="Facebook" className="hover:text-white/80">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-3h2.5V9.5A3.5 3.5 0 0 1 14 6h3v3h-2a1 1 0 0 0-1 1V12h3l-.5 3h-2.5v7A10 10 0 0 0 22 12z" />
-              </svg>
-            </a>
-            <a href="https://x.com/ConquerorsTech" aria-label="X" className="hover:text-white/80">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M18.083 2h3.641l-7.96 9.025L23.5 22h-7.708l-6.029-7.035L3.197 22H-.5l8.534-9.665L.5 2h7.833l5.585 6.515L18.083 2Zm-1.282 18h2.01L7.688 4H5.59l11.211 16Z" />
-              </svg>
-            </a>
-            <a href="https://www.conquerorstech.net/" aria-label="Website" className="hover:text-white/80">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M21.35 11.1H12v2.8h5.35c-.23 1.26-.94 2.33-2 3.05v2.5h3.22c1.88-1.73 2.98-4.28 2.98-7.35 0-.66-.06-1.31-.2-1.95zM12 22c2.7 0 4.96-.9 6.61-2.45l-3.22-2.5c-.89.6-2 .95-3.39.95-2.61 0-4.81-1.76-5.6-4.13H3.1v2.6C4.74 19.98 8.05 22 12 22zM6.4 13.87c-.2-.6-.3-1.23-.3-1.87s.1-1.27.3-1.87V7.53H3.1A9.95 9.95 0 0 0 2 12c0 1.59.38 3.09 1.1 4.47l3.3-2.6zM12 5.5c1.47 0 2.8.5 3.85 1.5l2.9-2.9C16.96 2.9 14.7 2 12 2 8.05 2 4.74 4.02 3.1 7.53l3.3 2.6C7.19 7.26 9.39 5.5 12 5.5z" />
-              </svg>
-            </a>
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-6">
+          {/* Useful Links Section */}
+          <div>
+            <h3 className="text-base font-bold text-white mb-3 font-display uppercase tracking-wide">
+              Useful Links
+            </h3>
+            <div className="space-y-1.5">
+              {[
+                "About Us",
+                "Careers",
+                "Contact Us",
+                "News & Media",
+                "Awards",
+                "Blogs",
+                "Newsletters",
+                "Partnership Model",
+                "Brokerage / Aggregator",
+                "Landlord",
+                "Privacy Policy",
+                "Terms And Conditions",
+                "Data Protection",
+                "Cookie Policy"
+              ].map((item) => (
+                <a 
+                  key={item}
+                  href="#" 
+                  className="block text-sm text-white/80 hover:text-[#FF5A22] transition-colors font-body leading-relaxed"
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
           </div>
 
-          <div className="text-sm text-white/70 text-center lg:text-right">© {new Date().getFullYear()} CoworkSpace. All rights reserved.</div>
+          {/* Corporate & Registered Office */}
+          <div>
+            <h3 className="text-base font-bold text-white mb-3 font-display uppercase tracking-wide">
+              Corporate Office
+            </h3>
+            <p className="text-sm text-white/80 leading-relaxed font-body mb-4">
+              123 Business Center, 5th Floor,<br />
+              Suite 500, Downtown District,<br />
+              Tampa, Florida, USA - 33602
+            </p>
+            <h3 className="text-base font-bold text-white mb-3 font-display uppercase tracking-wide">
+              Registered Office
+            </h3>
+            <p className="text-sm text-white/80 leading-relaxed font-body">
+              456 Corporate Plaza, 8th Floor,<br />
+              Tower A, Business Park,<br />
+              Tampa, Florida, USA - 33602
+            </p>
+          </div>
+
+          {/* Contact Section */}
+          <div>
+            <h3 className="text-base font-bold text-white mb-3 font-display uppercase tracking-wide">
+              Contact Us
+            </h3>
+            <div className="space-y-2">
+              <a 
+                href="mailto:info@coworkspaces.us" 
+                className="flex items-center gap-2 text-sm text-white/80 hover:text-[#FF5A22] transition-colors group"
+              >
+                <Mail className="w-4 h-4 text-white/60 group-hover:text-[#FF5A22] transition-colors shrink-0" />
+                <span className="font-body break-all">info@coworkspaces.us</span>
+              </a>
+              <a 
+                href="tel:+18139221406" 
+                className="flex items-center gap-2 text-sm text-white/80 hover:text-[#FF5A22] transition-colors group"
+              >
+                <Phone className="w-4 h-4 text-white/60 group-hover:text-[#FF5A22] transition-colors shrink-0" />
+                <span className="font-body">+1 813-922-1406</span>
+              </a>
+              <a 
+                href="https://www.google.com/maps/search/?api=1&query=Tampa+Florida+USA" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2 text-sm text-white/80 hover:text-[#FF5A22] transition-colors group"
+              >
+                <MapPin className="w-4 h-4 text-white/60 group-hover:text-[#FF5A22] transition-colors shrink-0 mt-0.5" />
+                <span className="font-body">Multiple locations across the USA</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Social Media Section */}
+          <div>
+            <h3 className="text-base font-bold text-white mb-3 font-display uppercase tracking-wide">
+              Follow Us
+            </h3>
+            <div className="flex gap-2 flex-wrap">
+              {[
+                { icon: Linkedin, href: "#", label: "LinkedIn", color: "hover:bg-blue-600" },
+                { icon: Facebook, href: "https://www.facebook.com/ConquerorsSoftwareTechnologiesPvtLimited", label: "Facebook", color: "hover:bg-blue-500" },
+                { icon: Instagram, href: "#", label: "Instagram", color: "hover:bg-gradient-to-r hover:from-purple-600 hover:via-pink-600 hover:to-orange-500" },
+                { icon: Twitter, href: "https://x.com/ConquerorsTech", label: "Twitter", color: "hover:bg-black" },
+                { icon: Globe, href: "https://www.conquerorstech.net/", label: "Website", color: "hover:bg-white/20" }
+              ].map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    aria-label={social.label}
+                    className={`w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white transition-all duration-300 ${social.color} hover:text-white hover:scale-110 hover:shadow-lg border border-white/20`}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-white/10 pt-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+            <div className="text-sm text-white/70 font-body text-center md:text-left">
+              Copyright - {currentYear}. <span className="font-semibold text-white">CoworkSpace</span> | All rights reserved.
+            </div>
+          </div>
         </div>
       </div>
     </footer>

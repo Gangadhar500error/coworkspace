@@ -63,7 +63,7 @@ const features = [
 
 export default function AboutUs() {
   return (
-    <section className="w-full bg-white py-10 lg:py-16">
+    <section className="w-full bg-white py-10 lg:py-12">
       <div className="container-custom px-4 md:px-6 lg:px-8">
         {/* Search Component */}
         <WorkspaceSearch />

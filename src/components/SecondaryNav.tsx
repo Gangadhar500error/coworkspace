@@ -16,24 +16,24 @@ interface SecondaryNavProps {
 }
 
 const navigationItems: NavItem[] = [
-  { name: "New York", image: "/assets/cityilogos/newyork.png", href: "/new-york" },
-  { name: "Los Angeles", image: "/assets/jfif/download (1).jfif", href: "/los-angeles" },
-  { name: "Chicago", image: "/assets/jfif/download.jfif", href: "/chicago" },
-  { name: "Miami", image: "/assets/jfif/miani.jfif", href: "/miami" },
-  { name: "San Francisco", image: "/assets/jfif/San-Francisco.jfif", href: "/san-francisco" },
-  { name: "Boston", image: "/assets/jfif/Boston.jfif", href: "/boston" },
-  { name: "Seattle", image: "/assets/jfif/Seattle.jfif", href: "/seattle" },
-  { name: "Dallas", image: "/assets/jfif/Dallas.jfif", href: "/dallas" },
-  { name: "Houston", image: "/assets/jfif/Houston.jfif", href: "/houston" },
-  { name: "Atlanta", image: "/assets/jfif/Atlanta.jfif", href: "/atlanta" },
-  { name: "Phoenix", image: "/assets/jfif/Phoenix.jfif", href: "/phoenix" },
-  { name: "Philadelphia", image: "/assets/jfif/Philadelphia.jfif", href: "/philadelphia" },
-  { name: "San Diego", image: "/assets/jfif/San-Diego.jfif", href: "/san-diego" },
-  { name: "Denver", image: "/assets/jfif/Denver.jfif", href: "/denver" },
-  { name: "Washington DC", image: "/assets/jfif/Washington DC.jfif", href: "/washington-dc" },
-  { name: "Tampa", image: "/assets/jfif/download.jfif", href: "/tampa" },
-  { name: "Orlando", image: "/assets/jfif/Orlando.jfif", href: "/orlando" },
-  { name: "Las Vegas", image: "/assets/jfif/download (1).jfif", href: "/las-vegas" },
+  { name: "New York", image: "/assets/city-logos/newyork.png", href: "/coworking/new-york" },
+  { name: "Los Angeles", image: "/assets/city-logos/losangels.png", href: "/coworking/los-angeles" },
+  { name: "Chicago", image: "/assets/jfif/download.jfif", href: "/coworking/chicago" },
+  { name: "Miami", image: "/assets/jfif/miani.jfif", href: "/coworking/miami" },
+  { name: "San Francisco", image: "/assets/jfif/San-Francisco.jfif", href: "/coworking/san-francisco" },
+  { name: "Boston", image: "/assets/jfif/Boston.jfif", href: "/coworking/boston" },
+  { name: "Seattle", image: "/assets/jfif/Seattle.jfif", href: "/coworking/seattle" },
+  { name: "Dallas", image: "/assets/jfif/Dallas.jfif", href: "/coworking/dallas" },
+  { name: "Houston", image: "/assets/jfif/Houston.jfif", href: "/coworking/houston" },
+  { name: "Atlanta", image: "/assets/jfif/Atlanta.jfif", href: "/coworking/atlanta" },
+  { name: "Phoenix", image: "/assets/jfif/Phoenix.jfif", href: "/coworking/phoenix" },
+  { name: "Philadelphia", image: "/assets/jfif/Philadelphia.jfif", href: "/coworking/philadelphia" },
+  { name: "San Diego", image: "/assets/jfif/San-Diego.jfif", href: "/coworking/san-diego" },
+  { name: "Denver", image: "/assets/jfif/Denver.jfif", href: "/coworking/denver" },
+  { name: "Washington DC", image: "/assets/jfif/Washington DC.jfif", href: "/coworking/washington-dc" },
+  { name: "Tampa", image: "/assets/jfif/download.jfif", href: "/coworking/tampa" },
+  { name: "Orlando", image: "/assets/jfif/Orlando.jfif", href: "/coworking/orlando" },
+  { name: "Las Vegas", image: "/assets/jfif/download (1).jfif", href: "/coworking/las-vegas" },
 ];
 
 export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) {
@@ -163,13 +163,15 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
                   href={item.href}
                   className="flex flex-col items-center gap-2.5 min-w-[85px] shrink-0 text-gray-700 hover:text-orange-500 transition-colors group"
                 >
-                  <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden border-none border-gray-200 group-hover:border-orange-500 transition-all duration-300 ">
+                  <div className={`relative rounded-xl overflow-hidden border-none border-gray-200 group-hover:border-orange-500 transition-all duration-300 ${
+                    isScrolled ? "w-12 h-12 md:w-12 md:h-12" : "w-14 h-14 md:w-16 md:h-16"
+                  }`}>
                     <Image
                       src={item.image}
                       alt={item.name}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-300"
-                      sizes="(max-width: 768px) 56px, 64px"
+                      sizes={isScrolled ? "(max-width: 768px) 48px, 56px" : "(max-width: 768px) 56px, 64px"}
                     />
                   </div>
                   <span className="text-xs font-semibold text-center whitespace-nowrap leading-tight">{item.name}</span>
