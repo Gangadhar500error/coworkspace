@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useParams } from "next/navigation";
+import { useState, useMemo, useEffect } from "react";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import FiltersBar, { FilterState } from "./components/FiltersBar";
 import LocationChips from "./components/LocationChips";
 import ListingGrid from "./components/ListingGrid";
 import SortDropdown, { SortOption } from "./components/SortDropdown";
 import EmptyState from "./components/EmptyState";
+import ComingSoon from "./components/ComingSoon";
 import LoadingSkeleton from "./components/LoadingSkeleton";
 import Pagination from "./components/Pagination";
 import { getWorkspacesByCity, getAreasByCity, Workspace } from "./data/workspaces";
@@ -15,6 +16,8 @@ const ITEMS_PER_PAGE = 9;
 
 export default function CoworkingCityPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const city = (params.city as string) || "New York";
   
   // Format city name (e.g., "new-york" -> "New York")
@@ -23,22 +26,81 @@ export default function CoworkingCityPage() {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-  const [filters, setFilters] = useState<FilterState>({
-    priceRange: "all",
-    workspaceType: "all",
-    rating: "all",
-    amenities: []
+  // Get selected types from query params
+  const typesParam = searchParams.get("types");
+  const selectedTypesFromUrl = useMemo(() => {
+    if (!typesParam) return [];
+    return typesParam.split(",").map(t => t.trim()).filter(Boolean);
+  }, [typesParam]);
+
+  // Initialize filters from URL params
+  const [filters, setFilters] = useState<FilterState>(() => {
+    const initialWorkspaceType = selectedTypesFromUrl.length > 0 
+      ? selectedTypesFromUrl.length === 1 
+        ? selectedTypesFromUrl[0] 
+        : selectedTypesFromUrl
+      : "all";
+    
+    return {
+      priceRange: "all",
+      workspaceType: initialWorkspaceType,
+      rating: "all",
+      amenities: []
+    };
   });
+
+  // Sync filters when URL params change
+  useEffect(() => {
+    const newWorkspaceType = selectedTypesFromUrl.length > 0 
+      ? selectedTypesFromUrl.length === 1 
+        ? selectedTypesFromUrl[0] 
+        : selectedTypesFromUrl
+      : "all";
+    
+    setFilters(prev => {
+      const currentType = Array.isArray(prev.workspaceType) 
+        ? prev.workspaceType 
+        : prev.workspaceType !== "all" 
+          ? [prev.workspaceType] 
+          : [];
+      
+      const newTypeArray = Array.isArray(newWorkspaceType) 
+        ? newWorkspaceType 
+        : newWorkspaceType !== "all" 
+          ? [newWorkspaceType] 
+          : [];
+      
+      // Only update if different
+      const currentStr = currentType.sort().join(",");
+      const newStr = newTypeArray.sort().join(",");
+      
+      if (currentStr !== newStr) {
+        return {
+          ...prev,
+          workspaceType: newWorkspaceType
+        };
+      }
+      return prev;
+    });
+  }, [selectedTypesFromUrl]);
 
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>("recommended");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading] = useState(false);
 
-  // Get all workspaces for the city
+  // Get all workspaces for the city, filtered by selected types from URL
   const allWorkspaces = useMemo(() => {
-    return getWorkspacesByCity(formattedCity);
-  }, [formattedCity]);
+    const workspaces = getWorkspacesByCity(formattedCity);
+    
+    // If types are specified in URL, filter by those types
+    if (selectedTypesFromUrl.length > 0) {
+      return workspaces.filter(ws => selectedTypesFromUrl.includes(ws.type));
+    }
+    
+    // Default: show only Coworking Space if no types specified
+    return workspaces.filter(ws => ws.type === "Coworking Space");
+  }, [formattedCity, selectedTypesFromUrl]);
 
   // Get available areas
   const areas = useMemo(() => {
@@ -67,9 +129,13 @@ export default function CoworkingCityPage() {
       });
     }
 
-    // Filter by workspace type
+    // Filter by workspace type (supports single or multiple types)
     if (filters.workspaceType !== "all") {
-      filtered = filtered.filter(ws => ws.type === filters.workspaceType);
+      if (Array.isArray(filters.workspaceType)) {
+        filtered = filtered.filter(ws => filters.workspaceType.includes(ws.type));
+      } else {
+        filtered = filtered.filter(ws => ws.type === filters.workspaceType);
+      }
     }
 
     // Filter by rating
@@ -119,6 +185,19 @@ export default function CoworkingCityPage() {
   const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters);
     setCurrentPage(1);
+    
+    // Update URL query params when workspace types change
+    const url = new URL(window.location.href);
+    
+    if (Array.isArray(newFilters.workspaceType) && newFilters.workspaceType.length > 0) {
+      url.searchParams.set("types", newFilters.workspaceType.join(","));
+    } else if (typeof newFilters.workspaceType === "string" && newFilters.workspaceType !== "all") {
+      url.searchParams.set("types", newFilters.workspaceType);
+    } else {
+      url.searchParams.delete("types");
+    }
+    
+    router.replace(url.pathname + url.search, { scroll: false });
   };
 
   const handleAreaSelect = (area: string | null) => {
@@ -150,8 +229,38 @@ export default function CoworkingCityPage() {
       <div className="w-full lg:w-3/5">
 
         <h1 className="text-base lg:text-2xl font-bold text-gray-900 font-display mb-1">
-          Coworking Spaces in <span className="text-orange-500">{formattedCity}</span>
+          {selectedTypesFromUrl.length > 0 ? (
+            <>
+              {selectedTypesFromUrl.length === 1 ? (
+                <>
+                  {selectedTypesFromUrl[0]}s in <span className="text-orange-500">{formattedCity}</span>
+                </>
+              ) : (
+                <>
+                  Workspaces in <span className="text-orange-500">{formattedCity}</span>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              Coworking Spaces in <span className="text-orange-500">{formattedCity}</span>
+            </>
+          )}
         </h1>
+
+        {/* Selected Types Display */}
+        {selectedTypesFromUrl.length > 1 && (
+          <div className="flex flex-wrap items-center gap-2 mt-2 mb-2">
+            {selectedTypesFromUrl.map((type) => (
+              <span
+                key={type}
+                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700 border border-orange-200 font-body"
+              >
+                {type}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Location Chips */}
         {areas.length > 0 && (
@@ -172,13 +281,19 @@ export default function CoworkingCityPage() {
 </div>
 
       {/* Main Content */}
-      <div className="container-custom px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container-custom px-4 sm:px-6 lg:px-8 py-2">
         {/* Sort and Results Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
           <div className="text-sm text-gray-600 font-body">
-            Showing {paginatedWorkspaces.length} of {filteredAndSortedWorkspaces.length} workspaces
+            {allWorkspaces.length > 0 ? (
+              <>Showing {paginatedWorkspaces.length} of {filteredAndSortedWorkspaces.length} workspaces</>
+            ) : (
+              <>No workspaces available</>
+            )}
           </div>
-          <SortDropdown sortBy={sortBy} onSortChange={handleSortChange} />
+          {allWorkspaces.length > 0 && (
+            <SortDropdown sortBy={sortBy} onSortChange={handleSortChange} />
+          )}
         </div>
 
         {/* Loading State */}
@@ -186,21 +301,32 @@ export default function CoworkingCityPage() {
           <LoadingSkeleton />
         ) : (
           <>
-            {/* Listings Grid or Empty State */}
-            {paginatedWorkspaces.length > 0 ? (
-              <>
-                <ListingGrid
-                  workspaces={paginatedWorkspaces}
-                  onGetQuote={handleGetQuote}
-                />
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
-              </>
+            {/* Listings Grid, Empty State, or Coming Soon */}
+            {allWorkspaces.length > 0 ? (
+              paginatedWorkspaces.length > 0 ? (
+                <>
+                  <ListingGrid
+                    workspaces={paginatedWorkspaces}
+                    onGetQuote={handleGetQuote}
+                  />
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                </>
+              ) : (
+                <EmptyState />
+              )
             ) : (
-              <EmptyState />
+              <ComingSoon 
+                workspaceType={
+                  selectedTypesFromUrl.length > 0 
+                    ? selectedTypesFromUrl.join(" & ") 
+                    : "Coworking Space"
+                } 
+                cityName={formattedCity} 
+              />
             )}
           </>
         )}

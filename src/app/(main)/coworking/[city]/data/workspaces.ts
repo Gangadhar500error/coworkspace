@@ -8,8 +8,9 @@ export interface Workspace {
   badge?: "Popular" | "Special Offer" | "Featured";
   price: number;
   image: string;
+  images?: string[]; // Optional array of images for slider
   amenities: string[];
-  type: "Hot Desk" | "Dedicated Desk" | "Private Office" | "Meeting Room";
+  type: "Coworking Space" | "Meeting Room" | "Virtual Office" | "Private Office";
   description?: string;
 }
 
@@ -24,8 +25,9 @@ export const workspaces: Workspace[] = [
     badge: "Popular",
     price: 499,
     image: "/assets/cowork.jpg",
+    images: ["/assets/cowork.jpg", "/assets/monthly.webp", "/assets/privateoffice.jpg"],
     amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
-    type: "Dedicated Desk",
+    type: "Coworking Space",
     description: "Modern workspace in the heart of Manhattan with stunning city views."
   },
   {
@@ -38,8 +40,9 @@ export const workspaces: Workspace[] = [
     badge: "Special Offer",
     price: 299,
     image: "/assets/monthly.webp",
+    images: ["/assets/monthly.webp", "/assets/cowork.jpg", "/assets/eventspace.webp"],
     amenities: ["WiFi", "Meeting Rooms", "AC", "Pantry"],
-    type: "Hot Desk",
+    type: "Coworking Space",
     description: "Affordable coworking space perfect for startups and freelancers."
   },
   {
@@ -52,6 +55,7 @@ export const workspaces: Workspace[] = [
     badge: "Featured",
     price: 599,
     image: "/assets/privateoffice.jpg",
+    images: ["/assets/privateoffice.jpg", "/assets/cowork.jpg", "/assets/monthly.webp"],
     amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
     type: "Private Office",
     description: "Premium private offices with dedicated meeting spaces."
@@ -66,8 +70,8 @@ export const workspaces: Workspace[] = [
     price: 399,
     image: "/assets/eventspace.webp",
     amenities: ["WiFi", "Meeting Rooms", "AC", "Pantry"],
-    type: "Dedicated Desk",
-    description: "Spacious coworking environment with modern amenities."
+    type: "Meeting Room",
+    description: "Spacious meeting rooms with modern amenities."
   },
   {
     id: "gw-chelsea",
@@ -79,6 +83,7 @@ export const workspaces: Workspace[] = [
     badge: "Popular",
     price: 549,
     image: "/assets/cowork.jpg",
+    images: ["/assets/cowork.jpg", "/assets/privateoffice.jpg", "/assets/eventspace.webp"],
     amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC"],
     type: "Private Office",
     description: "Elegant workspace in trendy Chelsea neighborhood."
@@ -93,7 +98,7 @@ export const workspaces: Workspace[] = [
     price: 349,
     image: "/assets/monthly.webp",
     amenities: ["WiFi", "AC", "Pantry"],
-    type: "Hot Desk",
+    type: "Coworking Space",
     description: "Budget-friendly coworking space with essential amenities."
   },
   {
@@ -106,6 +111,7 @@ export const workspaces: Workspace[] = [
     badge: "Featured",
     price: 649,
     image: "/assets/privateoffice.jpg",
+    images: ["/assets/privateoffice.jpg", "/assets/eventspace.webp", "/assets/cowork.jpg"],
     amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
     type: "Private Office",
     description: "Luxury coworking space with premium facilities."
@@ -121,8 +127,8 @@ export const workspaces: Workspace[] = [
     price: 449,
     image: "/assets/eventspace.webp",
     amenities: ["WiFi", "Meeting Rooms", "AC", "Pantry"],
-    type: "Dedicated Desk",
-    description: "Sophisticated workspace in prestigious Upper East Side."
+    type: "Virtual Office",
+    description: "Virtual office solutions in prestigious Upper East Side."
   },
   {
     id: "gw-greenpoint",
@@ -134,7 +140,7 @@ export const workspaces: Workspace[] = [
     price: 379,
     image: "/assets/cowork.jpg",
     amenities: ["WiFi", "24/7 Access", "AC", "Pantry"],
-    type: "Hot Desk",
+    type: "Coworking Space",
     description: "Creative space perfect for artists and designers."
   },
   {
@@ -161,7 +167,7 @@ export const workspaces: Workspace[] = [
     price: 329,
     image: "/assets/privateoffice.jpg",
     amenities: ["WiFi", "AC", "Pantry"],
-    type: "Hot Desk",
+    type: "Coworking Space",
     description: "Affordable option with great connectivity."
   },
   {
@@ -177,6 +183,368 @@ export const workspaces: Workspace[] = [
     amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
     type: "Private Office",
     description: "Premium waterfront location with stunning views."
+  },
+  // Los Angeles Workspaces
+  {
+    id: "gw-la-downtown",
+    name: "GoodWorks Cowork - Downtown LA",
+    city: "Los Angeles",
+    area: "Downtown",
+    rating: 4.6,
+    reviewCount: 287,
+    badge: "Popular",
+    price: 479,
+    image: "/assets/cowork.jpg",
+    images: ["/assets/cowork.jpg", "/assets/monthly.webp", "/assets/privateoffice.jpg"],
+    amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Coworking Space",
+    description: "Modern coworking space in the heart of Downtown LA."
+  },
+  {
+    id: "gw-la-beverly-hills",
+    name: "GoodWorks Cowork - Beverly Hills",
+    city: "Los Angeles",
+    area: "Beverly Hills",
+    rating: 4.9,
+    reviewCount: 412,
+    badge: "Featured",
+    price: 799,
+    image: "/assets/privateoffice.jpg",
+    images: ["/assets/privateoffice.jpg", "/assets/cowork.jpg", "/assets/eventspace.webp"],
+    amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Private Office",
+    description: "Luxury private offices in prestigious Beverly Hills."
+  },
+  {
+    id: "gw-la-santa-monica",
+    name: "GoodWorks Cowork - Santa Monica",
+    city: "Los Angeles",
+    area: "Santa Monica",
+    rating: 4.5,
+    reviewCount: 203,
+    badge: "Special Offer",
+    price: 429,
+    image: "/assets/monthly.webp",
+    images: ["/assets/monthly.webp", "/assets/cowork.jpg", "/assets/privateoffice.jpg"],
+    amenities: ["WiFi", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Coworking Space",
+    description: "Beachside coworking with ocean views."
+  },
+  {
+    id: "gw-la-venice",
+    name: "GoodWorks Cowork - Venice Beach",
+    city: "Los Angeles",
+    area: "Venice",
+    rating: 4.4,
+    reviewCount: 178,
+    price: 399,
+    image: "/assets/eventspace.webp",
+    amenities: ["WiFi", "AC", "Pantry", "Parking"],
+    type: "Meeting Room",
+    description: "Creative meeting spaces near the beach."
+  },
+  {
+    id: "gw-la-hollywood",
+    name: "GoodWorks Cowork - Hollywood",
+    city: "Los Angeles",
+    area: "Hollywood",
+    rating: 4.7,
+    reviewCount: 325,
+    badge: "Popular",
+    price: 549,
+    image: "/assets/cowork.jpg",
+    images: ["/assets/cowork.jpg", "/assets/eventspace.webp", "/assets/monthly.webp"],
+    amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "AC", "Pantry"],
+    type: "Virtual Office",
+    description: "Virtual office solutions in the entertainment district."
+  },
+  // Chicago Workspaces
+  {
+    id: "gw-chicago-loop",
+    name: "GoodWorks Cowork - The Loop",
+    city: "Chicago",
+    area: "The Loop",
+    rating: 4.6,
+    reviewCount: 298,
+    badge: "Popular",
+    price: 459,
+    image: "/assets/cowork.jpg",
+    images: ["/assets/cowork.jpg", "/assets/monthly.webp", "/assets/privateoffice.jpg"],
+    amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Coworking Space",
+    description: "Central business district workspace with city views."
+  },
+  {
+    id: "gw-chicago-river-north",
+    name: "GoodWorks Cowork - River North",
+    city: "Chicago",
+    area: "River North",
+    rating: 4.8,
+    reviewCount: 356,
+    badge: "Featured",
+    price: 629,
+    image: "/assets/privateoffice.jpg",
+    images: ["/assets/privateoffice.jpg", "/assets/cowork.jpg", "/assets/eventspace.webp"],
+    amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Private Office",
+    description: "Premium offices in trendy River North district."
+  },
+  {
+    id: "gw-chicago-wicker-park",
+    name: "GoodWorks Cowork - Wicker Park",
+    city: "Chicago",
+    area: "Wicker Park",
+    rating: 4.5,
+    reviewCount: 189,
+    price: 379,
+    image: "/assets/monthly.webp",
+    images: ["/assets/monthly.webp", "/assets/cowork.jpg", "/assets/privateoffice.jpg"],
+    amenities: ["WiFi", "Meeting Rooms", "AC", "Pantry"],
+    type: "Coworking Space",
+    description: "Creative workspace in vibrant Wicker Park."
+  },
+  {
+    id: "gw-chicago-magnificent-mile",
+    name: "GoodWorks Cowork - Magnificent Mile",
+    city: "Chicago",
+    area: "Magnificent Mile",
+    rating: 4.7,
+    reviewCount: 267,
+    badge: "Special Offer",
+    price: 499,
+    image: "/assets/eventspace.webp",
+    amenities: ["WiFi", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Meeting Room",
+    description: "Professional meeting rooms on Michigan Avenue."
+  },
+  {
+    id: "gw-chicago-west-loop",
+    name: "GoodWorks Cowork - West Loop",
+    city: "Chicago",
+    area: "West Loop",
+    rating: 4.4,
+    reviewCount: 156,
+    price: 419,
+    image: "/assets/cowork.jpg",
+    amenities: ["WiFi", "24/7 Access", "AC", "Pantry"],
+    type: "Virtual Office",
+    description: "Virtual office services in the West Loop."
+  },
+  // San Francisco Workspaces
+  {
+    id: "gw-sf-soma",
+    name: "GoodWorks Cowork - SoMa",
+    city: "San Francisco",
+    area: "SoMa",
+    rating: 4.7,
+    reviewCount: 342,
+    badge: "Popular",
+    price: 599,
+    image: "/assets/cowork.jpg",
+    images: ["/assets/cowork.jpg", "/assets/monthly.webp", "/assets/privateoffice.jpg"],
+    amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Coworking Space",
+    description: "Tech hub workspace in South of Market."
+  },
+  {
+    id: "gw-sf-financial-district",
+    name: "GoodWorks Cowork - Financial District",
+    city: "San Francisco",
+    area: "Financial District",
+    rating: 4.9,
+    reviewCount: 428,
+    badge: "Featured",
+    price: 749,
+    image: "/assets/privateoffice.jpg",
+    images: ["/assets/privateoffice.jpg", "/assets/cowork.jpg", "/assets/eventspace.webp"],
+    amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Private Office",
+    description: "Executive offices in the Financial District."
+  },
+  {
+    id: "gw-sf-mission",
+    name: "GoodWorks Cowork - Mission District",
+    city: "San Francisco",
+    area: "Mission",
+    rating: 4.5,
+    reviewCount: 201,
+    badge: "Special Offer",
+    price: 449,
+    image: "/assets/monthly.webp",
+    images: ["/assets/monthly.webp", "/assets/cowork.jpg", "/assets/privateoffice.jpg"],
+    amenities: ["WiFi", "Meeting Rooms", "AC", "Pantry"],
+    type: "Coworking Space",
+    description: "Vibrant coworking space in the Mission."
+  },
+  {
+    id: "gw-sf-pacific-heights",
+    name: "GoodWorks Cowork - Pacific Heights",
+    city: "San Francisco",
+    area: "Pacific Heights",
+    rating: 4.6,
+    reviewCount: 234,
+    price: 529,
+    image: "/assets/eventspace.webp",
+    amenities: ["WiFi", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Meeting Room",
+    description: "Elegant meeting spaces in Pacific Heights."
+  },
+  {
+    id: "gw-sf-castro",
+    name: "GoodWorks Cowork - Castro",
+    city: "San Francisco",
+    area: "Castro",
+    rating: 4.3,
+    reviewCount: 167,
+    price: 389,
+    image: "/assets/cowork.jpg",
+    amenities: ["WiFi", "AC", "Pantry"],
+    type: "Virtual Office",
+    description: "Virtual office solutions in Castro district."
+  },
+  // Boston Workspaces
+  {
+    id: "gw-boston-back-bay",
+    name: "GoodWorks Cowork - Back Bay",
+    city: "Boston",
+    area: "Back Bay",
+    rating: 4.7,
+    reviewCount: 312,
+    badge: "Popular",
+    price: 549,
+    image: "/assets/cowork.jpg",
+    images: ["/assets/cowork.jpg", "/assets/monthly.webp", "/assets/privateoffice.jpg"],
+    amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Coworking Space",
+    description: "Historic Back Bay location with modern amenities."
+  },
+  {
+    id: "gw-boston-financial-district",
+    name: "GoodWorks Cowork - Financial District",
+    city: "Boston",
+    area: "Financial District",
+    rating: 4.8,
+    reviewCount: 367,
+    badge: "Featured",
+    price: 679,
+    image: "/assets/privateoffice.jpg",
+    images: ["/assets/privateoffice.jpg", "/assets/cowork.jpg", "/assets/eventspace.webp"],
+    amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Private Office",
+    description: "Premium private offices in Boston's Financial District."
+  },
+  {
+    id: "gw-boston-seaport",
+    name: "GoodWorks Cowork - Seaport",
+    city: "Boston",
+    area: "Seaport",
+    rating: 4.6,
+    reviewCount: 245,
+    badge: "Special Offer",
+    price: 479,
+    image: "/assets/monthly.webp",
+    images: ["/assets/monthly.webp", "/assets/cowork.jpg", "/assets/privateoffice.jpg"],
+    amenities: ["WiFi", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Coworking Space",
+    description: "Waterfront workspace in the Seaport District."
+  },
+  {
+    id: "gw-boston-cambridge",
+    name: "GoodWorks Cowork - Cambridge",
+    city: "Boston",
+    area: "Cambridge",
+    rating: 4.5,
+    reviewCount: 198,
+    price: 429,
+    image: "/assets/eventspace.webp",
+    amenities: ["WiFi", "Meeting Rooms", "AC", "Pantry"],
+    type: "Meeting Room",
+    description: "Academic district meeting spaces near Harvard and MIT."
+  },
+  {
+    id: "gw-boston-south-end",
+    name: "GoodWorks Cowork - South End",
+    city: "Boston",
+    area: "South End",
+    rating: 4.4,
+    reviewCount: 156,
+    price: 399,
+    image: "/assets/cowork.jpg",
+    amenities: ["WiFi", "AC", "Pantry"],
+    type: "Virtual Office",
+    description: "Virtual office services in trendy South End."
+  },
+  // Seattle Workspaces
+  {
+    id: "gw-seattle-downtown",
+    name: "GoodWorks Cowork - Downtown Seattle",
+    city: "Seattle",
+    area: "Downtown",
+    rating: 4.6,
+    reviewCount: 289,
+    badge: "Popular",
+    price: 489,
+    image: "/assets/cowork.jpg",
+    images: ["/assets/cowork.jpg", "/assets/monthly.webp", "/assets/privateoffice.jpg"],
+    amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Coworking Space",
+    description: "Central Seattle workspace with Space Needle views."
+  },
+  {
+    id: "gw-seattle-belltown",
+    name: "GoodWorks Cowork - Belltown",
+    city: "Seattle",
+    area: "Belltown",
+    rating: 4.8,
+    reviewCount: 334,
+    badge: "Featured",
+    price: 619,
+    image: "/assets/privateoffice.jpg",
+    images: ["/assets/privateoffice.jpg", "/assets/cowork.jpg", "/assets/eventspace.webp"],
+    amenities: ["WiFi", "24/7 Access", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Private Office",
+    description: "Premium offices in vibrant Belltown neighborhood."
+  },
+  {
+    id: "gw-seattle-capitol-hill",
+    name: "GoodWorks Cowork - Capitol Hill",
+    city: "Seattle",
+    area: "Capitol Hill",
+    rating: 4.5,
+    reviewCount: 212,
+    badge: "Special Offer",
+    price: 439,
+    image: "/assets/monthly.webp",
+    images: ["/assets/monthly.webp", "/assets/cowork.jpg", "/assets/privateoffice.jpg"],
+    amenities: ["WiFi", "Meeting Rooms", "AC", "Pantry"],
+    type: "Coworking Space",
+    description: "Creative coworking space in Capitol Hill."
+  },
+  {
+    id: "gw-seattle-south-lake-union",
+    name: "GoodWorks Cowork - South Lake Union",
+    city: "Seattle",
+    area: "South Lake Union",
+    rating: 4.7,
+    reviewCount: 278,
+    price: 519,
+    image: "/assets/eventspace.webp",
+    amenities: ["WiFi", "Meeting Rooms", "Parking", "AC", "Pantry"],
+    type: "Meeting Room",
+    description: "Tech district meeting rooms near Amazon campus."
+  },
+  {
+    id: "gw-seattle-fremont",
+    name: "GoodWorks Cowork - Fremont",
+    city: "Seattle",
+    area: "Fremont",
+    rating: 4.4,
+    reviewCount: 178,
+    price: 409,
+    image: "/assets/cowork.jpg",
+    amenities: ["WiFi", "AC", "Pantry"],
+    type: "Virtual Office",
+    description: "Virtual office solutions in artsy Fremont."
   }
 ];
 

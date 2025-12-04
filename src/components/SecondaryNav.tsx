@@ -1,14 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronRight, ChevronLeft, Search } from "lucide-react";
+import WorkspaceTypeModal from "./WorkspaceTypeModal";
 
 interface NavItem {
   name: string;
   image: string;
-  href: string;
+  slug: string;
 }
 
 interface SecondaryNavProps {
@@ -16,30 +16,32 @@ interface SecondaryNavProps {
 }
 
 const navigationItems: NavItem[] = [
-  { name: "New York", image: "/assets/city-logos/newyork.png", href: "/coworking/new-york" },
-  { name: "Los Angeles", image: "/assets/city-logos/losangels.png", href: "/coworking/los-angeles" },
-  { name: "Chicago", image: "/assets/jfif/download.jfif", href: "/coworking/chicago" },
-  { name: "Miami", image: "/assets/jfif/miani.jfif", href: "/coworking/miami" },
-  { name: "San Francisco", image: "/assets/jfif/San-Francisco.jfif", href: "/coworking/san-francisco" },
-  { name: "Boston", image: "/assets/jfif/Boston.jfif", href: "/coworking/boston" },
-  { name: "Seattle", image: "/assets/jfif/Seattle.jfif", href: "/coworking/seattle" },
-  { name: "Dallas", image: "/assets/jfif/Dallas.jfif", href: "/coworking/dallas" },
-  { name: "Houston", image: "/assets/jfif/Houston.jfif", href: "/coworking/houston" },
-  { name: "Atlanta", image: "/assets/jfif/Atlanta.jfif", href: "/coworking/atlanta" },
-  { name: "Phoenix", image: "/assets/jfif/Phoenix.jfif", href: "/coworking/phoenix" },
-  { name: "Philadelphia", image: "/assets/jfif/Philadelphia.jfif", href: "/coworking/philadelphia" },
-  { name: "San Diego", image: "/assets/jfif/San-Diego.jfif", href: "/coworking/san-diego" },
-  { name: "Denver", image: "/assets/jfif/Denver.jfif", href: "/coworking/denver" },
-  { name: "Washington DC", image: "/assets/jfif/Washington DC.jfif", href: "/coworking/washington-dc" },
-  { name: "Tampa", image: "/assets/jfif/download.jfif", href: "/coworking/tampa" },
-  { name: "Orlando", image: "/assets/jfif/Orlando.jfif", href: "/coworking/orlando" },
-  { name: "Las Vegas", image: "/assets/jfif/download (1).jfif", href: "/coworking/las-vegas" },
+  { name: "New York", image: "/assets/city-logos/newyork.png", slug: "new-york" },
+  { name: "Los Angeles", image: "/assets/city-logos/losangels.png", slug: "los-angeles" },
+  { name: "Chicago", image: "/assets/jfif/download.jfif", slug: "chicago" },
+  { name: "Miami", image: "/assets/jfif/miani.jfif", slug: "miami" },
+  { name: "San Francisco", image: "/assets/jfif/San-Francisco.jfif", slug: "san-francisco" },
+  { name: "Boston", image: "/assets/jfif/Boston.jfif", slug: "boston" },
+  { name: "Seattle", image: "/assets/jfif/Seattle.jfif", slug: "seattle" },
+  { name: "Dallas", image: "/assets/jfif/Dallas.jfif", slug: "dallas" },
+  { name: "Houston", image: "/assets/jfif/Houston.jfif", slug: "houston" },
+  { name: "Atlanta", image: "/assets/jfif/Atlanta.jfif", slug: "atlanta" },
+  { name: "Phoenix", image: "/assets/jfif/Phoenix.jfif", slug: "phoenix" },
+  { name: "Philadelphia", image: "/assets/jfif/Philadelphia.jfif", slug: "philadelphia" },
+  { name: "San Diego", image: "/assets/jfif/San-Diego.jfif", slug: "san-diego" },
+  { name: "Denver", image: "/assets/jfif/Denver.jfif", slug: "denver" },
+  { name: "Washington DC", image: "/assets/jfif/Washington DC.jfif", slug: "washington-dc" },
+  { name: "Tampa", image: "/assets/jfif/download.jfif", slug: "tampa" },
+  { name: "Orlando", image: "/assets/jfif/Orlando.jfif", slug: "orlando" },
+  { name: "Las Vegas", image: "/assets/jfif/download (1).jfif", slug: "las-vegas" },
 ];
 
 export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) {
   const navScrollRef = useRef<HTMLDivElement>(null);
   const [showScrollRight, setShowScrollRight] = useState(false);
   const [showScrollLeft, setShowScrollLeft] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedCity, setSelectedCity] = useState<{ name: string; slug: string } | null>(null);
 
   const checkScrollability = useCallback(() => {
     if (navScrollRef.current) {
@@ -109,7 +111,7 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
         {/* Search Bar - Only visible when scrolled on large screens */}
         <div className={`hidden lg:block transition-all duration-500 ease-in-out ${
           isScrolled 
-            ? "w-[30%] opacity-100 max-w-[30%] min-w-0 relative flex-shrink-0" 
+            ? "w-[30%] opacity-100 max-w-[30%] min-w-0 relative shrink-0" 
             : "absolute left-0 top-0 w-0 h-0 opacity-0 max-w-0 min-w-0 overflow-hidden pointer-events-none"
         }`} style={!isScrolled ? { margin: 0, padding: 0 } : undefined}>
           <div className="relative">
@@ -158,10 +160,13 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
           >
             {navigationItems.map((item) => {
               return (
-                <Link
+                <button
                   key={item.name}
-                  href={item.href}
-                  className="flex flex-col items-center gap-2.5 min-w-[85px] shrink-0 text-gray-700 hover:text-orange-500 transition-colors group"
+                  onClick={() => {
+                    setSelectedCity({ name: item.name, slug: item.slug });
+                    setModalOpen(true);
+                  }}
+                  className="flex flex-col items-center gap-2.5 min-w-[85px] shrink-0 text-gray-700 hover:text-orange-500 transition-colors group cursor-pointer"
                 >
                   <div className={`relative rounded-xl overflow-hidden border-none border-gray-200 group-hover:border-orange-500 transition-all duration-300 ${
                     isScrolled ? "w-12 h-12 md:w-12 md:h-12" : "w-14 h-14 md:w-16 md:h-16"
@@ -175,7 +180,7 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
                     />
                   </div>
                   <span className="text-xs font-semibold text-center whitespace-nowrap leading-tight">{item.name}</span>
-                </Link>
+                </button>
               );
             })}
           </div>
@@ -192,6 +197,19 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
           )}
         </div>
       </div>
+
+      {/* Workspace Type Modal */}
+      {selectedCity && (
+        <WorkspaceTypeModal
+          isOpen={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setSelectedCity(null);
+          }}
+          cityName={selectedCity.name}
+          citySlug={selectedCity.slug}
+        />
+      )}
     </div>
   );
 }

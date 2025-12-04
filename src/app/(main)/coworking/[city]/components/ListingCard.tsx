@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { Star, MapPin } from "lucide-react";
+import { Star, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { Workspace } from "../data/workspaces";
 
 interface ListingCardProps {
@@ -10,6 +11,16 @@ interface ListingCardProps {
 }
 
 export default function ListingCard({ workspace, onGetQuote }: ListingCardProps) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Generate 3 images for each workspace (using the same image or variations)
+  const workspaceImages = 'images' in workspace ? (workspace as any).images : undefined;
+  const images: string[] = workspaceImages && Array.isArray(workspaceImages) ? workspaceImages : [
+    workspace.image,
+    workspace.image,
+    workspace.image
+  ];
+
   const getBadgeColor = (badge?: string) => {
     switch (badge) {
       case "Popular":
@@ -23,25 +34,90 @@ export default function ListingCard({ workspace, onGetQuote }: ListingCardProps)
     }
   };
 
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index);
+  };
+
   return (
-    <div className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-      {/* Image Container */}
+    <div className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+      {/* Image Slider Container */}
       <div className="relative h-48 w-full overflow-hidden">
-        <Image
-          src={workspace.image}
-          alt={workspace.name}
-          fill
-          className="object-cover group-hover:scale-110 transition-transform duration-300"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
+        {/* Images */}
+        <div className="relative h-full w-full">
+          {images.map((image: string, index: number) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-500 ${
+                index === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+              }`}
+            >
+              <Image
+                src={image}
+                alt={`${workspace.name} - Image ${index + 1}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Navigation Arrows */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="w-4 h-4 text-gray-700" />
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              aria-label="Next image"
+            >
+              <ChevronRight className="w-4 h-4 text-gray-700" />
+            </button>
+          </>
+        )}
+
+        {/* Dots Indicator */}
+        {images.length > 1 && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
+            {images.map((_: string, index: number) => (
+              <button
+                key={index}
+                onClick={() => goToImage(index)}
+                className={`h-1.5 rounded-full transition-all duration-200 ${
+                  index === currentImageIndex
+                    ? "w-6 bg-white"
+                    : "w-1.5 bg-white/50 hover:bg-white/75"
+                }`}
+                aria-label={`Go to image ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Badge */}
         {workspace.badge && (
-          <div className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold ${getBadgeColor(workspace.badge)}`}>
+          <div className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold z-20 ${getBadgeColor(workspace.badge)}`}>
             {workspace.badge}
           </div>
         )}
         {/* Workspace Type Badge */}
-        <div className="absolute top-3 right-3 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-700">
+        <div className="absolute top-3 right-3 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-700 z-20">
           {workspace.type}
         </div>
       </div>

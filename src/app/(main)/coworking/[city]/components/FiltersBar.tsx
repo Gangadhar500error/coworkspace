@@ -5,7 +5,7 @@ import { ChevronDown, X } from "lucide-react";
 
 export interface FilterState {
   priceRange: string;
-  workspaceType: string;
+  workspaceType: string | string[]; // Can be "all", single type string, or array of types
   rating: string;
   amenities: string[];
 }
@@ -23,13 +23,6 @@ const priceRanges = [
   { value: "700+", label: "$700+" }
 ];
 
-const workspaceTypes = [
-  { value: "all", label: "All Types" },
-  { value: "Hot Desk", label: "Hot Desk" },
-  { value: "Dedicated Desk", label: "Dedicated Desk" },
-  { value: "Private Office", label: "Private Office" },
-  { value: "Meeting Room", label: "Meeting Room" }
-];
 
 const ratings = [
   { value: "all", label: "All Ratings" },
@@ -55,10 +48,6 @@ export default function FiltersBar({ filters, onFilterChange }: FiltersBarProps)
     setOpenDropdown(null);
   };
 
-  const handleTypeChange = (value: string) => {
-    onFilterChange({ ...filters, workspaceType: value });
-    setOpenDropdown(null);
-  };
 
   const handleRatingChange = (value: string) => {
     onFilterChange({ ...filters, rating: value });
@@ -83,7 +72,6 @@ export default function FiltersBar({ filters, onFilterChange }: FiltersBarProps)
 
   const hasActiveFilters = 
     filters.priceRange !== "all" ||
-    filters.workspaceType !== "all" ||
     filters.rating !== "all" ||
     filters.amenities.length > 0;
 
@@ -98,12 +86,6 @@ export default function FiltersBar({ filters, onFilterChange }: FiltersBarProps)
       });
     }
     
-    if (filters.workspaceType !== "all") {
-      selected.push({
-        label: filters.workspaceType,
-        onRemove: () => handleTypeChange("all")
-      });
-    }
     
     if (filters.rating !== "all") {
       selected.push({
@@ -152,36 +134,6 @@ export default function FiltersBar({ filters, onFilterChange }: FiltersBarProps)
                   }`}
                 >
                   {range.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Workspace Type Filter */}
-        <div className="relative">
-          <button
-            onClick={() => setOpenDropdown(openDropdown === "type" ? null : "type")}
-            className={`flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-50 hover:bg-gray-100 border rounded-lg text-xs sm:text-sm font-medium transition-all ${
-              filters.workspaceType !== "all" 
-                ? "border-[#4ECDC4] bg-[#4ECDC4]/10 text-[#4ECDC4]" 
-                : "border-gray-300 text-gray-700"
-            }`}
-          >
-            Type
-            <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-200 ${openDropdown === "type" ? "rotate-180" : ""}`} />
-          </button>
-          {openDropdown === "type" && (
-            <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-              {workspaceTypes.map((type) => (
-                <button
-                  key={type.value}
-                  onClick={() => handleTypeChange(type.value)}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg transition-colors ${
-                    filters.workspaceType === type.value ? "bg-[#4ECDC4]/10 text-[#4ECDC4] font-medium" : "text-gray-700"
-                  }`}
-                >
-                  {type.label}
                 </button>
               ))}
             </div>
