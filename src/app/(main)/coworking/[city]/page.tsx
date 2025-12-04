@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
+import { X } from "lucide-react";
 import FiltersBar, { FilterState } from "./components/FiltersBar";
 import LocationChips from "./components/LocationChips";
 import ListingGrid from "./components/ListingGrid";
@@ -216,6 +217,26 @@ export default function CoworkingCityPage() {
     // Could navigate to a quote page or open a modal
   };
 
+  const handleRemoveType = (typeToRemove: string) => {
+    const updatedTypes = selectedTypesFromUrl.filter(type => type !== typeToRemove);
+    
+    const url = new URL(window.location.href);
+    
+    if (updatedTypes.length === 0) {
+      // If no types left, remove the types param
+      url.searchParams.delete("types");
+    } else if (updatedTypes.length === 1) {
+      // Single type - set as single value
+      url.searchParams.set("types", updatedTypes[0]);
+    } else {
+      // Multiple types - join with comma
+      url.searchParams.set("types", updatedTypes.join(","));
+    }
+    
+    router.replace(url.pathname + url.search, { scroll: false });
+    setCurrentPage(1);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -249,14 +270,21 @@ export default function CoworkingCityPage() {
         </h1>
 
         {/* Selected Types Display */}
-        {selectedTypesFromUrl.length > 1 && (
+        {selectedTypesFromUrl.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-2 mb-2">
             {selectedTypesFromUrl.map((type) => (
               <span
                 key={type}
-                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700 border border-orange-200 font-body"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700 border border-orange-200 font-body hover:bg-orange-200 transition-colors"
               >
                 {type}
+                <button
+                  onClick={() => handleRemoveType(type)}
+                  className="hover:bg-orange-300 rounded-full p-0.5 transition-colors"
+                  aria-label={`Remove ${type}`}
+                >
+                  <X className="w-3 h-3" />
+                </button>
               </span>
             ))}
           </div>

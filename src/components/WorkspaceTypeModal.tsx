@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { X, Building2, Users, Monitor, Briefcase, Check } from "lucide-react";
+import { X, Building2, Users, Monitor, Briefcase } from "lucide-react";
 
 interface WorkspaceTypeModalProps {
   isOpen: boolean;
@@ -12,38 +12,17 @@ interface WorkspaceTypeModalProps {
 }
 
 const workspaceTypes = [
-  {
-    id: "coworking",
-    name: "Coworking Space",
-    icon: Building2,
-    description: "Flexible shared workspaces"
-  },
-  {
-    id: "meeting-room",
-    name: "Meeting Room",
-    icon: Users,
-    description: "Book meeting spaces"
-  },
-  {
-    id: "virtual-office",
-    name: "Virtual Office",
-    icon: Monitor,
-    description: "Remote office solutions"
-  },
-  {
-    id: "private-office",
-    name: "Private Office",
-    icon: Briefcase,
-    description: "Dedicated private spaces"
-  }
+  { id: "coworking", name: "Coworking", icon: Building2 },
+  { id: "meeting-room", name: "Meeting Room", icon: Users },
+  { id: "virtual-office", name: "Virtual Office", icon: Monitor },
+  { id: "private-office", name: "Private Office", icon: Briefcase },
 ];
 
-// Map modal IDs to actual workspace type names
 const typeIdToName: Record<string, string> = {
   "coworking": "Coworking Space",
   "meeting-room": "Meeting Room",
   "virtual-office": "Virtual Office",
-  "private-office": "Private Office"
+  "private-office": "Private Office",
 };
 
 export default function WorkspaceTypeModal({ isOpen, onClose, cityName, citySlug }: WorkspaceTypeModalProps) {
@@ -53,151 +32,85 @@ export default function WorkspaceTypeModal({ isOpen, onClose, cityName, citySlug
   if (!isOpen) return null;
 
   const handleTypeToggle = (typeId: string) => {
-    setSelectedTypes(prev => {
-      if (prev.includes(typeId)) {
-        return prev.filter(id => id !== typeId);
-      } else {
-        return [...prev, typeId];
-      }
-    });
+    setSelectedTypes(prev => prev.includes(typeId) ? prev.filter(id => id !== typeId) : [...prev, typeId]);
   };
 
   const handleViewResults = () => {
-    if (selectedTypes.length === 0) {
-      // If nothing selected, navigate to coworking page
-      router.push(`/coworking/${citySlug}`);
-    } else if (selectedTypes.length === 1) {
-      // Single selection - navigate to specific type page
-      const typeId = selectedTypes[0];
-      switch (typeId) {
-        case "coworking":
-          router.push(`/coworking/${citySlug}`);
-          break;
-        case "meeting-room":
-          router.push(`/meeting-room/${citySlug}`);
-          break;
-        case "virtual-office":
-          router.push(`/virtual-office/${citySlug}`);
-          break;
-        case "private-office":
-          router.push(`/private-office/${citySlug}`);
-          break;
-        default:
-          router.push(`/coworking/${citySlug}`);
-      }
-    } else {
-      // Multiple selections - navigate to coworking page with query params
+    if (selectedTypes.length === 1) {
+      router.push(`/${selectedTypes[0]}/${citySlug}`);
+    } else if (selectedTypes.length > 1) {
       const typesParam = selectedTypes.map(id => typeIdToName[id]).join(",");
       router.push(`/coworking/${citySlug}?types=${encodeURIComponent(typesParam)}`);
+    } else {
+      router.push(`/coworking/${citySlug}`);
     }
-    setSelectedTypes([]); // Reset selections
+
+    setSelectedTypes([]);
     onClose();
   };
 
   const handleClose = () => {
-    setSelectedTypes([]); // Reset selections when closing
+    setSelectedTypes([]);
     onClose();
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
-      onClick={handleClose}
-    >
+    <div onClick={handleClose} className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex justify-center items-center p-4">
       <div
-        className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 md:p-8 animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
+        className="bg-white w-full max-w-xl p-8 rounded-3xl shadow-2xl relative"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-display">
-              Select Workspace Types
-            </h2>
-            <p className="text-sm text-gray-600 mt-1 font-body">
-              Choose one or more workspace types for <span className="font-semibold text-orange-500">{cityName}</span>
-            </p>
-            {selectedTypes.length > 0 && (
-              <p className="text-xs text-orange-600 mt-1 font-body font-medium">
-                {selectedTypes.length} type{selectedTypes.length > 1 ? "s" : ""} selected
-              </p>
-            )}
-          </div>
-          <button
-            onClick={handleClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5 text-gray-600" />
-          </button>
-        </div>
+        {/* Close Button */}
+        <button
+          onClick={handleClose}
+          className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition"
+        >
+          <X className="w-5 h-5 text-gray-600" />
+        </button>
 
-        {/* Workspace Type Options */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        {/* Title */}
+        <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 font-display leading-tight">
+          Choose Workspace in <span className="text-orange-500">{cityName}</span>
+        </h2>
+        <p className="text-center text-gray-600 text-sm mt-1">
+          100% Verified • Sanitized • Flexible Plans
+        </p>
+
+        {/* Workspace Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
           {workspaceTypes.map((type) => {
             const Icon = type.icon;
             const isSelected = selectedTypes.includes(type.id);
+
             return (
               <button
                 key={type.id}
                 onClick={() => handleTypeToggle(type.id)}
-                className={`group flex flex-col items-start p-6 border-2 rounded-xl transition-all duration-200 text-left relative ${
-                  isSelected
-                    ? "border-orange-500 bg-orange-50"
-                    : "border-gray-200 hover:border-orange-500 hover:bg-orange-50/50"
-                }`}
+                className={`flex flex-col items-center justify-center p-4 rounded-xl border text-center transition-all 
+                  ${isSelected ? "border-orange-500 bg-orange-50 text-orange-600 scale-[1.05]" 
+                  : "border-gray-300 hover:border-gray-500 text-gray-700"}`}
               >
-                {/* Checkbox indicator */}
-                <div className={`absolute top-4 right-4 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all duration-200 ${
-                  isSelected
-                    ? "bg-orange-500 border-orange-500"
-                    : "bg-white border-gray-300"
-                }`}>
-                  {isSelected && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
-                </div>
-                
-                <div className={`p-3 rounded-lg mb-4 transition-colors duration-200 ${
-                  isSelected
-                    ? "bg-orange-500"
-                    : "bg-orange-100 group-hover:bg-orange-500"
-                }`}>
-                  <Icon className={`w-6 h-6 transition-colors duration-200 ${
-                    isSelected
-                      ? "text-white"
-                      : "text-orange-600 group-hover:text-white"
-                  }`} />
-                </div>
-                <h3 className={`text-lg font-bold mb-1 font-display transition-colors ${
-                  isSelected
-                    ? "text-orange-600"
-                    : "text-gray-900 group-hover:text-orange-600"
-                }`}>
-                  {type.name}
-                </h3>
-                <p className="text-sm text-gray-600 font-body">
-                  {type.description}
-                </p>
+                <Icon className="w-7 h-7 mb-2" />
+                <span className="text-sm font-medium">{type.name}</span>
               </button>
             );
           })}
         </div>
 
-        {/* Action Button */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-          <button
-            onClick={handleClose}
-            className="px-6 py-2.5 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-colors font-body"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleViewResults}
-            className="px-6 py-2.5 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors font-body disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={selectedTypes.length === 0}
-          >
-            View Results
-          </button>
-        </div>
+        {/* Button */}
+        {/* Button - Right side */}
+<div className="flex justify-end mt-10">
+  <button
+    onClick={handleViewResults}
+    disabled={selectedTypes.length === 0}
+    className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-full transition disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+  >
+    {selectedTypes.length === 0
+      ? "View All Spaces"
+      : `View ${selectedTypes.length} Selected`}
+  </button>
+</div>
+
       </div>
     </div>
   );
