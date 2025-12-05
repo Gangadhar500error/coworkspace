@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useParams } from "next/navigation";
-import FiltersBar, { FilterState } from "../../coworking/[city]/components/FiltersBar";
+import { useState, useMemo, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import MeetingRoomFiltersBar, { MeetingRoomFilterState } from "./components/MeetingRoomFiltersBar";
 import LocationChips from "../../coworking/[city]/components/LocationChips";
 import ListingGrid from "../../coworking/[city]/components/ListingGrid";
 import SortDropdown, { SortOption } from "../../coworking/[city]/components/SortDropdown";
@@ -16,6 +16,7 @@ const WORKSPACE_TYPE = "Meeting Room";
 
 export default function MeetingRoomCityPage() {
   const params = useParams();
+  const router = useRouter();
   const city = (params.city as string) || "New York";
   
   // Format city name (e.g., "new-york" -> "New York")
@@ -24,12 +25,18 @@ export default function MeetingRoomCityPage() {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-  const [filters, setFilters] = useState<FilterState>({
-    priceRange: "all",
-    workspaceType: "all",
-    rating: "all",
-    amenities: []
+  const [filters, setFilters] = useState<MeetingRoomFilterState>({
+    city: formattedCity,
+    capacity: "all",
+    price_range: "all",
+    room_features: [],
+    booking_type: "all"
   });
+
+  // Update city in filters when city changes
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, city: formattedCity }));
+  }, [formattedCity]);
 
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>("recommended");
@@ -56,29 +63,47 @@ export default function MeetingRoomCityPage() {
       filtered = filtered.filter(ws => ws.area === selectedArea);
     }
 
+    // Filter by capacity (placeholder - would need workspace data to support this)
+    // if (filters.capacity !== "all") {
+    //   filtered = filtered.filter(ws => ws.capacity === filters.capacity);
+    // }
+
     // Filter by price range
-    if (filters.priceRange !== "all") {
+    if (filters.price_range !== "all") {
       filtered = filtered.filter(ws => {
-        const [min, max] = filters.priceRange.split("-").map(p => 
+        const [min, max] = filters.price_range.split("-").map(p => 
           p === "+" ? Infinity : parseInt(p.replace(/\D/g, ""))
         );
-        if (filters.priceRange === "700+") {
-          return ws.price >= 700;
+        if (filters.price_range === "200+") {
+          return ws.price >= 200;
         }
         return ws.price >= min && ws.price <= max;
       });
     }
 
-    // Filter by rating
-    if (filters.rating !== "all") {
-      const minRating = parseFloat(filters.rating.replace("+", ""));
-      filtered = filtered.filter(ws => ws.rating >= minRating);
-    }
+    // Filter by booking type (placeholder - would need workspace data to support this)
+    // if (filters.booking_type !== "all") {
+    //   filtered = filtered.filter(ws => ws.booking_type === filters.booking_type);
+    // }
 
-    // Filter by amenities
-    if (filters.amenities.length > 0) {
+    // Filter by room features
+    if (filters.room_features.length > 0) {
       filtered = filtered.filter(ws =>
-        filters.amenities.every(amenity => ws.amenities.includes(amenity))
+        filters.room_features.every(feature => {
+          // Map filter feature IDs to workspace amenity strings
+          const featureMap: Record<string, string> = {
+            "projector": "Projector",
+            "whiteboard": "Whiteboard",
+            "video_conferencing": "Video Conferencing",
+            "phone_booth": "Phone Booth",
+            "catering": "Catering",
+            "wifi": "WiFi",
+            "ac": "AC",
+            "natural_light": "Natural Light"
+          };
+          const featureLabel = featureMap[feature] || feature;
+          return ws.amenities.includes(featureLabel);
+        })
       );
     }
 
@@ -112,9 +137,38 @@ export default function MeetingRoomCityPage() {
   }, [filteredAndSortedWorkspaces, currentPage]);
 
   // Reset to page 1 when filters change
-  const handleFilterChange = (newFilters: FilterState) => {
+  const handleFilterChange = (newFilters: MeetingRoomFilterState) => {
     setFilters(newFilters);
     setCurrentPage(1);
+    
+    // Build query params for backend API
+    const url = new URL(window.location.href);
+    
+    if (newFilters.capacity !== "all") {
+      url.searchParams.set("capacity", newFilters.capacity);
+    } else {
+      url.searchParams.delete("capacity");
+    }
+    
+    if (newFilters.price_range !== "all") {
+      url.searchParams.set("price_range", newFilters.price_range);
+    } else {
+      url.searchParams.delete("price_range");
+    }
+    
+    if (newFilters.booking_type !== "all") {
+      url.searchParams.set("booking_type", newFilters.booking_type);
+    } else {
+      url.searchParams.delete("booking_type");
+    }
+    
+    if (newFilters.room_features.length > 0) {
+      url.searchParams.set("room_features", newFilters.room_features.join(","));
+    } else {
+      url.searchParams.delete("room_features");
+    }
+    
+    router.replace(url.pathname + url.search, { scroll: false });
   };
 
   const handleAreaSelect = (area: string | null) => {
@@ -156,7 +210,7 @@ export default function MeetingRoomCityPage() {
 
             {/* RIGHT FILTER BAR */}
             <div className="w-full lg:w-2/5">
-              <FiltersBar filters={filters} onFilterChange={handleFilterChange} />
+              <MeetingRoomFiltersBar filters={filters} onFilterChange={handleFilterChange} />
             </div>
           </div>
         </div>

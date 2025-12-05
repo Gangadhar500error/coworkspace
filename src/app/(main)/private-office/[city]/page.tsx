@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useParams } from "next/navigation";
-import FiltersBar, { FilterState } from "../../coworking/[city]/components/FiltersBar";
+import { useState, useMemo, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import PrivateOfficeFiltersBar, { PrivateOfficeFilterState } from "./components/PrivateOfficeFiltersBar";
 import LocationChips from "../../coworking/[city]/components/LocationChips";
 import ListingGrid from "../../coworking/[city]/components/ListingGrid";
 import SortDropdown, { SortOption } from "../../coworking/[city]/components/SortDropdown";
@@ -16,6 +16,7 @@ const WORKSPACE_TYPE = "Private Office";
 
 export default function PrivateOfficeCityPage() {
   const params = useParams();
+  const router = useRouter();
   const city = (params.city as string) || "New York";
   
   // Format city name (e.g., "new-york" -> "New York")
@@ -24,12 +25,19 @@ export default function PrivateOfficeCityPage() {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-  const [filters, setFilters] = useState<FilterState>({
-    priceRange: "all",
-    workspaceType: "all",
-    rating: "all",
+  const [filters, setFilters] = useState<PrivateOfficeFilterState>({
+    city: formattedCity,
+    capacity: "all",
+    lockable: "all",
+    furnishing: "all",
+    contract_term: "all",
     amenities: []
   });
+
+  // Update city in filters when city changes
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, city: formattedCity }));
+  }, [formattedCity]);
 
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>("recommended");
@@ -56,29 +64,44 @@ export default function PrivateOfficeCityPage() {
       filtered = filtered.filter(ws => ws.area === selectedArea);
     }
 
-    // Filter by price range
-    if (filters.priceRange !== "all") {
-      filtered = filtered.filter(ws => {
-        const [min, max] = filters.priceRange.split("-").map(p => 
-          p === "+" ? Infinity : parseInt(p.replace(/\D/g, ""))
-        );
-        if (filters.priceRange === "700+") {
-          return ws.price >= 700;
-        }
-        return ws.price >= min && ws.price <= max;
-      });
-    }
+    // Filter by capacity (placeholder - would need workspace data to support this)
+    // if (filters.capacity !== "all") {
+    //   filtered = filtered.filter(ws => ws.capacity === filters.capacity);
+    // }
 
-    // Filter by rating
-    if (filters.rating !== "all") {
-      const minRating = parseFloat(filters.rating.replace("+", ""));
-      filtered = filtered.filter(ws => ws.rating >= minRating);
-    }
+    // Filter by lockable (placeholder - would need workspace data to support this)
+    // if (filters.lockable !== "all") {
+    //   filtered = filtered.filter(ws => ws.lockable === filters.lockable);
+    // }
+
+    // Filter by furnishing (placeholder - would need workspace data to support this)
+    // if (filters.furnishing !== "all") {
+    //   filtered = filtered.filter(ws => ws.furnishing === filters.furnishing);
+    // }
+
+    // Filter by contract term (placeholder - would need workspace data to support this)
+    // if (filters.contract_term !== "all") {
+    //   filtered = filtered.filter(ws => ws.contract_term === filters.contract_term);
+    // }
 
     // Filter by amenities
     if (filters.amenities.length > 0) {
       filtered = filtered.filter(ws =>
-        filters.amenities.every(amenity => ws.amenities.includes(amenity))
+        filters.amenities.every(amenity => {
+          // Map filter amenity IDs to workspace amenity strings
+          const amenityMap: Record<string, string> = {
+            "ac": "AC",
+            "parking": "Parking",
+            "wifi": "WiFi",
+            "pantry": "Pantry",
+            "reception": "Reception",
+            "security": "Security",
+            "meeting_rooms": "Meeting Rooms",
+            "printing": "Printing"
+          };
+          const amenityLabel = amenityMap[amenity] || amenity;
+          return ws.amenities.includes(amenityLabel);
+        })
       );
     }
 
@@ -112,9 +135,44 @@ export default function PrivateOfficeCityPage() {
   }, [filteredAndSortedWorkspaces, currentPage]);
 
   // Reset to page 1 when filters change
-  const handleFilterChange = (newFilters: FilterState) => {
+  const handleFilterChange = (newFilters: PrivateOfficeFilterState) => {
     setFilters(newFilters);
     setCurrentPage(1);
+    
+    // Build query params for backend API
+    const url = new URL(window.location.href);
+    
+    if (newFilters.capacity !== "all") {
+      url.searchParams.set("capacity", newFilters.capacity);
+    } else {
+      url.searchParams.delete("capacity");
+    }
+    
+    if (newFilters.lockable !== "all") {
+      url.searchParams.set("lockable", newFilters.lockable);
+    } else {
+      url.searchParams.delete("lockable");
+    }
+    
+    if (newFilters.furnishing !== "all") {
+      url.searchParams.set("furnishing", newFilters.furnishing);
+    } else {
+      url.searchParams.delete("furnishing");
+    }
+    
+    if (newFilters.contract_term !== "all") {
+      url.searchParams.set("contract_term", newFilters.contract_term);
+    } else {
+      url.searchParams.delete("contract_term");
+    }
+    
+    if (newFilters.amenities.length > 0) {
+      url.searchParams.set("amenities", newFilters.amenities.join(","));
+    } else {
+      url.searchParams.delete("amenities");
+    }
+    
+    router.replace(url.pathname + url.search, { scroll: false });
   };
 
   const handleAreaSelect = (area: string | null) => {
@@ -156,7 +214,7 @@ export default function PrivateOfficeCityPage() {
 
             {/* RIGHT FILTER BAR */}
             <div className="w-full lg:w-2/5">
-              <FiltersBar filters={filters} onFilterChange={handleFilterChange} />
+              <PrivateOfficeFiltersBar filters={filters} onFilterChange={handleFilterChange} />
             </div>
           </div>
         </div>

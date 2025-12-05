@@ -1,209 +1,93 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import FiltersBar, { FilterState } from "../../coworking/[city]/components/FiltersBar";
-import LocationChips from "../../coworking/[city]/components/LocationChips";
-import ListingGrid from "../../coworking/[city]/components/ListingGrid";
-import SortDropdown, { SortOption } from "../../coworking/[city]/components/SortDropdown";
+import VirtualOfficeHero from "./components/VirtualOfficeHero";
+import VirtualOfficeCard from "./components/VirtualOfficeCard";
 import ComingSoon from "../../coworking/[city]/components/ComingSoon";
-import LoadingSkeleton from "../../coworking/[city]/components/LoadingSkeleton";
-import Pagination from "../../coworking/[city]/components/Pagination";
-import { getWorkspacesByCity } from "../../coworking/[city]/data/workspaces";
+import { getVirtualOfficesByCity } from "./data";
 
-const ITEMS_PER_PAGE = 9;
 const WORKSPACE_TYPE = "Virtual Office";
 
 export default function VirtualOfficeCityPage() {
   const params = useParams();
-  const city = (params.city as string) || "New York";
+  const city = (params.city as string) || "new-york";
+  const [isLoading, setIsLoading] = useState(true);
   
   // Format city name (e.g., "new-york" -> "New York")
-  const formattedCity = city
-    .split("-")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+  const formattedCity = useMemo(() => {
+    return city
+      .split("-")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }, [city]);
 
-  const [filters, setFilters] = useState<FilterState>({
-    priceRange: "all",
-    workspaceType: "all",
-    rating: "all",
-    amenities: []
-  });
-
-  const [selectedArea, setSelectedArea] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<SortOption>("recommended");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading] = useState(false);
-
-  // Get all workspaces for the city, filtered by workspace type
-  const allWorkspaces = useMemo(() => {
-    return getWorkspacesByCity(formattedCity).filter(ws => ws.type === WORKSPACE_TYPE);
+  // Fetch virtual offices for the selected city
+  // TODO: Replace with actual API call
+  // Example API call: GET /api/virtual-offices?city={city_slug}
+  const virtualOffices = useMemo(() => {
+    // Simulate API call delay
+    // In real implementation, this would be:
+    // const response = await fetch(`/api/virtual-offices?city=${city}`);
+    // const data = await response.json();
+    // return data.data || [];
+    
+    // For now, return mock data filtered by city
+    // Data structure is maintained in: ./data/virtualOfficeCards.ts
+    return getVirtualOfficesByCity(formattedCity);
   }, [formattedCity]);
 
-  // Get available areas from filtered workspaces
-  const areas = useMemo(() => {
-    const areasList = allWorkspaces.map(ws => ws.area);
-    return Array.from(new Set(areasList));
-  }, [allWorkspaces]);
-
-  // Filter and sort workspaces
-  const filteredAndSortedWorkspaces = useMemo(() => {
-    let filtered = [...allWorkspaces];
-
-    // Filter by area
-    if (selectedArea) {
-      filtered = filtered.filter(ws => ws.area === selectedArea);
-    }
-
-    // Filter by price range
-    if (filters.priceRange !== "all") {
-      filtered = filtered.filter(ws => {
-        const [min, max] = filters.priceRange.split("-").map(p => 
-          p === "+" ? Infinity : parseInt(p.replace(/\D/g, ""))
-        );
-        if (filters.priceRange === "700+") {
-          return ws.price >= 700;
-        }
-        return ws.price >= min && ws.price <= max;
-      });
-    }
-
-    // Filter by rating
-    if (filters.rating !== "all") {
-      const minRating = parseFloat(filters.rating.replace("+", ""));
-      filtered = filtered.filter(ws => ws.rating >= minRating);
-    }
-
-    // Filter by amenities
-    if (filters.amenities.length > 0) {
-      filtered = filtered.filter(ws =>
-        filters.amenities.every(amenity => ws.amenities.includes(amenity))
-      );
-    }
-
-    // Sort
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "price-low":
-          return a.price - b.price;
-        case "price-high":
-          return b.price - a.price;
-        case "rating-high":
-          return b.rating - a.rating;
-        case "recommended":
-        default:
-          const badgeOrder = { Featured: 3, Popular: 2, "Special Offer": 1 };
-          const aBadge = badgeOrder[a.badge as keyof typeof badgeOrder] || 0;
-          const bBadge = badgeOrder[b.badge as keyof typeof badgeOrder] || 0;
-          if (aBadge !== bBadge) return bBadge - aBadge;
-          return b.rating - a.rating;
-      }
-    });
-
-    return filtered;
-  }, [allWorkspaces, filters, selectedArea, sortBy]);
-
-  // Pagination
-  const totalPages = Math.ceil(filteredAndSortedWorkspaces.length / ITEMS_PER_PAGE);
-  const paginatedWorkspaces = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredAndSortedWorkspaces.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [filteredAndSortedWorkspaces, currentPage]);
-
-  // Reset to page 1 when filters change
-  const handleFilterChange = (newFilters: FilterState) => {
-    setFilters(newFilters);
-    setCurrentPage(1);
-  };
-
-  const handleAreaSelect = (area: string | null) => {
-    setSelectedArea(area);
-    setCurrentPage(1);
-  };
-
-  const handleSortChange = (sort: SortOption) => {
-    setSortBy(sort);
-    setCurrentPage(1);
-  };
+  // Simulate loading state
+  useEffect(() => {
+    setIsLoading(false);
+  }, [formattedCity]);
 
   const handleGetQuote = (id: string) => {
-    console.log("Get quote for:", id);
+    // TODO: Handle quote request - could navigate to quote page or open modal
+    console.log("Get quote for virtual office:", id);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white pt-20">
-        <div className="container-custom px-4 sm:px-6 lg:px-8">
-          {/* Top Section - Responsive Layout */}
-          <div className="flex flex-col lg:flex-row justify-between gap-6 items-start mt-2">
-            {/* LEFT CONTENT */}
-            <div className="w-full lg:w-3/5">
-              <h1 className="text-base lg:text-2xl font-bold text-gray-900 font-display mb-1">
-                {WORKSPACE_TYPE}s in <span className="text-orange-500">{formattedCity}</span>
-              </h1>
+      {/* Hero Section - Always Display */}
+      <VirtualOfficeHero cityName={formattedCity} />
 
-              {/* Location Chips */}
-              {areas.length > 0 && (
-                <LocationChips
-                  areas={areas}
-                  selectedArea={selectedArea}
-                  onAreaSelect={handleAreaSelect}
-                />
-              )}
-            </div>
-
-            {/* RIGHT FILTER BAR */}
-            <div className="w-full lg:w-2/5">
-              <FiltersBar filters={filters} onFilterChange={handleFilterChange} />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="container-custom px-4 sm:px-6 lg:px-8 py-2">
-        {/* Sort and Results Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
-          <div className="text-sm text-gray-600 font-body">
-            {allWorkspaces.length > 0 ? (
-              <>Showing {paginatedWorkspaces.length} of {filteredAndSortedWorkspaces.length} {WORKSPACE_TYPE.toLowerCase()}s</>
-            ) : (
-              <>No {WORKSPACE_TYPE.toLowerCase()}s available</>
-            )}
-          </div>
-          {allWorkspaces.length > 0 && (
-            <SortDropdown sortBy={sortBy} onSortChange={handleSortChange} />
-          )}
-        </div>
-
+      {/* Virtual Offices List */}
+      <div id="virtual-offices-section" className="container-custom px-4 sm:px-6 lg:px-8 py-12">
         {/* Loading State */}
         {isLoading ? (
-          <LoadingSkeleton />
+          <div className="flex items-center justify-center py-20">
+            <div className="text-gray-600">Loading virtual offices...</div>
+          </div>
         ) : (
           <>
-            {/* Listings Grid or Coming Soon */}
-            {allWorkspaces.length > 0 ? (
-              paginatedWorkspaces.length > 0 ? (
-                <>
-                  <ListingGrid
-                    workspaces={paginatedWorkspaces}
+            {/* Section Header */}
+            <div className="mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-display mb-2">
+                Available Virtual Offices in <span className="text-orange-500">{formattedCity}</span>
+              </h2>
+              <p className="text-gray-600">
+                {virtualOffices.length > 0 
+                  ? "Choose from our premium virtual office locations"
+                  : "We're expanding our virtual office network"}
+              </p>
+            </div>
+
+            {/* Virtual Office Cards Grid - 2 cards per row */}
+            {virtualOffices.length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {virtualOffices.map((office) => (
+                  <VirtualOfficeCard
+                    key={office.id}
+                    office={office}
                     onGetQuote={handleGetQuote}
                   />
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                  />
-                </>
-              ) : (
-                <div className="text-center py-12 text-gray-600 font-body">
-                  No {WORKSPACE_TYPE.toLowerCase()}s match your filters. Try adjusting your search criteria.
-                </div>
-              )
+                ))}
+              </div>
             ) : (
-              <ComingSoon workspaceType={WORKSPACE_TYPE} cityName={formattedCity} />
+              <div className="flex justify-center items-center min-h-[400px]">
+                <ComingSoon workspaceType={WORKSPACE_TYPE} cityName={formattedCity} />
+              </div>
             )}
           </>
         )}

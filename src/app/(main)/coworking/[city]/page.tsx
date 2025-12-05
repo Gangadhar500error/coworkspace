@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { X } from "lucide-react";
-import FiltersBar, { FilterState } from "./components/FiltersBar";
+import CoworkingFiltersBar, { CoworkingFilterState } from "./components/CoworkingFiltersBar";
 import LocationChips from "./components/LocationChips";
 import ListingGrid from "./components/ListingGrid";
 import SortDropdown, { SortOption } from "./components/SortDropdown";
@@ -35,55 +35,20 @@ export default function CoworkingCityPage() {
   }, [typesParam]);
 
   // Initialize filters from URL params
-  const [filters, setFilters] = useState<FilterState>(() => {
-    const initialWorkspaceType = selectedTypesFromUrl.length > 0 
-      ? selectedTypesFromUrl.length === 1 
-        ? selectedTypesFromUrl[0] 
-        : selectedTypesFromUrl
-      : "all";
-    
+  const [filters, setFilters] = useState<CoworkingFilterState>(() => {
     return {
-      priceRange: "all",
-      workspaceType: initialWorkspaceType,
-      rating: "all",
-      amenities: []
+      city: formattedCity,
+      price_range: "all",
+      amenities: [],
+      availability: "all",
+      seat_type: "all"
     };
   });
 
-  // Sync filters when URL params change
+  // Update city in filters when city changes
   useEffect(() => {
-    const newWorkspaceType = selectedTypesFromUrl.length > 0 
-      ? selectedTypesFromUrl.length === 1 
-        ? selectedTypesFromUrl[0] 
-        : selectedTypesFromUrl
-      : "all";
-    
-    setFilters(prev => {
-      const currentType = Array.isArray(prev.workspaceType) 
-        ? prev.workspaceType 
-        : prev.workspaceType !== "all" 
-          ? [prev.workspaceType] 
-          : [];
-      
-      const newTypeArray = Array.isArray(newWorkspaceType) 
-        ? newWorkspaceType 
-        : newWorkspaceType !== "all" 
-          ? [newWorkspaceType] 
-          : [];
-      
-      // Only update if different
-      const currentStr = currentType.sort().join(",");
-      const newStr = newTypeArray.sort().join(",");
-      
-      if (currentStr !== newStr) {
-        return {
-          ...prev,
-          workspaceType: newWorkspaceType
-        };
-      }
-      return prev;
-    });
-  }, [selectedTypesFromUrl]);
+    setFilters(prev => ({ ...prev, city: formattedCity }));
+  }, [formattedCity]);
 
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>("recommended");
@@ -118,12 +83,12 @@ export default function CoworkingCityPage() {
     }
 
     // Filter by price range
-    if (filters.priceRange !== "all") {
+    if (filters.price_range !== "all") {
       filtered = filtered.filter(ws => {
-        const [min, max] = filters.priceRange.split("-").map(p => 
+        const [min, max] = filters.price_range.split("-").map(p => 
           p === "+" ? Infinity : parseInt(p.replace(/\D/g, ""))
         );
-        if (filters.priceRange === "700+") {
+        if (filters.price_range === "700+") {
           return ws.price >= 700;
         }
         return ws.price >= min && ws.price <= max;
@@ -131,24 +96,38 @@ export default function CoworkingCityPage() {
     }
 
     // Filter by workspace type (supports single or multiple types)
-    if (filters.workspaceType !== "all") {
-      if (Array.isArray(filters.workspaceType)) {
-        filtered = filtered.filter(ws => filters.workspaceType.includes(ws.type));
-      } else {
-        filtered = filtered.filter(ws => ws.type === filters.workspaceType);
-      }
+    if (selectedTypesFromUrl.length > 0) {
+      filtered = filtered.filter(ws => selectedTypesFromUrl.includes(ws.type));
     }
 
-    // Filter by rating
-    if (filters.rating !== "all") {
-      const minRating = parseFloat(filters.rating.replace("+", ""));
-      filtered = filtered.filter(ws => ws.rating >= minRating);
-    }
+    // Filter by availability (placeholder - would need workspace data to support this)
+    // if (filters.availability !== "all") {
+    //   filtered = filtered.filter(ws => ws.availability === filters.availability);
+    // }
+
+    // Filter by seat type (placeholder - would need workspace data to support this)
+    // if (filters.seat_type !== "all") {
+    //   filtered = filtered.filter(ws => ws.seat_type === filters.seat_type);
+    // }
 
     // Filter by amenities
     if (filters.amenities.length > 0) {
       filtered = filtered.filter(ws =>
-        filters.amenities.every(amenity => ws.amenities.includes(amenity))
+        filters.amenities.every(amenity => {
+          // Map filter amenity IDs to workspace amenity strings
+          const amenityMap: Record<string, string> = {
+            "ac": "AC",
+            "non_ac": "Non-AC",
+            "parking": "Parking",
+            "wifi": "WiFi",
+            "pantry": "Pantry",
+            "24_7_access": "24/7 Access",
+            "meeting_rooms": "Meeting Rooms",
+            "printing": "Printing"
+          };
+          const amenityLabel = amenityMap[amenity] || amenity;
+          return ws.amenities.includes(amenityLabel);
+        })
       );
     }
 
@@ -183,19 +162,36 @@ export default function CoworkingCityPage() {
   }, [filteredAndSortedWorkspaces, currentPage]);
 
   // Reset to page 1 when filters change
-  const handleFilterChange = (newFilters: FilterState) => {
+  const handleFilterChange = (newFilters: CoworkingFilterState) => {
     setFilters(newFilters);
     setCurrentPage(1);
     
-    // Update URL query params when workspace types change
+    // Build query params for backend API
     const url = new URL(window.location.href);
     
-    if (Array.isArray(newFilters.workspaceType) && newFilters.workspaceType.length > 0) {
-      url.searchParams.set("types", newFilters.workspaceType.join(","));
-    } else if (typeof newFilters.workspaceType === "string" && newFilters.workspaceType !== "all") {
-      url.searchParams.set("types", newFilters.workspaceType);
+    // Add filter params
+    if (newFilters.price_range !== "all") {
+      url.searchParams.set("price_range", newFilters.price_range);
     } else {
-      url.searchParams.delete("types");
+      url.searchParams.delete("price_range");
+    }
+    
+    if (newFilters.availability !== "all") {
+      url.searchParams.set("availability", newFilters.availability);
+    } else {
+      url.searchParams.delete("availability");
+    }
+    
+    if (newFilters.seat_type !== "all") {
+      url.searchParams.set("seat_type", newFilters.seat_type);
+    } else {
+      url.searchParams.delete("seat_type");
+    }
+    
+    if (newFilters.amenities.length > 0) {
+      url.searchParams.set("amenities", newFilters.amenities.join(","));
+    } else {
+      url.searchParams.delete("amenities");
     }
     
     router.replace(url.pathname + url.search, { scroll: false });
@@ -300,10 +296,10 @@ export default function CoworkingCityPage() {
         )}
       </div>
 
-      {/* RIGHT FILTER BAR */}
-      <div className="w-full lg:w-2/5">
-        <FiltersBar filters={filters} onFilterChange={handleFilterChange} />
-      </div>
+            {/* RIGHT FILTER BAR */}
+            <div className="w-full lg:w-2/5">
+              <CoworkingFiltersBar filters={filters} onFilterChange={handleFilterChange} />
+            </div>
     </div>
   </div>
 </div>
