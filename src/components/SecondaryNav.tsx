@@ -16,24 +16,24 @@ interface SecondaryNavProps {
 }
 
 const navigationItems: NavItem[] = [
-  { name: "New York", image: "/assets/city-logos/newyork.png", slug: "new-york" },
+  { name: "New York", image: "/assets/city-logos/Newyork.png", slug: "new-york" },
   { name: "Los Angeles", image: "/assets/city-logos/losangels.png", slug: "los-angeles" },
-  { name: "Chicago", image: "/assets/jfif/download.jfif", slug: "chicago" },
-  { name: "Miami", image: "/assets/jfif/miani.jfif", slug: "miami" },
-  { name: "San Francisco", image: "/assets/jfif/San-Francisco.jfif", slug: "san-francisco" },
-  { name: "Boston", image: "/assets/jfif/Boston.jfif", slug: "boston" },
-  { name: "Seattle", image: "/assets/jfif/Seattle.jfif", slug: "seattle" },
-  { name: "Dallas", image: "/assets/jfif/Dallas.jfif", slug: "dallas" },
-  { name: "Houston", image: "/assets/jfif/Houston.jfif", slug: "houston" },
-  { name: "Atlanta", image: "/assets/jfif/Atlanta.jfif", slug: "atlanta" },
-  { name: "Phoenix", image: "/assets/jfif/Phoenix.jfif", slug: "phoenix" },
-  { name: "Philadelphia", image: "/assets/jfif/Philadelphia.jfif", slug: "philadelphia" },
-  { name: "San Diego", image: "/assets/jfif/San-Diego.jfif", slug: "san-diego" },
-  { name: "Denver", image: "/assets/jfif/Denver.jfif", slug: "denver" },
-  { name: "Washington DC", image: "/assets/jfif/Washington DC.jfif", slug: "washington-dc" },
-  { name: "Tampa", image: "/assets/jfif/download.jfif", slug: "tampa" },
-  { name: "Orlando", image: "/assets/jfif/Orlando.jfif", slug: "orlando" },
-  { name: "Las Vegas", image: "/assets/jfif/download (1).jfif", slug: "las-vegas" },
+  { name: "Chicago", image: "/assets/city-logos/Chicago.png", slug: "chicago" },
+  { name: "Miami", image: "/assets/city-logos/miami.png", slug: "miami" },
+  { name: "San Francisco", image: "/assets/city-logos/San Francisco.png", slug: "san-francisco" },
+  { name: "Boston", image: "/assets/city-logos/Boston.png", slug: "boston" },
+  { name: "Seattle", image: "/assets/city-logos/Seattle.png", slug: "seattle" },
+  { name: "Dallas", image: "/assets/city-logos/Dallas.png", slug: "dallas" },
+  { name: "Houston", image: "/assets/city-logos/Houston.png", slug: "houston" },
+  { name: "Atlanta", image: "/assets/city-logos/Atlanta.png", slug: "atlanta" },
+  { name: "Phoenix", image: "/assets/city-logos/Phoenix.png", slug: "phoenix" },
+  { name: "Philadelphia", image: "/assets/city-logos/Philadelphia.png", slug: "philadelphia" },
+  { name: "San Diego", image: "/assets/city-logos/San Diego.png", slug: "san-diego" },
+  { name: "Denver", image: "/assets/city-logos/Denver.png", slug: "denver" },
+  { name: "Washington DC", image: "/assets/city-logos/Washington DC.png", slug: "washington-dc" },
+  { name: "Tampa", image: "/assets/city-logos/miami.png", slug: "tampa" },
+  { name: "Orlando", image: "/assets/city-logos/Orlando.png", slug: "orlando" },
+  { name: "Las Vegas", image: "/assets/city-logos/las vegas.png", slug: "las-vegas" },
 ];
 
 export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) {
@@ -119,7 +119,7 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
             <input
               type="text"
               placeholder="Search for a location"
-              className="w-full rounded-full border border-gray-300 bg-white pl-10 pr-4 py-2 text-sm text-gray-600 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full rounded-full border border-gray-300 bg-white pl-10 pr-4 py-1.5 text-sm text-gray-600 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -143,15 +143,15 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
             <button
               aria-label="Scroll left"
               onClick={() => scrollNav("left")}
-              className="hidden lg:flex absolute left-4 top-1/2 -translate-y-1/2 z-30 items-center justify-center w-10 h-10 rounded-full bg-white border-2 border-gray-300 text-gray-600 hover:text-orange-500 hover:border-orange-500 hover:bg-orange-50 shadow-lg transition-all duration-200 backdrop-blur-sm"
+              className="hidden lg:flex absolute left-4 top-1/2 -translate-y-1/2 z-30 items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-300 text-gray-600 hover:text-orange-500 hover:border-orange-500 hover:bg-orange-50 shadow-md transition-all duration-200 backdrop-blur-sm"
             >
-              <ChevronLeft className="h-5 w-5 stroke-[2.5]" />
+              <ChevronLeft className="h-4 w-4 stroke-[2.5]" />
             </button>
           )}
 
           <div 
             ref={navScrollRef}
-            className={`flex items-center lg:gap-6 gap-4 overflow-x-auto scrollbar-hide py-4 ${
+            className={`flex items-center lg:gap-5 gap-3 overflow-x-auto scrollbar-hide py-2 ${
               showScrollLeft ? 'lg:pl-20' : 'lg:pl-4'
             } ${
               showScrollRight ? 'lg:pr-20' : 'lg:pr-4'
@@ -166,20 +166,20 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
                     setSelectedCity({ name: item.name, slug: item.slug });
                     setModalOpen(true);
                   }}
-                  className="flex flex-col items-center gap-2.5 min-w-[85px] shrink-0 text-gray-700 hover:text-orange-500 transition-colors group cursor-pointer"
+                  className="flex flex-col items-center gap-1.5 min-w-[75px] shrink-0 text-gray-700 hover:text-orange-500 transition-colors group cursor-pointer"
                 >
-                  <div className={`relative rounded-xl overflow-hidden border-none border-gray-200 group-hover:border-orange-500 transition-all duration-300 ${
-                    isScrolled ? "w-12 h-12 md:w-12 md:h-12" : "w-14 h-14 md:w-16 md:h-16"
+                  <div className={`relative rounded-lg overflow-hidden transition-all duration-300 ${
+                    isScrolled ? "w-10 h-10 md:w-10 md:h-10" : "w-12 h-12 md:w-14 md:h-14"
                   }`}>
                     <Image
                       src={item.image}
                       alt={item.name}
                       fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-300"
-                      sizes={isScrolled ? "(max-width: 768px) 48px, 56px" : "(max-width: 768px) 56px, 64px"}
+                      className="object-cover group-hover:scale-110 transition-transform duration-300 p-0.5"
+                      sizes={isScrolled ? "(max-width: 768px) 40px, 40px" : "(max-width: 768px) 48px, 56px"}
                     />
                   </div>
-                  <span className="text-xs font-semibold text-center whitespace-nowrap leading-tight">{item.name}</span>
+                  <span className="text-[13px] font-semibold text-center text-gray-500 whitespace-nowrap leading-tight">{item.name}</span>
                 </button>
               );
             })}
@@ -190,9 +190,9 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
             <button
               aria-label="Scroll right"
               onClick={() => scrollNav("right")}
-              className="hidden lg:flex absolute right-4 top-1/2 -translate-y-1/2 z-30 items-center justify-center w-10 h-10 rounded-full bg-white border-2 border-gray-300 text-gray-600 hover:text-orange-500 hover:border-orange-500 hover:bg-orange-50 shadow-lg transition-all duration-200 backdrop-blur-sm"
+              className="hidden lg:flex absolute right-4 top-1/2 -translate-y-1/2 z-30 items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-300 text-gray-600 hover:text-orange-500 hover:border-orange-500 hover:bg-orange-50 transition-all duration-200 backdrop-blur-sm"
             >
-              <ChevronRight className="h-5 w-5 stroke-[2.5]" />
+              <ChevronRight className="h-4 w-4 stroke-[2.5]" />
             </button>
           )}
         </div>

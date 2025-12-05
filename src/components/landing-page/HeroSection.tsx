@@ -56,7 +56,7 @@ const featureCards = [
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full bg-white py-12 md:py-10 lg:pt-24 lg:pb-14 overflow-hidden">
+    <section className="relative w-full bg-white py-12 md:py-10 lg:pt-20 lg:pb-14 overflow-hidden">
       {/* Dotted Grid Background Pattern */}
       <div 
         className="absolute inset-0 opacity-20"
@@ -69,7 +69,7 @@ export default function HeroSection() {
       <div className="container-custom relative z-10 px-4 md:px-6 lg:px-8">
         {/* Full Width Main Headline with Embedded Elements */}
         <div className="w-full">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-[1.1] font-display" style={{ fontFamily: "'Romana-Bold', 'Romana-Bold'" }}>
+          <h1 className="text-2xl lg:text-[113px] leading-[1.1] font-heading">
               {/* First Line */}
               <span className="block">
               <span className="text-gradient-animate">Future-Ready Work.</span>

@@ -2,15 +2,14 @@
 
 import { useState } from "react";
 import { CheckCircle2, Phone } from "lucide-react";
-import { useRouter, useParams } from "next/navigation";
-import { getLocationsByCity } from "../data/cityLocations";
+import { useParams } from "next/navigation";
+import { getLocationsByCity } from "../../../virtual-office/[city]/data/cityLocations";
 
-interface VirtualOfficeHeroProps {
+interface PrivateOfficeHeroProps {
   cityName: string;
 }
 
-export default function VirtualOfficeHero({ cityName }: VirtualOfficeHeroProps) {
-  const router = useRouter();
+export default function PrivateOfficeHero({ cityName }: PrivateOfficeHeroProps) {
   const params = useParams();
   const citySlug = (params.city as string) || "new-york";
   
@@ -22,7 +21,8 @@ export default function VirtualOfficeHero({ cityName }: VirtualOfficeHeroProps) 
     email: "",
     phone: "",
     companyName: "",
-    planType: "",
+    officeSize: "",
+    moveInDate: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -42,25 +42,29 @@ export default function VirtualOfficeHero({ cityName }: VirtualOfficeHeroProps) 
       email: "",
       phone: "",
       companyName: "",
-      planType: "",
+      officeSize: "",
+      moveInDate: "",
     });
   };
 
   const handleGetQuote = () => {
-    // Scroll to virtual offices section or handle quote request
-    const officesSection = document.getElementById("virtual-offices-section");
+    // Scroll to private offices section or handle quote request
+    const officesSection = document.getElementById("private-offices-section");
     if (officesSection) {
       officesSection.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   const features = [
-    "Business Address",
-    "GST Registration",
-    "Company Registration",
-    "Documents in 24 Hours",
+    "Fully Furnished Offices",
+    "Verified & Approved Spaces",
+    "Flexible Lease Terms",
+    "Escalation Free Space Rentals",
   ];
 
+  // Get first few locations for subtitle
+  const locationList = cityLocations.slice(0, 3).map(loc => loc.name).join(", ");
+  const remainingCount = cityLocations.length > 3 ? cityLocations.length - 3 : 0;
 
   return (
     <div className="bg-gradient-to-br from-orange-50 via-white to-orange-50 py-12 md:py-16 lg:py-20">
@@ -70,12 +74,13 @@ export default function VirtualOfficeHero({ cityName }: VirtualOfficeHeroProps) 
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 font-display leading-tight mb-4">
-                Virtual Office in{" "}
+                Choose from 1,000+ Office Space For Rent in{" "}
                 <span className="text-orange-500">{cityName}</span>
               </h1>
               <p className="text-lg md:text-xl text-gray-600 mb-6">
-                Get a prestigious business address, mail handling, and complete business registration services. 
-                Start your business journey with professional virtual office solutions.
+                All prime locations of {cityName}
+                {locationList && ` - ${locationList}`}
+                {remainingCount > 0 && ` and ${remainingCount} more locations`}
               </p>
             </div>
 
@@ -89,23 +94,24 @@ export default function VirtualOfficeHero({ cityName }: VirtualOfficeHeroProps) 
               ))}
             </div>
 
-            {/* Get Quote Button */}
-            <div className="flex items-center gap-2">
-            <button
-              onClick={handleGetQuote}
-              className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg"
-            >
-              Get Quote
-            </button>
+            {/* Get Quote Button and Phone */}
+            <div className="flex items-center gap-6">
+              <button
+                onClick={handleGetQuote}
+                className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg"
+              >
+                Get Quote
+              </button>
 
-            {/* Mobile Number */}
-            <div className="flex items-center gap-3 pt-2">
-              <Phone className="w-5 h-5 text-orange-500" />
-              <a href="tel:+18139221406" className="text-gray-700 font-semibold hover:text-orange-500 transition-colors">
-                +1 813-922-1406
-              </a>
+              {/* Mobile Number */}
+              <div className="flex items-center gap-3">
+                <Phone className="w-5 h-5 text-orange-500" />
+                <a href="tel:+18139221406" className="text-gray-700 font-semibold hover:text-orange-500 transition-colors">
+                  +1 813-922-1406
+                </a>
+              </div>
             </div>
-            </div>
+
             {/* City Locations */}
             {cityLocations.length > 0 && (
               <div className="pt-4">
@@ -117,11 +123,10 @@ export default function VirtualOfficeHero({ cityName }: VirtualOfficeHeroProps) 
                     <button
                       key={location.slug}
                       onClick={() => {
-                        // TODO: Filter virtual offices by location/area
-                        // This could be implemented as: /virtual-office/{city}?area={location-slug}
+                        // TODO: Filter private offices by location/area
                         console.log("Filter by location:", location.slug);
                         // For now, just scroll to offices section
-                        const officesSection = document.getElementById("virtual-offices-section");
+                        const officesSection = document.getElementById("private-offices-section");
                         if (officesSection) {
                           officesSection.scrollIntoView({ behavior: "smooth" });
                         }
@@ -140,7 +145,7 @@ export default function VirtualOfficeHero({ cityName }: VirtualOfficeHeroProps) 
           <div className="lg:pl-8">
             <div className="bg-white rounded-xl shadow-lg border border-orange-200 p-5 md:p-6">
               <h2 className="text-xl md:text-2xl font-bold text-gray-900 text-center mb-1">
-                Book a Virtual Office
+                Book a Private Office
               </h2>
               <p className="text-xs text-gray-500 text-center mb-5">
                 by Cowork Space
@@ -198,19 +203,33 @@ export default function VirtualOfficeHero({ cityName }: VirtualOfficeHeroProps) 
                   />
                 </div>
 
-                {/* Plan Type */}
+                {/* Office Size */}
                 <div>
                   <select
-                    name="planType"
-                    value={formData.planType}
+                    name="officeSize"
+                    value={formData.officeSize}
                     onChange={handleChange}
                     className="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm text-gray-900"
                   >
-                    <option value="">Select Plan Type</option>
-                    <option value="basic">Basic Plan</option>
-                    <option value="premium">Premium Plan</option>
-                    <option value="enterprise">Enterprise Plan</option>
+                    <option value="">Select Office Size</option>
+                    <option value="1-5">1-5 Seats</option>
+                    <option value="6-10">6-10 Seats</option>
+                    <option value="11-20">11-20 Seats</option>
+                    <option value="21-50">21-50 Seats</option>
+                    <option value="50+">50+ Seats</option>
                   </select>
+                </div>
+
+                {/* Move In Date */}
+                <div>
+                  <input
+                    type="date"
+                    name="moveInDate"
+                    placeholder="Preferred Move-In Date"
+                    value={formData.moveInDate}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm text-gray-900 placeholder-gray-500"
+                  />
                 </div>
 
                 {/* Submit Button */}

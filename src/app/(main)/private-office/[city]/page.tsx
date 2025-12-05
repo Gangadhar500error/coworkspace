@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import PrivateOfficeHero from "./components/PrivateOfficeHero";
 import PrivateOfficeFiltersBar, { PrivateOfficeFilterState } from "./components/PrivateOfficeFiltersBar";
 import LocationChips from "../../coworking/[city]/components/LocationChips";
 import ListingGrid from "../../coworking/[city]/components/ListingGrid";
@@ -191,28 +192,25 @@ export default function PrivateOfficeCityPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white pt-20">
-        <div className="container-custom px-4 sm:px-6 lg:px-8">
-          {/* Top Section - Responsive Layout */}
-          <div className="flex flex-col lg:flex-row justify-between gap-6 items-start mt-2">
-            {/* LEFT CONTENT */}
-            <div className="w-full lg:w-3/5">
-              <h1 className="text-base lg:text-2xl font-bold text-gray-900 font-display mb-1">
-                {WORKSPACE_TYPE}s in <span className="text-orange-500">{formattedCity}</span>
-              </h1>
+      {/* Hero Section */}
+      <PrivateOfficeHero cityName={formattedCity} />
 
-              {/* Location Chips */}
-              {areas.length > 0 && (
+      {/* Filters Section */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="container-custom px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col lg:flex-row justify-between gap-4 items-start">
+            {/* Location Chips */}
+            {areas.length > 0 && (
+              <div className="w-full lg:w-3/5">
                 <LocationChips
                   areas={areas}
                   selectedArea={selectedArea}
                   onAreaSelect={handleAreaSelect}
                 />
-              )}
-            </div>
+              </div>
+            )}
 
-            {/* RIGHT FILTER BAR */}
+            {/* Filter Bar */}
             <div className="w-full lg:w-2/5">
               <PrivateOfficeFiltersBar filters={filters} onFilterChange={handleFilterChange} />
             </div>
@@ -221,7 +219,7 @@ export default function PrivateOfficeCityPage() {
       </div>
 
       {/* Main Content */}
-      <div className="container-custom px-4 sm:px-6 lg:px-8 py-2">
+      <div id="private-offices-section" className="container-custom px-4 sm:px-6 lg:px-8 py-2">
         {/* Sort and Results Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
           <div className="text-sm text-gray-600 font-body">
