@@ -10,7 +10,7 @@ const featureCards = [
     paragraph: "Flexible workspace solutions for individuals and teams seeking a productive environment.",
     image: "/assets/medium-shot-people-working-together-office_23-2149345228.jpg",
     linkText: "Explore →",
-    linkHref: "#"
+    linkHref: "/coworking"
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ const featureCards = [
     paragraph: "Enjoy privacy, comfort, and focus in your own modern dedicated office workspace.",
     image: "/assets/privateoffice.jpg",
     linkText: "View Spaces →",
-    linkHref: "#"
+    linkHref: "/private-office"
   },
   {
     id: 4,
@@ -34,7 +34,7 @@ const featureCards = [
     paragraph: "Get a professional business address and mail handling services for your business.",
     image: "/assets/eventspace.webp",
     linkText: "Learn More →",
-    linkHref: "#"
+    linkHref: "/virtual-office"
   },
   {
     id: 5,
@@ -42,7 +42,7 @@ const featureCards = [
     paragraph: "Book professional meeting rooms equipped with everything you need for successful meetings.",
     image: "/assets/monthly.webp",
     linkText: "Book Now →",
-    linkHref: "#"
+    linkHref: "/meeting-room"
   },
   {
     id: 6,

@@ -1,9 +1,15 @@
 "use client";
 
 import { MapPin, Mail, Phone, Facebook, Twitter, Globe, Linkedin, Instagram } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState<number>(2025);
+  
+  // Set year on client side only to avoid hydration mismatch
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
 
   return (
     <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">

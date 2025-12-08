@@ -22,8 +22,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="light">
-      <body className={robotoCondensed.variable}>
+    <html lang="en" className="light" suppressHydrationWarning>
+      <body className={robotoCondensed.variable} suppressHydrationWarning>
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

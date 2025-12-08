@@ -6,7 +6,8 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const city = params.city
+  const citySlug = params?.city || "new-york";
+  const city = citySlug
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       "hot desk",
       "coworking space",
     ],
-    canonical: `/coworking/${params.city}`,
+    canonical: `/coworking/${citySlug}`,
     city,
     workspaceType: "Coworking Spaces",
   });

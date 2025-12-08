@@ -15,11 +15,19 @@ export default function ContactModal({ open, onClose }: Props) {
   const [message, setMessage] = useState("");
   const [answer, setAnswer] = useState("");
 
-  const [seed, setSeed] = useState(() => Math.random());
+  const [seed, setSeed] = useState<number | null>(null);
   const [a, b, sum] = useMemo(() => {
+    if (seed === null) return [0, 0, 0];
     const aLocal = Math.floor(((seed * 1000) % 8) + 2); // 2..9
     const bLocal = Math.floor((((seed + 0.37) * 1000) % 8) + 2);
     return [aLocal, bLocal, aLocal + bLocal];
+  }, [seed]);
+
+  // Initialize seed on client side only to avoid hydration mismatch
+  useEffect(() => {
+    if (seed === null) {
+      setSeed(Math.random());
+    }
   }, [seed]);
 
   useEffect(() => {
