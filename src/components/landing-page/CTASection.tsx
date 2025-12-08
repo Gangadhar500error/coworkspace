@@ -17,7 +17,7 @@ export default function VirtualOfficeCTA() {
           </h2>
 
           <p className="text-gray-700 text-lg md:text-xl font-medium">
-            Company Registration • GST Registration • Business Address •  
+            Company Registration • Tax Registration • Business Address •  
             Mailing Address • Reception Services • Meeting Room Access
           </p>
 

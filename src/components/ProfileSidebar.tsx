@@ -1,8 +1,9 @@
 "use client";
 
-import { X, User, Mail, Phone, HelpCircle, Package, Settings, LogOut, ChevronRight } from "lucide-react";
+import { X, User, Mail, Phone, HelpCircle, Package, Settings, LogOut, ChevronRight, MapPin } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import AllCitiesModal from "./AllCitiesModal";
 
 interface ProfileSidebarProps {
   isOpen: boolean;
@@ -11,13 +12,14 @@ interface ProfileSidebarProps {
 
 export default function ProfileSidebar({ isOpen, onClose }: ProfileSidebarProps) {
   const router = useRouter();
+  const [allCitiesModalOpen, setAllCitiesModalOpen] = useState(false);
 
   const menuItems = [
+    { name: "All Cities", icon: MapPin, href: "#", action: () => setAllCitiesModalOpen(true) },
     { name: "Contact", icon: Mail, href: "#", action: () => window.dispatchEvent(new Event("open-contact-modal")) },
     { name: "Help & Support", icon: HelpCircle, href: "/help" },
     { name: "Products", icon: Package, href: "/products" },
     { name: "Settings", icon: Settings, href: "/settings" },
-    { name: "Profile", icon: User, href: "/profile" },
   ];
 
   const handleItemClick = (item: typeof menuItems[0]) => {
@@ -140,6 +142,15 @@ export default function ProfileSidebar({ isOpen, onClose }: ProfileSidebarProps)
           </button>
         </div>
       </div>
+
+      {/* All Cities Modal */}
+      <AllCitiesModal
+        isOpen={allCitiesModalOpen}
+        onClose={() => {
+          setAllCitiesModalOpen(false);
+          onClose();
+        }}
+      />
     </>
   );
 }

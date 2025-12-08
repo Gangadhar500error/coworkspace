@@ -5,7 +5,7 @@ import ListingCard from "./ListingCard";
 
 interface ListingGridProps {
   workspaces: Workspace[];
-  onGetQuote: (id: string) => void;
+  onGetQuote: (workspace: Workspace) => void;
 }
 
 export default function ListingGrid({ workspaces, onGetQuote }: ListingGridProps) {

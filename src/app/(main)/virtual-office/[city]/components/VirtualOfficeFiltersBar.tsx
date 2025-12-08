@@ -6,7 +6,7 @@ import { ChevronDown, X } from "lucide-react";
 export interface VirtualOfficeFilterState {
   city: string;
   plan_type: string;
-  gst_support: string;
+  tax_support: string;
   mail_handling: string;
 }
 
@@ -22,10 +22,10 @@ const planTypes = [
   { value: "enterprise", label: "Enterprise" }
 ];
 
-const gstSupportOptions = [
-  { value: "all", label: "All GST Support" },
-  { value: "yes", label: "GST Supported" },
-  { value: "no", label: "No GST" }
+const taxSupportOptions = [
+  { value: "all", label: "All Tax Support" },
+  { value: "yes", label: "Tax Supported" },
+  { value: "no", label: "No Tax" }
 ];
 
 const mailHandlingOptions = [
@@ -42,8 +42,8 @@ export default function VirtualOfficeFiltersBar({ filters, onFilterChange }: Vir
     setOpenDropdown(null);
   };
 
-  const handleGstSupportChange = (value: string) => {
-    onFilterChange({ ...filters, gst_support: value });
+  const handleTaxSupportChange = (value: string) => {
+    onFilterChange({ ...filters, tax_support: value });
     setOpenDropdown(null);
   };
 
@@ -56,14 +56,14 @@ export default function VirtualOfficeFiltersBar({ filters, onFilterChange }: Vir
     onFilterChange({
       city: filters.city, // Keep city as it's usually from URL
       plan_type: "all",
-      gst_support: "all",
+      tax_support: "all",
       mail_handling: "all"
     });
   };
 
   const hasActiveFilters = 
     filters.plan_type !== "all" ||
-    filters.gst_support !== "all" ||
+    filters.tax_support !== "all" ||
     filters.mail_handling !== "all";
 
   // Get selected filter labels
@@ -77,10 +77,10 @@ export default function VirtualOfficeFiltersBar({ filters, onFilterChange }: Vir
       });
     }
     
-    if (filters.gst_support !== "all") {
+    if (filters.tax_support !== "all") {
       selected.push({
-        label: gstSupportOptions.find(g => g.value === filters.gst_support)?.label || "",
-        onRemove: () => handleGstSupportChange("all")
+        label: taxSupportOptions.find(g => g.value === filters.tax_support)?.label || "",
+        onRemove: () => handleTaxSupportChange("all")
       });
     }
     
@@ -130,27 +130,27 @@ export default function VirtualOfficeFiltersBar({ filters, onFilterChange }: Vir
           )}
         </div>
 
-        {/* GST Support Filter */}
+        {/* Tax Support Filter */}
         <div className="relative">
           <button
-            onClick={() => setOpenDropdown(openDropdown === "gst_support" ? null : "gst_support")}
+            onClick={() => setOpenDropdown(openDropdown === "tax_support" ? null : "tax_support")}
             className={`flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-50 hover:bg-gray-100 border rounded-lg text-xs sm:text-sm font-medium transition-all ${
-              filters.gst_support !== "all" 
+              filters.tax_support !== "all" 
                 ? "border-[#4ECDC4] bg-[#4ECDC4]/10 text-[#4ECDC4]" 
                 : "border-gray-300 text-gray-700"
             }`}
           >
-            GST Support
-            <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-200 ${openDropdown === "gst_support" ? "rotate-180" : ""}`} />
+            Tax Support
+            <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-200 ${openDropdown === "tax_support" ? "rotate-180" : ""}`} />
           </button>
-          {openDropdown === "gst_support" && (
+          {openDropdown === "tax_support" && (
             <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-              {gstSupportOptions.map((option) => (
+              {taxSupportOptions.map((option) => (
                 <button
                   key={option.value}
-                  onClick={() => handleGstSupportChange(option.value)}
+                  onClick={() => handleTaxSupportChange(option.value)}
                   className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg transition-colors ${
-                    filters.gst_support === option.value ? "bg-[#4ECDC4]/10 text-[#4ECDC4] font-medium" : "text-gray-700"
+                    filters.tax_support === option.value ? "bg-[#4ECDC4]/10 text-[#4ECDC4] font-medium" : "text-gray-700"
                   }`}
                 >
                   {option.label}

@@ -56,7 +56,7 @@ export default function VirtualOfficeHero({ cityName }: VirtualOfficeHeroProps) 
 
   const features = [
     "Business Address",
-    "GST Registration",
+    "Tax Registration",
     "Company Registration",
     "Documents in 24 Hours",
   ];

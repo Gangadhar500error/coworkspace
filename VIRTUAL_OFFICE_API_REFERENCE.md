@@ -86,7 +86,7 @@ The API should return a JSON response with the following structure:
           "price": "₹999 /month"
         },
         {
-          "name": "GST Registration",
+          "name": "Tax Registration",
           "price": "₹2,499 /month"
         },
         {
@@ -112,7 +112,7 @@ The API should return a JSON response with the following structure:
           "price": "₹1,299 /month"
         },
         {
-          "name": "GST Registration",
+          "name": "Tax Registration",
           "price": "₹2,999 /month"
         },
         {
@@ -137,7 +137,7 @@ The API should return a JSON response with the following structure:
 The following service names are commonly used:
 
 - `"Business Address"` - Virtual business address service
-- `"GST Registration"` - GST registration service
+- `"Tax Registration"` - Tax registration service
 - `"Company Registration"` - Company registration service
 - `"Mail Handling"` - Mail handling and forwarding
 - `"Phone Answering"` - Phone answering service
@@ -152,7 +152,7 @@ The following features are commonly displayed:
 - `"Documents in 24 Hours"` - Fast document processing
 - `"Mail Forwarding"` - Mail forwarding service
 - `"24/7 Online Dashboard"` - Online dashboard access
-- `"GST Support"` - GST registration support
+- `"Tax Support"` - Tax registration support
 - `"Company Registration Support"` - Company registration assistance
 
 ## Badge Values

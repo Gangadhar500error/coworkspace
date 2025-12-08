@@ -11,7 +11,9 @@ import EmptyState from "./components/EmptyState";
 import ComingSoon from "./components/ComingSoon";
 import LoadingSkeleton from "./components/LoadingSkeleton";
 import Pagination from "./components/Pagination";
+import QuoteRequestModal from "@/components/QuoteRequestModal";
 import { getWorkspacesByCity, getAreasByCity, Workspace } from "./data/workspaces";
+import { generateWorkspaceStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -54,6 +56,8 @@ export default function CoworkingCityPage() {
   const [sortBy, setSortBy] = useState<SortOption>("recommended");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading] = useState(false);
+  const [quoteModalOpen, setQuoteModalOpen] = useState(false);
+  const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
 
   // Get all workspaces for the city, filtered by selected types from URL
   const allWorkspaces = useMemo(() => {
@@ -207,10 +211,9 @@ export default function CoworkingCityPage() {
     setCurrentPage(1);
   };
 
-  const handleGetQuote = (id: string) => {
-    // TODO: Implement quote functionality
-    console.log("Get quote for:", id);
-    // Could navigate to a quote page or open a modal
+  const handleGetQuote = (workspace: Workspace) => {
+    setSelectedWorkspace(workspace);
+    setQuoteModalOpen(true);
   };
 
   const handleRemoveType = (typeToRemove: string) => {
@@ -233,10 +236,35 @@ export default function CoworkingCityPage() {
     setCurrentPage(1);
   };
 
+  // Generate structured data
+  const structuredData = useMemo(() => {
+    const workspaceType = selectedTypesFromUrl.length > 0 
+      ? selectedTypesFromUrl.join(" & ") 
+      : "Coworking Space";
+    
+    return [
+      generateWorkspaceStructuredData(formattedCity, workspaceType, filteredAndSortedWorkspaces.length),
+      generateBreadcrumbStructuredData([
+        { name: "Home", url: "https://www.coworkspace.com" },
+        { name: "Coworking", url: "https://www.coworkspace.com/coworking" },
+        { name: formattedCity, url: `https://www.coworkspace.com/coworking/${params.city}` },
+      ]),
+    ];
+  }, [formattedCity, selectedTypesFromUrl, filteredAndSortedWorkspaces.length, params.city]);
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white pt-20">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData[0]) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData[1]) }}
+      />
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="bg-white pt-20">
   <div className="container-custom px-4 sm:px-6 lg:px-8">
 
     {/* Top Section - Responsive Layout */}
@@ -355,6 +383,17 @@ export default function CoworkingCityPage() {
           </>
         )}
       </div>
-    </div>
+
+      {/* Quote Request Modal */}
+      <QuoteRequestModal
+        isOpen={quoteModalOpen}
+        onClose={() => {
+          setQuoteModalOpen(false);
+          setSelectedWorkspace(null);
+        }}
+        workspace={selectedWorkspace}
+      />
+      </div>
+    </>
   );
 }

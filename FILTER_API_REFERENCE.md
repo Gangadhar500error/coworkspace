@@ -90,14 +90,14 @@ GET /workspaces?type=meeting-room&city=new-york&capacity=5-10&price_range=50-100
 - `city` (string) - City name/slug
 - `plan_type` (string) - Plan tier
   - Values: `"all"`, `"basic"`, `"premium"`, `"enterprise"`
-- `gst_support` (string) - GST support availability
+- `tax_support` (string) - Tax support availability
   - Values: `"all"`, `"yes"`, `"no"`
 - `mail_handling` (string) - Mail handling service
   - Values: `"all"`, `"yes"`, `"no"`
 
 **Example Request:**
 ```
-GET /workspaces?type=virtual-office&city=new-york&plan_type=premium&gst_support=yes&mail_handling=yes
+GET /workspaces?type=virtual-office&city=new-york&plan_type=premium&tax_support=yes&mail_handling=yes
 ```
 
 **Expected Response Structure:**
@@ -107,7 +107,7 @@ GET /workspaces?type=virtual-office&city=new-york&plan_type=premium&gst_support=
     "filters": [
       "city",
       "plan_type",
-      "gst_support",
+      "tax_support",
       "mail_handling"
     ]
   }

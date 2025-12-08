@@ -18,7 +18,7 @@ export const virtualOfficeCardsByCity: Record<string, VirtualOfficeCardData[]> =
       features: ["Digital KYC & Agreement", "Documents in 24 Hours"],
       services: [
         { name: "Business Address", price: "₹999 /month" },
-        { name: "GST Registration", price: "₹2,499 /month" },
+        { name: "Tax Registration", price: "₹2,499 /month" },
         { name: "Company Registration", price: "₹1,099 /month" },
       ],
       badge: "Popular",
@@ -32,7 +32,7 @@ export const virtualOfficeCardsByCity: Record<string, VirtualOfficeCardData[]> =
       features: ["Digital KYC & Agreement", "Documents in 24 Hours", "Mail Forwarding"],
       services: [
         { name: "Business Address", price: "₹1,299 /month" },
-        { name: "GST Registration", price: "₹2,999 /month" },
+        { name: "Tax Registration", price: "₹2,999 /month" },
         { name: "Company Registration", price: "₹1,499 /month" },
       ],
       badge: "Featured",
@@ -46,7 +46,7 @@ export const virtualOfficeCardsByCity: Record<string, VirtualOfficeCardData[]> =
       features: ["Digital KYC & Agreement", "Documents in 24 Hours"],
       services: [
         { name: "Business Address", price: "₹899 /month" },
-        { name: "GST Registration", price: "₹2,199 /month" },
+        { name: "Tax Registration", price: "₹2,199 /month" },
         { name: "Company Registration", price: "₹999 /month" },
       ],
     },
@@ -59,7 +59,7 @@ export const virtualOfficeCardsByCity: Record<string, VirtualOfficeCardData[]> =
       features: ["Digital KYC & Agreement", "Documents in 24 Hours", "24/7 Support"],
       services: [
         { name: "Business Address", price: "₹1,199 /month" },
-        { name: "GST Registration", price: "₹2,799 /month" },
+        { name: "Tax Registration", price: "₹2,799 /month" },
         { name: "Company Registration", price: "₹1,299 /month" },
       ],
       badge: "New",
@@ -73,7 +73,7 @@ export const virtualOfficeCardsByCity: Record<string, VirtualOfficeCardData[]> =
       features: ["Digital KYC & Agreement", "Documents in 24 Hours", "Premium Support"],
       services: [
         { name: "Business Address", price: "₹1,499 /month" },
-        { name: "GST Registration", price: "₹3,299 /month" },
+        { name: "Tax Registration", price: "₹3,299 /month" },
         { name: "Company Registration", price: "₹1,599 /month" },
       ],
       badge: "Best Value",
@@ -87,7 +87,7 @@ export const virtualOfficeCardsByCity: Record<string, VirtualOfficeCardData[]> =
       features: ["Digital KYC & Agreement", "Documents in 24 Hours"],
       services: [
         { name: "Business Address", price: "₹799 /month" },
-        { name: "GST Registration", price: "₹1,999 /month" },
+        { name: "Tax Registration", price: "₹1,999 /month" },
         { name: "Company Registration", price: "₹899 /month" },
       ],
     },
@@ -102,7 +102,7 @@ export const virtualOfficeCardsByCity: Record<string, VirtualOfficeCardData[]> =
       features: ["Digital KYC & Agreement", "Documents in 24 Hours", "Premium Support"],
       services: [
         { name: "Business Address", price: "$299 /month" },
-        { name: "GST Registration", price: "$499 /month" },
+        { name: "Tax Registration", price: "$499 /month" },
         { name: "Company Registration", price: "$399 /month" },
       ],
       badge: "Featured",
@@ -116,7 +116,7 @@ export const virtualOfficeCardsByCity: Record<string, VirtualOfficeCardData[]> =
       features: ["Digital KYC & Agreement", "Documents in 24 Hours"],
       services: [
         { name: "Business Address", price: "$249 /month" },
-        { name: "GST Registration", price: "$449 /month" },
+        { name: "Tax Registration", price: "$449 /month" },
         { name: "Company Registration", price: "$349 /month" },
       ],
       badge: "Popular",
@@ -132,7 +132,7 @@ export const virtualOfficeCardsByCity: Record<string, VirtualOfficeCardData[]> =
       features: ["Digital KYC & Agreement", "Documents in 24 Hours", "Mail Forwarding"],
       services: [
         { name: "Business Address", price: "$279 /month" },
-        { name: "GST Registration", price: "$479 /month" },
+        { name: "Tax Registration", price: "$479 /month" },
         { name: "Company Registration", price: "$379 /month" },
       ],
       badge: "Featured",

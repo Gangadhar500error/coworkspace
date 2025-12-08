@@ -7,7 +7,7 @@ import { Workspace } from "../data/workspaces";
 
 interface ListingCardProps {
   workspace: Workspace;
-  onGetQuote: (id: string) => void;
+  onGetQuote: (workspace: Workspace) => void;
 }
 
 export default function ListingCard({ workspace, onGetQuote }: ListingCardProps) {
@@ -172,7 +172,7 @@ export default function ListingCard({ workspace, onGetQuote }: ListingCardProps)
             <span className="text-sm text-gray-600 font-body">/month</span>
           </div>
           <button
-            onClick={() => onGetQuote(workspace.id)}
+            onClick={() => onGetQuote(workspace)}
             className="px-4 py-2 bg-[#4ECDC4] hover:bg-[#3ab5ad] text-white rounded-lg text-sm font-semibold transition-colors font-body"
           >
             Get Quote

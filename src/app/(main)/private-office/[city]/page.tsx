@@ -11,6 +11,7 @@ import ComingSoon from "../../coworking/[city]/components/ComingSoon";
 import LoadingSkeleton from "../../coworking/[city]/components/LoadingSkeleton";
 import Pagination from "../../coworking/[city]/components/Pagination";
 import { getWorkspacesByCity } from "../../coworking/[city]/data/workspaces";
+import { generateWorkspaceStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo";
 
 const ITEMS_PER_PAGE = 9;
 const WORKSPACE_TYPE = "Private Office";
@@ -190,8 +191,29 @@ export default function PrivateOfficeCityPage() {
     console.log("Get quote for:", id);
   };
 
+  // Generate structured data
+  const structuredData = useMemo(() => {
+    return [
+      generateWorkspaceStructuredData(formattedCity, WORKSPACE_TYPE, filteredAndSortedWorkspaces.length),
+      generateBreadcrumbStructuredData([
+        { name: "Home", url: "https://www.coworkspace.com" },
+        { name: "Private Office", url: "https://www.coworkspace.com/private-office" },
+        { name: formattedCity, url: `https://www.coworkspace.com/private-office/${params.city}` },
+      ]),
+    ];
+  }, [formattedCity, filteredAndSortedWorkspaces.length, params.city]);
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData[0]) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData[1]) }}
+      />
+      <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <PrivateOfficeHero cityName={formattedCity} />
 
@@ -264,6 +286,7 @@ export default function PrivateOfficeCityPage() {
           </>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

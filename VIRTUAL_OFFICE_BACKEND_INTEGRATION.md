@@ -63,7 +63,7 @@ GET /virtual-offices?city=hyderabad
           "price": "₹999 /month"
         },
         {
-          "name": "GST Registration",
+          "name": "Tax Registration",
           "price": "₹2,499 /month"
         },
         {
@@ -193,7 +193,7 @@ The `services` field should be returned as a JSON array of objects:
     "price": "₹999 /month"
   },
   {
-    "name": "GST Registration",
+    "name": "Tax Registration",
     "price": "₹2,499 /month"
   }
 ]

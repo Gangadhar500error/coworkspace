@@ -6,48 +6,48 @@ import Image from "next/image";
 const featureCards = [
   {
     id: 1,
-    heading: "Single Day Passes",
-    paragraph: "Find an open seat and get some work done without membership.",
+    heading: "Coworking",
+    paragraph: "Flexible workspace solutions for individuals and teams seeking a productive environment.",
     image: "/assets/medium-shot-people-working-together-office_23-2149345228.jpg",
-    linkText: "Book Now →",
+    linkText: "Explore →",
     linkHref: "#"
   },
   {
     id: 2,
-    heading: "Meeting Rooms",
-    paragraph: "Book professional meeting rooms equipped with everything you need.",
+    heading: "Dedicated Desk",
+    paragraph: "Your own personal workspace in a shared environment with all amenities included.",
     image: "/assets/cowork.jpg",
     linkText: "Book Now →",
     linkHref: "#"
   },
   {
     id: 3,
-    heading: "Monthly Memberships",
-    paragraph: "Join our growing community and make CoworkSpace your work home.",
-    image: "/assets/monthly.webp",
-    linkText: "Join Today →",
+    heading: "Private Office",
+    paragraph: "Enjoy privacy, comfort, and focus in your own modern dedicated office workspace.",
+    image: "/assets/privateoffice.jpg",
+    linkText: "View Spaces →",
     linkHref: "#"
   },
   {
     id: 4,
-    heading: "Virtual Offices",
-    paragraph: "Get a professional business address and mail handling for you.",
+    heading: "Virtual Office",
+    paragraph: "Get a professional business address and mail handling services for your business.",
     image: "/assets/eventspace.webp",
     linkText: "Learn More →",
     linkHref: "#"
   },
   {
     id: 5,
-    heading: "Private Offices",
-    paragraph: "Enjoy privacy, comfort, and focus in your own modern dedicated office workspace..",
-    image: "/assets/privateoffice.jpg",
-    linkText: "View Spaces →",
+    heading: "Meeting Rooms",
+    paragraph: "Book professional meeting rooms equipped with everything you need for successful meetings.",
+    image: "/assets/monthly.webp",
+    linkText: "Book Now →",
     linkHref: "#"
   },
   {
     id: 6,
-    heading: "Event Spaces",
-    paragraph: "Host workshops, seminars, and networking events in our spaces.",
+    heading: "Event/Training Space",
+    paragraph: "Host workshops, seminars, training sessions, and networking events in our versatile spaces.",
     image: "/assets/eventspace.webp",
     linkText: "Book Event →",
     linkHref: "#"

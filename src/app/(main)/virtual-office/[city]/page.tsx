@@ -6,6 +6,7 @@ import VirtualOfficeHero from "./components/VirtualOfficeHero";
 import VirtualOfficeCard from "./components/VirtualOfficeCard";
 import ComingSoon from "../../coworking/[city]/components/ComingSoon";
 import { getVirtualOfficesByCity } from "./data";
+import { generateWorkspaceStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo";
 
 const WORKSPACE_TYPE = "Virtual Office";
 
@@ -47,8 +48,29 @@ export default function VirtualOfficeCityPage() {
     console.log("Get quote for virtual office:", id);
   };
 
+  // Generate structured data
+  const structuredData = useMemo(() => {
+    return [
+      generateWorkspaceStructuredData(formattedCity, WORKSPACE_TYPE, virtualOffices.length),
+      generateBreadcrumbStructuredData([
+        { name: "Home", url: "https://www.coworkspace.com" },
+        { name: "Virtual Office", url: "https://www.coworkspace.com/virtual-office" },
+        { name: formattedCity, url: `https://www.coworkspace.com/virtual-office/${city}` },
+      ]),
+    ];
+  }, [formattedCity, virtualOffices.length, city]);
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData[0]) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData[1]) }}
+      />
+      <div className="min-h-screen bg-gray-50">
       {/* Hero Section - Always Display */}
       <VirtualOfficeHero cityName={formattedCity} />
 
@@ -92,6 +114,7 @@ export default function VirtualOfficeCityPage() {
           </>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

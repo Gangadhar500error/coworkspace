@@ -76,7 +76,7 @@ Contains the structure for virtual office listings that appear as cards.
       features: ["Digital KYC & Agreement", "Documents in 24 Hours"],
       services: [
         { name: "Business Address", price: "₹999 /month" },
-        { name: "GST Registration", price: "₹2,499 /month" }
+        { name: "Tax Registration", price: "₹2,499 /month" }
       ],
       badge: "Popular"
     }

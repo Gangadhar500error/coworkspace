@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronRight, ChevronLeft, Search } from "lucide-react";
 import WorkspaceTypeModal from "./WorkspaceTypeModal";
+import AllCitiesModal from "./AllCitiesModal";
+import { allCities } from "@/data/cities";
 
 interface NavItem {
   name: string;
@@ -16,24 +18,8 @@ interface SecondaryNavProps {
 }
 
 const navigationItems: NavItem[] = [
-  { name: "New York", image: "/assets/city-logos/Newyork.png", slug: "new-york" },
-  { name: "Los Angeles", image: "/assets/city-logos/losangels.png", slug: "los-angeles" },
-  { name: "Chicago", image: "/assets/city-logos/Chicago.png", slug: "chicago" },
-  { name: "Miami", image: "/assets/city-logos/miami.png", slug: "miami" },
-  { name: "San Francisco", image: "/assets/city-logos/San Francisco.png", slug: "san-francisco" },
-  { name: "Boston", image: "/assets/city-logos/Boston.png", slug: "boston" },
-  { name: "Seattle", image: "/assets/city-logos/Seattle.png", slug: "seattle" },
-  { name: "Dallas", image: "/assets/city-logos/Dallas.png", slug: "dallas" },
-  { name: "Houston", image: "/assets/city-logos/Houston.png", slug: "houston" },
-  { name: "Atlanta", image: "/assets/city-logos/Atlanta.png", slug: "atlanta" },
-  { name: "Phoenix", image: "/assets/city-logos/Phoenix.png", slug: "phoenix" },
-  { name: "Philadelphia", image: "/assets/city-logos/Philadelphia.png", slug: "philadelphia" },
-  { name: "San Diego", image: "/assets/city-logos/San Diego.png", slug: "san-diego" },
-  { name: "Denver", image: "/assets/city-logos/Denver.png", slug: "denver" },
-  { name: "Washington DC", image: "/assets/city-logos/Washington DC.png", slug: "washington-dc" },
-  { name: "Tampa", image: "/assets/city-logos/miami.png", slug: "tampa" },
-  { name: "Orlando", image: "/assets/city-logos/Orlando.png", slug: "orlando" },
-  { name: "Las Vegas", image: "/assets/city-logos/las vegas.png", slug: "las-vegas" },
+  { name: "All", image: "/assets/city-logos/All-image.png", slug: "all" },
+  ...allCities,
 ];
 
 export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) {
@@ -41,6 +27,7 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
   const [showScrollRight, setShowScrollRight] = useState(false);
   const [showScrollLeft, setShowScrollLeft] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [allCitiesModalOpen, setAllCitiesModalOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState<{ name: string; slug: string } | null>(null);
 
   const checkScrollability = useCallback(() => {
@@ -163,8 +150,12 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
                 <button
                   key={item.name}
                   onClick={() => {
-                    setSelectedCity({ name: item.name, slug: item.slug });
-                    setModalOpen(true);
+                    if (item.slug === "all") {
+                      setAllCitiesModalOpen(true);
+                    } else {
+                      setSelectedCity({ name: item.name, slug: item.slug });
+                      setModalOpen(true);
+                    }
                   }}
                   className="flex flex-col items-center gap-1.5 min-w-[75px] shrink-0 text-gray-700 hover:text-orange-500 transition-colors group cursor-pointer"
                 >
@@ -197,6 +188,12 @@ export default function SecondaryNav({ isScrolled = false }: SecondaryNavProps) 
           )}
         </div>
       </div>
+
+      {/* All Cities Modal */}
+      <AllCitiesModal
+        isOpen={allCitiesModalOpen}
+        onClose={() => setAllCitiesModalOpen(false)}
+      />
 
       {/* Workspace Type Modal */}
       {selectedCity && (

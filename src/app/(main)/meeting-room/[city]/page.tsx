@@ -9,7 +9,9 @@ import SortDropdown, { SortOption } from "../../coworking/[city]/components/Sort
 import ComingSoon from "../../coworking/[city]/components/ComingSoon";
 import LoadingSkeleton from "../../coworking/[city]/components/LoadingSkeleton";
 import Pagination from "../../coworking/[city]/components/Pagination";
-import { getWorkspacesByCity, getAreasByCity } from "../../coworking/[city]/data/workspaces";
+import QuoteRequestModal from "@/components/QuoteRequestModal";
+import { getWorkspacesByCity, getAreasByCity, Workspace } from "../../coworking/[city]/data/workspaces";
+import { generateWorkspaceStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo";
 
 const ITEMS_PER_PAGE = 9;
 const WORKSPACE_TYPE = "Meeting Room";
@@ -42,6 +44,8 @@ export default function MeetingRoomCityPage() {
   const [sortBy, setSortBy] = useState<SortOption>("recommended");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading] = useState(false);
+  const [quoteModalOpen, setQuoteModalOpen] = useState(false);
+  const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
 
   // Get all workspaces for the city, filtered by workspace type
   const allWorkspaces = useMemo(() => {
@@ -181,12 +185,34 @@ export default function MeetingRoomCityPage() {
     setCurrentPage(1);
   };
 
-  const handleGetQuote = (id: string) => {
-    console.log("Get quote for:", id);
+  const handleGetQuote = (workspace: Workspace) => {
+    setSelectedWorkspace(workspace);
+    setQuoteModalOpen(true);
   };
 
+  // Generate structured data
+  const structuredData = useMemo(() => {
+    return [
+      generateWorkspaceStructuredData(formattedCity, WORKSPACE_TYPE, filteredAndSortedWorkspaces.length),
+      generateBreadcrumbStructuredData([
+        { name: "Home", url: "https://www.coworkspace.com" },
+        { name: "Meeting Rooms", url: "https://www.coworkspace.com/meeting-room" },
+        { name: formattedCity, url: `https://www.coworkspace.com/meeting-room/${params.city}` },
+      ]),
+    ];
+  }, [formattedCity, filteredAndSortedWorkspaces.length, params.city]);
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData[0]) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData[1]) }}
+      />
+      <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white pt-20">
         <div className="container-custom px-4 sm:px-6 lg:px-8">
@@ -262,6 +288,17 @@ export default function MeetingRoomCityPage() {
           </>
         )}
       </div>
-    </div>
+
+      {/* Quote Request Modal */}
+      <QuoteRequestModal
+        isOpen={quoteModalOpen}
+        onClose={() => {
+          setQuoteModalOpen(false);
+          setSelectedWorkspace(null);
+        }}
+        workspace={selectedWorkspace}
+      />
+      </div>
+    </>
   );
 }
