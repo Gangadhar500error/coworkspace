@@ -1,5 +1,42 @@
 import Link from "next/link";
 
+// Helper function to convert city name to slug
+const cityToSlug = (cityName: string): string => {
+  return cityName.toLowerCase().replace(/\s+/g, "-").replace(/\./g, "").replace(/,/g, "");
+};
+
+// Cities list
+const cities = [
+  "New York City",
+  "Los Angeles",
+  "Chicago",
+  "Houston",
+  "Phoenix",
+  "Philadelphia",
+  "San Antonio",
+  "San Diego",
+  "Dallas",
+  "San Jose",
+  "Austin",
+  "Jacksonville",
+  "Fort Worth",
+  "Columbus, Ohio",
+  "Indianapolis",
+  "San Francisco",
+  "Seattle",
+  "Denver",
+  "Washington, D.C.",
+  "Boston",
+  "El Paso",
+  "Detroit",
+  "Nashville, Tennessee",
+  "Memphis, Tennessee",
+  "Portland, Oregon",
+  "Oklahoma City",
+  "Las Vegas",
+  "Louisville, Kentucky",
+];
+
 export default function SEOContent() {
   return (
     <section className="bg-gray-50 py-10 lg:py-12">
@@ -57,8 +94,88 @@ export default function SEOContent() {
             Coworking spaces in the USA offer tailored solutions for different types of professionals and businesses. For freelancers, day passes and hot desk memberships provide affordable access to professional facilities without long-term commitments. These options are perfect for those who work independently and value flexibility. Teams and small businesses benefit from dedicated desk memberships or private office spaces, which offer consistency and privacy while still providing access to shared amenities. Startups find coworking spaces particularly valuable because they can scale their workspace needs as they grow, from a single desk to a private office, without the hassle of relocating. Many coworking spaces also offer virtual office services, providing businesses with a professional address and mail handling without physical workspace needs. The community aspect of coworking spaces creates opportunities for collaboration, mentorship, and business development that traditional offices simply cannot match.
           </p>
 
+          <h3 className="text-2xl font-bold text-gray-900 mb-4 mt-8 font-display">
+            Coworking Spaces by City in USA
+          </h3>
+          <div className="mb-8">
+            {cities.map((city, index) => {
+              const slug = cityToSlug(city);
+              return (
+                <span key={city}>
+                  <Link
+                    href={`/coworking/${slug}`}
+                    className="text-gray-700 hover:text-orange-600  font-body transition-colors"
+                  >
+                    Coworking Space in {city}, USA
+                  </Link>
+                  {index < cities.length - 1 && <span className="text-gray-400 mx-2">|</span>}
+                </span>
+              );
+            })}
+          </div>
+
+          <h3 className="text-2xl font-bold text-gray-900 mb-4 mt-8 font-display">
+            Virtual Offices in USA
+          </h3>
+          <div className="mb-8">
+            {cities.map((city, index) => {
+              const slug = cityToSlug(city);
+              return (
+                <span key={`virtual-${city}`}>
+                  <Link
+                    href={`/virtual-office/${slug}`}
+                    className="text-gray-700 hover:text-orange-600  font-body transition-colors"
+                  >
+                    Virtual Office in {city}, USA
+                  </Link>
+                  {index < cities.length - 1 && <span className="text-gray-400 mx-2">|</span>}
+                </span>
+              );
+            })}
+          </div>
+
+          <h3 className="text-2xl font-bold text-gray-900 mb-4 mt-8 font-display">
+            Office Spaces in USA
+          </h3>
+          <div className="mb-8">
+            {cities.map((city, index) => {
+              const slug = cityToSlug(city);
+              return (
+                <span key={`office-${city}`}>
+                  <Link
+                    href={`/coworking/${slug}`}
+                    className="text-gray-700 hover:text-orange-600  font-body transition-colors"
+                  >
+                    Office Space in {city}, USA
+                  </Link>
+                  {index < cities.length - 1 && <span className="text-gray-400 mx-2">|</span>}
+                </span>
+              );
+            })}
+          </div>
+
+          <h3 className="text-2xl font-bold text-gray-900 mb-4 mt-8 font-display">
+            Meeting Rooms in USA
+          </h3>
+          <div className="mb-8">
+            {cities.map((city, index) => {
+              const slug = cityToSlug(city);
+              return (
+                <span key={`meeting-${city}`}>
+                  <Link
+                    href={`/coworking/${slug}`}
+                    className="text-gray-700 hover:text-orange-600  font-body transition-colors"
+                  >
+                    Meeting Room in {city}, USA
+                  </Link>
+                  {index < cities.length - 1 && <span className="text-gray-400 mx-2">|</span>}
+                </span>
+              );
+            })}
+          </div>  
+
           <p className="text-gray-700 mb-6 font-body leading-relaxed">
-            Whether you're a solo freelancer seeking inspiration, a startup team building your company, or an established business looking for flexible workspace solutions, coworking spaces across the USA offer the perfect blend of professional amenities, community, and flexibility. Explore our locations in major cities and find the workspace that fits your needs. <Link href="#contact" className="text-orange-600 hover:underline font-semibold">Contact us today</Link> to schedule a tour and discover how coworking can transform your work experience.
+            Whether you're a solo freelancer seeking inspiration, a startup team building your company, or an established business looking for flexible workspace solutions, coworking spaces across the USA offer the perfect blend of professional amenities, community, and flexibility. Explore our locations in major cities and find the workspace that fits your needs. <Link href="#contact" className="text-orange-600  font-semibold">Contact us today</Link> to schedule a tour and discover how coworking can transform your work experience.
           </p>
         </div>
       </div>

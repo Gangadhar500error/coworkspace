@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { allCities } from "@/data/cities";
 
@@ -12,18 +11,14 @@ interface FAQContactFormProps {
     city: string;
     message: string;
   };
-  openFaq: number | null;
   onFormChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   onFormSubmit: (e: React.FormEvent) => void;
-  toggleFaq: (index: number) => void;
 }
 
 export default function FAQContactForm({
   formData,
-  openFaq,
   onFormChange,
   onFormSubmit,
-  toggleFaq,
 }: FAQContactFormProps) {
   const faqs = [
     {
@@ -50,22 +45,6 @@ export default function FAQContactForm({
       q: "what is included in amenities?",
       a: "All memberships include high-speed WiFi, printing and scanning, access to meeting rooms (with credits), phone booths, lounge areas, free coffee and snacks, 24/7 secure access, lockers, community events, and professional support staff.",
     },
-    {
-      q: "can i bring guests?",
-      a: "Yes, members can bring guests. Guest policies vary by membership plan - Hot Desk members typically get 2-3 guest passes per month, while Dedicated Desk and Private Office members get more generous guest allowances.",
-    },
-    {
-      q: "are there meeting rooms available?",
-      a: "Yes, all our locations feature professional meeting rooms equipped with video conferencing, whiteboards, and presentation equipment. Meeting room access is included with membership credits, and additional hours can be purchased as needed.",
-    },
-    {
-      q: "do you offer virtual office services?",
-      a: "Yes, we offer virtual office services including professional business address, mail handling, call forwarding, and access to meeting rooms when needed. Perfect for businesses that need a professional presence without physical workspace.",
-    },
-    {
-      q: "what are the membership options?",
-      a: "We offer several membership options: Day Passes for occasional use, Hot Desk memberships for shared workspace, Dedicated Desk for reserved seating, and Private Office for teams needing dedicated space. All include access to amenities.",
-    },
   ];
 
   return (
@@ -82,25 +61,15 @@ export default function FAQContactForm({
                 Get answers to common questions about our coworking spaces.
               </p>
             </div>
-            <div className="space-y-3 flex-1">
+            <div className="space-y-4 flex-1">
               {faqs.map((faq, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg overflow-hidden bg-white hover:shadow-md hover:border-orange-300 transition-all">
-                  <button
-                    onClick={() => toggleFaq(index)}
-                    className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-orange-50 transition-colors"
-                  >
-                    <span className="font-semibold text-gray-900 font-body text-sm pr-3">{faq.q}</span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-gray-600 transition-transform shrink-0 ${
-                        openFaq === index ? "transform rotate-180 text-orange-600" : ""
-                      }`}
-                    />
-                  </button>
-                  {openFaq === index && (
-                    <div className="px-4 py-3 bg-orange-50/50 border-t border-gray-200">
-                      <p className="text-gray-700 font-body leading-relaxed text-sm">{faq.a}</p>
-                    </div>
-                  )}
+                  <div className="px-4 py-3 bg-orange-50/30 border-b border-gray-200">
+                    <h3 className="font-semibold text-gray-900 font-body text-sm">{faq.q}</h3>
+                  </div>
+                  <div className="px-4 py-3">
+                    <p className="text-gray-700 font-body leading-relaxed text-sm">{faq.a}</p>
+                  </div>
                 </div>
               ))}
             </div>

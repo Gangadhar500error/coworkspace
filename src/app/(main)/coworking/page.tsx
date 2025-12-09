@@ -13,7 +13,6 @@ import FAQContactForm from "@/components/CoworkingPage/FAQContactForm";
 import SEOContent from "@/components/CoworkingPage/SEOContent";
 
 export default function CoworkingPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -64,10 +63,6 @@ export default function CoworkingPage() {
     console.log("Form submitted:", formData);
   };
 
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
-
   return (
     <div className="min-h-screen bg-white">
       <HeroSection topCities={topCities} />
@@ -81,10 +76,8 @@ export default function CoworkingPage() {
       })}
       <FAQContactForm
         formData={formData}
-        openFaq={openFaq}
         onFormChange={handleFormChange}
         onFormSubmit={handleFormSubmit}
-        toggleFaq={toggleFaq}
       />
       <SEOContent />
     </div>
