@@ -8,11 +8,29 @@ const ContactModal = dynamic(() => import("@/components/ContactModal"), { ssr: f
 
 export default function ContactFab() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     const handler = () => setOpen(true);
     window.addEventListener("open-contact-modal", handler as EventListener);
     return () => window.removeEventListener("open-contact-modal", handler as EventListener);
   }, []);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  if (!mounted) return null;
+
   return (
     <>
       <button
@@ -22,7 +40,7 @@ export default function ContactFab() {
       >
         <MessageSquare className="h-6 w-6" />
       </button>
-      <ContactModal open={open} onClose={() => setOpen(false)} />
+      {mounted && <ContactModal open={open} onClose={() => setOpen(false)} />}
     </>
   );
 }

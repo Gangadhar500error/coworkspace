@@ -37,14 +37,6 @@ export default function FAQContactForm({
       q: "do you offer private offices?",
       a: "Yes, we offer private office spaces for teams and individuals who need dedicated, lockable workspace. Private offices include all amenities, 24/7 access, and can accommodate teams from 1 to 20+ people. Contact us for availability and pricing.",
     },
-    {
-      q: "is there a contract?",
-      a: "We offer flexible month-to-month memberships with no long-term contracts. You can cancel anytime with 30 days notice. Some premium spaces may require a minimum commitment, but we always prioritize flexibility for our members.",
-    },
-    {
-      q: "what is included in amenities?",
-      a: "All memberships include high-speed WiFi, printing and scanning, access to meeting rooms (with credits), phone booths, lounge areas, free coffee and snacks, 24/7 secure access, lockers, community events, and professional support staff.",
-    },
   ];
 
   return (

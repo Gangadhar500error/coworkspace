@@ -17,7 +17,7 @@ const featureCards = [
     heading: "Dedicated Desk",
     paragraph: "Your own personal workspace in a shared environment with all amenities included.",
     image: "/assets/cowork.jpg",
-    linkText: "Book Now →",
+    linkText: "Explore →",
     linkHref: "#"
   },
   {
@@ -25,7 +25,7 @@ const featureCards = [
     heading: "Private Office",
     paragraph: "Enjoy privacy, comfort, and focus in your own modern dedicated office workspace.",
     image: "/assets/privateoffice.jpg",
-    linkText: "View Spaces →",
+    linkText: "Explore →",
     linkHref: "/private-office"
   },
   {
@@ -33,7 +33,7 @@ const featureCards = [
     heading: "Virtual Office",
     paragraph: "Get a professional business address and mail handling services for your business.",
     image: "/assets/eventspace.webp",
-    linkText: "Learn More →",
+    linkText: "Explore →",
     linkHref: "/virtual-office"
   },
   {
@@ -41,7 +41,7 @@ const featureCards = [
     heading: "Meeting Rooms",
     paragraph: "Book professional meeting rooms equipped with everything you need for successful meetings.",
     image: "/assets/monthly.webp",
-    linkText: "Book Now →",
+    linkText: "Explore →",
     linkHref: "/meeting-room"
   },
   {
@@ -49,7 +49,7 @@ const featureCards = [
     heading: "Event/Training Space",
     paragraph: "Host workshops, seminars, training sessions, and networking events in our versatile spaces.",
     image: "/assets/eventspace.webp",
-    linkText: "Book Event →",
+    linkText: "Explore →",
     linkHref: "#"
   }
 ];
