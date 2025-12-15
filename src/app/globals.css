@@ -127,3 +127,7 @@ h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
 /* Dark Mode Support */
 html.dark { color-scheme: dark; }
 html.light { color-scheme: light; }
+:focus-visible {
+  outline: none;
+  outline-offset: 2px;
+}

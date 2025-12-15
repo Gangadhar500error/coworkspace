@@ -7,20 +7,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Settings,
   ChevronDown,
   X,
-  GraduationCap,
-  Building2,
-  CheckCircle2,
-  Shapes,
-  Link as LinkIcon,
-  Database,
-  Mail,
-  Megaphone,
-  MessageSquare,
-  Lock,
-  LogOut,
 } from "lucide-react";
 
 interface NavItem {
@@ -36,50 +24,6 @@ const navItems: NavItem[] = [
     label: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
-  },
-  {
-    label: "College Management",
-    href: "/admin/colleges",
-    icon: GraduationCap,
-    children: [
-      { label: "Colleges", href: "/admin/colleges", icon: Building2 },
-      { label: "Approved By", href: "/admin/colleges/approved-by", icon: CheckCircle2 },
-      { label: "College Types", href: "/admin/colleges/types", icon: Shapes },
-    ],
-  },
-  {
-    label: "Colleges Links",
-    href: "/admin/colleges/links",
-    icon: LinkIcon,
-  },
-  {
-    label: "Colleges Data",
-    href: "/admin/colleges/data",
-    icon: Database,
-  },
-  {
-    label: "Communication Manager",
-    href: "/admin/communications",
-    icon: Mail,
-    children: [
-      { label: "Email Templates", href: "/admin/communications/email-templates", icon: Mail },
-      { label: "Mailchimp Campaigns", href: "/admin/communications/mailchimp-campaigns", icon: Megaphone },
-    ],
-  },
-  {
-    label: "More",
-    href: "/admin/more",
-    icon: Settings,
-    children: [
-      { label: "Master Settings", href: "/admin/settings/master", icon: Settings },
-      { label: "Messages", href: "/admin/messages", icon: MessageSquare },
-      { label: "Change Password", href: "/admin/account/change-password", icon: Lock },
-    ],
-  },
-  {
-    label: "Logout",
-    href: "/",
-    icon: LogOut,
   },
 ];
 

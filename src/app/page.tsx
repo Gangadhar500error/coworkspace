@@ -7,6 +7,7 @@ import Services from "@/components/landing-page/Services";
 import CTASection from "@/components/landing-page/CTASection";
 import AboutUs from "@/components/landing-page/AboutUs";
 import { generateSEOMetadata, generateHomeStructuredData } from "@/lib/seo";
+import SEOContent from "@/components/CoworkingPage/SEOContent";
 
 export const metadata = generateSEOMetadata({
   title: "CoworkSpace - Modern Workspace Solutions | Flexible Coworking Spaces",
@@ -46,6 +47,7 @@ export default function Home() {
         <Services />
         {/* <Pricing /> */}
         <ImageScroller />
+        <SEOContent />
       </main>
     </>
   );
