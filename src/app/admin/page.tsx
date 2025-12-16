@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { useTheme } from "./_components/ThemeProvider";
 import { 
   Building2, 
@@ -12,11 +15,26 @@ import {
   Activity,
   UserPlus,
   Plus,
-  Bell
+  Bell,
+  ChevronDown,
+  ExternalLink
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
   const { isDarkMode } = useTheme();
+  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({
+    spaces: true,
+    users: true,
+    bookings: true,
+    activity: true,
+  });
+
+  const toggleCard = (cardKey: string) => {
+    setExpandedCards((prev) => ({
+      ...prev,
+      [cardKey]: !prev[cardKey],
+    }));
+  };
 
   // Key Statistics
   const stats = [
@@ -54,23 +72,6 @@ export default function AdminDashboardPage() {
     },
   ];
 
-  // Top Cities Performance
-  const topCities = [
-    { city: "New York City", spaces: 12, occupancy: 94, revenue: "$45.2K", trend: "+5.2%" },
-    { city: "Los Angeles", spaces: 10, occupancy: 89, revenue: "$38.7K", trend: "+8.1%" },
-    { city: "Chicago", spaces: 9, occupancy: 87, revenue: "$32.4K", trend: "+6.3%" },
-    { city: "San Francisco", spaces: 8, occupancy: 96, revenue: "$41.8K", trend: "+12.1%" },
-    { city: "Miami", spaces: 7, occupancy: 82, revenue: "$28.5K", trend: "+4.7%" },
-    { city: "Boston", spaces: 6, occupancy: 91, revenue: "$29.3K", trend: "+7.8%" },
-  ];
-
-  // Space Type Distribution
-  const spaceTypes = [
-    { type: "Coworking", count: 68, percentage: 48, icon: LayoutGrid, color: "from-[#FF5A22] to-[#FF8C42]" },
-    { type: "Private Office", count: 42, percentage: 30, icon: Briefcase, color: "from-[#7E22CE] to-[#A855F7]" },
-    { type: "Virtual Office", count: 24, percentage: 17, icon: Laptop, color: "from-blue-500 to-cyan-500" },
-    { type: "Meeting Rooms", count: 8, percentage: 5, icon: Presentation, color: "from-green-500 to-emerald-500" },
-  ];
 
   // Recent Bookings
   const recentBookings = [
@@ -105,7 +106,6 @@ export default function AdminDashboardPage() {
     { id: 2, name: "Sarah Johnson", email: "sarah.j@email.com", city: "San Francisco", joinDate: "Yesterday", status: "active" },
     { id: 3, name: "Michael Chen", email: "m.chen@email.com", city: "Los Angeles", joinDate: "2 days ago", status: "active" },
     { id: 4, name: "Emily Davis", email: "emily.d@email.com", city: "Chicago", joinDate: "3 days ago", status: "active" },
-    { id: 5, name: "David Wilson", email: "d.wilson@email.com", city: "Boston", joinDate: "5 days ago", status: "active" },
   ];
 
   return (
@@ -168,173 +168,327 @@ export default function AdminDashboardPage() {
       {/* Recent Added Spaces and Recent Users */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Recent Added Spaces */}
-        <div className={`rounded-lg p-4 border ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Plus className={`w-4 h-4 text-[#FF5A22]`} />
-              <h2 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>Recent Added Spaces</h2>
+        <div className={`rounded-lg border overflow-hidden ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
+          <div className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Plus className={`w-4 h-4 text-[#FF5A22]`} />
+                <h2 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>Recent Added Spaces</h2>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/admin/property-listings"
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                    isDarkMode 
+                      ? "bg-[#FF5A22]/10 text-[#FF5A22] hover:bg-[#FF5A22]/20 border border-[#FF5A22]/30" 
+                      : "bg-[#FF5A22]/5 text-[#FF5A22] hover:bg-[#FF5A22]/10 border border-[#FF5A22]/20"
+                  }`}
+                >
+                  View All
+                  <ExternalLink className="w-3 h-3" />
+                </Link>
+                <button
+                  onClick={() => toggleCard("spaces")}
+                  className={`p-1.5 rounded-lg transition-all duration-200 ${
+                    isDarkMode ? "hover:bg-gray-800 text-gray-400 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
+                  }`}
+                  aria-label={expandedCards.spaces ? "Collapse" : "Expand"}
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expandedCards.spaces ? "" : "-rotate-90"}`} />
+                </button>
+              </div>
             </div>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? "bg-gray-800 text-gray-300" : "bg-gray-100 text-gray-600"}`}>
-              {recentSpaces.length} new
-            </span>
           </div>
           
-          <div className="space-y-2">
-            {recentSpaces.map((space) => (
-              <div
-                key={space.id}
-                className={`p-3 rounded-lg border ${
-                  isDarkMode ? "border-gray-800 bg-gray-800/50" : "border-gray-200 bg-gray-50"
-                }`}
+          <AnimatePresence initial={false}>
+            {expandedCards.spaces && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{space.name}</h3>
-                    <div className="flex items-center gap-2 text-xs mt-0.5">
-                      <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-                        <MapPin className="w-3 h-3 inline mr-1" />
-                        {space.city}
-                      </span>
-                      <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>•</span>
-                      <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{space.type}</span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                      space.status === "active" 
-                        ? "bg-green-500/10 text-green-500" 
-                        : "bg-gray-500/10 text-gray-500"
-                    }`}>
-                      {space.status}
-                    </span>
-                    <p className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{space.addedDate}</p>
-                  </div>
+                <div className="px-4 pb-4 space-y-2">
+                  {recentSpaces.map((space, idx) => (
+                    <motion.div
+                      key={space.id}
+                      initial={{ x: -10, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: idx * 0.05, duration: 0.2 }}
+                      className={`p-3 rounded-lg border ${
+                        isDarkMode ? "border-gray-800 bg-gray-800/50" : "border-gray-200 bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{space.name}</h3>
+                          <div className="flex items-center gap-2 text-xs mt-0.5">
+                            <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                              <MapPin className="w-3 h-3 inline mr-1" />
+                              {space.city}
+                            </span>
+                            <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>•</span>
+                            <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{space.type}</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
+                            space.status === "active" 
+                              ? "bg-green-500/10 text-green-500" 
+                              : "bg-gray-500/10 text-gray-500"
+                          }`}>
+                            {space.status}
+                          </span>
+                          <p className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{space.addedDate}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-              </div>
-            ))}
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Recent Users */}
-        <div className={`rounded-lg p-4 border ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <UserPlus className={`w-4 h-4 text-[#7E22CE]`} />
-              <h2 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>Recent Users</h2>
+        <div className={`rounded-lg border overflow-hidden ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
+          <div className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <UserPlus className={`w-4 h-4 text-[#7E22CE]`} />
+                <h2 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>Recent Users</h2>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/admin/users"
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                    isDarkMode 
+                      ? "bg-[#7E22CE]/10 text-[#7E22CE] hover:bg-[#7E22CE]/20 border border-[#7E22CE]/30" 
+                      : "bg-[#7E22CE]/5 text-[#7E22CE] hover:bg-[#7E22CE]/10 border border-[#7E22CE]/20"
+                  }`}
+                >
+                  View All
+                  <ExternalLink className="w-3 h-3" />
+                </Link>
+                <button
+                  onClick={() => toggleCard("users")}
+                  className={`p-1.5 rounded-lg transition-all duration-200 ${
+                    isDarkMode ? "hover:bg-gray-800 text-gray-400 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
+                  }`}
+                  aria-label={expandedCards.users ? "Collapse" : "Expand"}
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expandedCards.users ? "" : "-rotate-90"}`} />
+                </button>
+              </div>
             </div>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? "bg-gray-800 text-gray-300" : "bg-gray-100 text-gray-600"}`}>
-              {recentUsers.length} new
-            </span>
           </div>
           
-          <div className="space-y-2">
-            {recentUsers.map((user) => (
-              <div
-                key={user.id}
-                className={`p-3 rounded-lg border ${
-                  isDarkMode ? "border-gray-800 bg-gray-800/50" : "border-gray-200 bg-gray-50"
-                }`}
+          <AnimatePresence initial={false}>
+            {expandedCards.users && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{user.name}</h3>
-                    <p className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{user.email}</p>
-                    <div className="flex items-center gap-2 text-xs mt-0.5">
-                      <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-                        <MapPin className="w-3 h-3 inline mr-1" />
-                        {user.city}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                      user.status === "active" 
-                        ? "bg-green-500/10 text-green-500" 
-                        : "bg-gray-500/10 text-gray-500"
-                    }`}>
-                      {user.status}
-                    </span>
-                    <p className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{user.joinDate}</p>
-                  </div>
+                <div className="px-4 pb-4 space-y-2">
+                  {recentUsers.map((user, idx) => (
+                    <motion.div
+                      key={user.id}
+                      initial={{ x: -10, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: idx * 0.05, duration: 0.2 }}
+                      className={`p-3 rounded-lg border ${
+                        isDarkMode ? "border-gray-800 bg-gray-800/50" : "border-gray-200 bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{user.name}</h3>
+                          <p className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{user.email}</p>
+                          <div className="flex items-center gap-2 text-xs mt-0.5">
+                            <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                              <MapPin className="w-3 h-3 inline mr-1" />
+                              {user.city}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
+                            user.status === "active" 
+                              ? "bg-green-500/10 text-green-500" 
+                              : "bg-gray-500/10 text-gray-500"
+                          }`}>
+                            {user.status}
+                          </span>
+                          <p className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{user.joinDate}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-              </div>
-            ))}
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       {/* Recent Bookings and Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Recent Bookings */}
-        <div className={`rounded-lg p-4 border ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
-          <div className="flex items-center gap-2 mb-3">
-            <Calendar className={`w-4 h-4 text-[#7E22CE]`} />
-            <h2 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>Recent Bookings</h2>
+        <div className={`rounded-lg border overflow-hidden ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
+          <div className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Calendar className={`w-4 h-4 text-[#7E22CE]`} />
+                <h2 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>Recent Bookings</h2>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/admin/bookings"
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                    isDarkMode 
+                      ? "bg-[#7E22CE]/10 text-[#7E22CE] hover:bg-[#7E22CE]/20 border border-[#7E22CE]/30" 
+                      : "bg-[#7E22CE]/5 text-[#7E22CE] hover:bg-[#7E22CE]/10 border border-[#7E22CE]/20"
+                  }`}
+                >
+                  View All
+                  <ExternalLink className="w-3 h-3" />
+                </Link>
+                <button
+                  onClick={() => toggleCard("bookings")}
+                  className={`p-1.5 rounded-lg transition-all duration-200 ${
+                    isDarkMode ? "hover:bg-gray-800 text-gray-400 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
+                  }`}
+                  aria-label={expandedCards.bookings ? "Collapse" : "Expand"}
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expandedCards.bookings ? "" : "-rotate-90"}`} />
+                </button>
+              </div>
+            </div>
           </div>
           
-          <div className="space-y-2">
-            {recentBookings.map((booking) => (
-              <div
-                key={booking.id}
-                className={`p-3 rounded-lg border ${
-                  booking.status === "confirmed" 
-                    ? `border-green-500/30 ${isDarkMode ? "bg-green-500/5" : "bg-green-50"}` 
-                    : `border-yellow-500/30 ${isDarkMode ? "bg-yellow-500/5" : "bg-yellow-50"}`
-                }`}
+          <AnimatePresence initial={false}>
+            {expandedCards.bookings && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{booking.customer}</h3>
-                    <p className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{booking.space}</p>
-                    <div className="flex items-center gap-2 text-xs mt-0.5">
-                      <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-                        {booking.date}
-                      </span>
-                      <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>•</span>
-                      <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{booking.time}</span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                      booking.status === "confirmed" 
-                        ? "bg-green-500/10 text-green-500" 
-                        : "bg-yellow-500/10 text-yellow-500"
-                    }`}>
-                      {booking.status}
-                    </span>
-                    <p className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{booking.type}</p>
-                  </div>
+                <div className="px-4 pb-4 space-y-2">
+                  {recentBookings.map((booking, idx) => (
+                    <motion.div
+                      key={booking.id}
+                      initial={{ x: -10, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: idx * 0.05, duration: 0.2 }}
+                      className={`p-3 rounded-lg border ${
+                        booking.status === "confirmed" 
+                          ? `border-green-500/30 ${isDarkMode ? "bg-green-500/5" : "bg-green-50"}` 
+                          : `border-yellow-500/30 ${isDarkMode ? "bg-yellow-500/5" : "bg-yellow-50"}`
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{booking.customer}</h3>
+                          <p className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{booking.space}</p>
+                          <div className="flex items-center gap-2 text-xs mt-0.5">
+                            <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                              {booking.date}
+                            </span>
+                            <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>•</span>
+                            <span className={`${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{booking.time}</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
+                            booking.status === "confirmed" 
+                              ? "bg-green-500/10 text-green-500" 
+                              : "bg-yellow-500/10 text-yellow-500"
+                          }`}>
+                            {booking.status}
+                          </span>
+                          <p className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{booking.type}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-              </div>
-            ))}
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Recent Activity */}
-        <div className={`rounded-lg p-4 border ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
-          <div className="flex items-center gap-2 mb-3">
-            <Activity className={`w-4 h-4 text-[#FF5A22]`} />
-            <h2 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>Recent Activity</h2>
+        <div className={`rounded-lg border overflow-hidden ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
+          <div className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Activity className={`w-4 h-4 text-[#FF5A22]`} />
+                <h2 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>Recent Activity</h2>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/admin"
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                    isDarkMode 
+                      ? "bg-[#FF5A22]/10 text-[#FF5A22] hover:bg-[#FF5A22]/20 border border-[#FF5A22]/30" 
+                      : "bg-[#FF5A22]/5 text-[#FF5A22] hover:bg-[#FF5A22]/10 border border-[#FF5A22]/20"
+                  }`}
+                >
+                  View All
+                  <ExternalLink className="w-3 h-3" />
+                </Link>
+                <button
+                  onClick={() => toggleCard("activity")}
+                  className={`p-1.5 rounded-lg transition-all duration-200 ${
+                    isDarkMode ? "hover:bg-gray-800 text-gray-400 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
+                  }`}
+                  aria-label={expandedCards.activity ? "Collapse" : "Expand"}
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expandedCards.activity ? "" : "-rotate-90"}`} />
+                </button>
+              </div>
+            </div>
           </div>
           
-          <div className="space-y-2">
-            {recentActivity.map((activity) => (
-              <div
-                key={activity.id}
-                className={`p-2.5 rounded-lg border ${
-                  isDarkMode ? "border-gray-800 hover:bg-gray-800" : "border-gray-200 hover:bg-gray-50"
-                }`}
+          <AnimatePresence initial={false}>
+            {expandedCards.activity && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden"
               >
-                <p className={`text-xs font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                  {activity.title}
-                </p>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <Clock className={`w-3 h-3 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`} />
-                  <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>{activity.time}</span>
+                <div className="px-4 pb-4 space-y-2">
+                  {recentActivity.map((activity, idx) => (
+                    <motion.div
+                      key={activity.id}
+                      initial={{ x: -10, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: idx * 0.05, duration: 0.2 }}
+                      className={`p-2.5 rounded-lg border transition-colors duration-200 ${
+                        isDarkMode ? "border-gray-800 hover:bg-gray-800" : "border-gray-200 hover:bg-gray-50"
+                      }`}
+                    >
+                      <p className={`text-xs font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                        {activity.title}
+                      </p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <Clock className={`w-3 h-3 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`} />
+                        <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>{activity.time}</span>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-              </div>
-            ))}
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

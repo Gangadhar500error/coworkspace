@@ -9,6 +9,18 @@ import {
   LayoutDashboard,
   ChevronDown,
   X,
+  Users,
+  Building2,
+  Calendar,
+  FileText,
+  Mail,
+  Settings,
+  DollarSign,
+  Languages,
+  Globe,
+  MessageSquare,
+  Star,
+  Wifi,
 } from "lucide-react";
 
 interface NavItem {
@@ -24,6 +36,71 @@ const navItems: NavItem[] = [
     label: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
+  },
+  {
+    label: "Property Managers",
+    href: "/admin/property-managers",
+    icon: Users,
+  },
+  {
+    label: "Property Listings",
+    href: "/admin/property-listings",
+    icon: Building2,
+  },
+  {
+    label: "Bookings",
+    href: "/admin/bookings",
+    icon: Calendar,
+    children: [
+      { label: "Unpaid Invoices", href: "/admin/bookings/unpaid-invoices", icon: FileText },
+      { label: "Paid Invoices", href: "/admin/bookings/paid-invoices", icon: FileText },
+      { label: "Bookings Completed", href: "/admin/bookings/completed", icon: Calendar },
+    ],
+  },
+  {
+    label: "Messaging",
+    href: "/admin/messaging",
+    icon: MessageSquare,
+  },
+  {
+    label: "Email Templates",
+    href: "/admin/email-templates",
+    icon: Mail,
+  },
+  {
+    label: "Users",
+    href: "/admin/users",
+    icon: Users,
+  },
+  {
+    label: "Master Settings",
+    href: "/admin/master-settings",
+    icon: Settings,
+  },
+  {
+    label: "Currencies",
+    href: "/admin/currencies",
+    icon: DollarSign,
+  },
+  {
+    label: "Translations",
+    href: "/admin/translations",
+    icon: Languages,
+  },
+  {
+    label: "Languages",
+    href: "/admin/languages",
+    icon: Globe,
+  },
+  {
+    label: "Testimonials",
+    href: "/admin/testimonials",
+    icon: Star,
+  },
+  {
+    label: "Amenities",
+    href: "/admin/amenities",
+    icon: Wifi,
   },
 ];
 
@@ -209,26 +286,30 @@ export default function AdminSidebar({
         {/* Logo */}
         <div className={`flex items-center justify-between h-20 border-b ${isDarkMode ? "border-gray-800" : "border-gray-200"}`}>
           {(!isCollapsed || isMobileOpen) && (
-            <div className="flex items-center gap-2 grow">
+            <div className="flex items-center gap-2 grow px-3 justify-center">
               <Image
                 src="/assets/coworkspace.png"
                 alt="CoworkSpace logo"
-                width={32}
-                height={32}
-                className="w-full h-10 rounded-lg object-contain"
+                width={120}
+                height={56}
+                className="h-14 w-auto rounded-lg object-contain"
+                quality={100}
                 priority
+                unoptimized={false}
               />
             </div>
           )}
           {isCollapsed && !isMobileOpen && (
             <div className="mx-auto">
               <Image
-                src="/assets/logo-new.png"
+                src="/assets/coworkspace.png"
                 alt="CoworkSpace logo"
                 width={32}
                 height={32}
                 className="w-8 h-8 rounded-lg object-contain"
+                quality={100}
                 priority
+                unoptimized={false}
               />
             </div>
           )}

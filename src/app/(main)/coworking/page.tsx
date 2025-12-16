@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { allCities } from "@/data/cities";
 import { workspaces, Workspace } from "../coworking/[city]/data/workspaces";
-import HeroSection from "@/components/CoworkingPage/HeroSection";
+import HeroSection from "@/components/CoworkingPage/Coworkhero";
 import FeatureIconStrip from "@/components/CoworkingPage/FeatureIconStrip";
 import TopCoworkingSpaces from "@/components/CoworkingPage/TopCoworkingSpaces";
 import FeaturedWorkspaces from "@/components/CoworkingPage/FeaturedWorkspaces";
