@@ -17,7 +17,10 @@ import {
   LogOut,
   CalendarClock,
   ClipboardCheck,
+  Languages,
+  LayoutGrid,
 } from "lucide-react";
+import QuickPanel from "./QuickPanel";
 
 interface AdminNavbarProps {
   onMenuClick: () => void;
@@ -35,10 +38,13 @@ export default function AdminNavbar({ onMenuClick, onToggleSidebar, isSidebarCol
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [isRightPanelVisible, setIsRightPanelVisible] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("English");
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const notifRef = useRef<HTMLDivElement | null>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
+  const languageRef = useRef<HTMLDivElement | null>(null);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -49,7 +55,9 @@ export default function AdminNavbar({ onMenuClick, onToggleSidebar, isSidebarCol
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setIsProfileOpen(false);
       }
-      //
+      if (languageRef.current && !languageRef.current.contains(e.target as Node)) {
+        setIsLanguageOpen(false);
+      }
     };
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
@@ -130,6 +138,19 @@ export default function AdminNavbar({ onMenuClick, onToggleSidebar, isSidebarCol
     { id: 3, title: "System maintenance tonight", time: "1h ago", icon: Settings },
   ];
 
+  const languages = [
+    { code: "en", name: "English" },
+    { code: "hi", name: "Hindi" },
+    { code: "ur", name: "Urdu" },
+    { code: "te", name: "Telugu" },
+    { code: "ta", name: "Tamil" },
+    { code: "kn", name: "Kannada" },
+    { code: "ml", name: "Malayalam" },
+    { code: "mr", name: "Marathi" },
+    { code: "gu", name: "Gujarati" },
+    { code: "bn", name: "Bengali" },
+  ];
+
   return (
     <nav className={`relative h-16 flex items-center justify-between px-4 shadow-sm transition-colors duration-300 ${isDarkMode ? "bg-gray-900 border-b border-gray-800" : "bg-white border-b border-gray-200"}`}>
       {/* Left: sidebar toggle + search */}
@@ -205,6 +226,48 @@ export default function AdminNavbar({ onMenuClick, onToggleSidebar, isSidebarCol
             <Maximize2 className={`w-5 h-5 ${isDarkMode ? "text-white" : "text-gray-700"}`} />
           )}
         </button>
+        {/* Language selector */}
+        <div className="relative" ref={languageRef}>
+          <button
+            onClick={() => setIsLanguageOpen((v) => !v)}
+            className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-100"}`}
+            aria-label="Select language"
+            title="Language"
+          >
+            <Languages className={`w-5 h-5 ${isDarkMode ? "text-white" : "text-gray-700"}`} />
+          </button>
+          {isLanguageOpen && (
+            <div className={`absolute right-0 mt-2 w-48 rounded-xl shadow-xl overflow-hidden animate-[fadeIn_.2s_ease-out_forwards] border z-50 ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
+              <div className={`px-4 py-3 border-b font-semibold ${isDarkMode ? "border-gray-800 text-white" : "border-gray-200 text-gray-900"}`}>Select Language</div>
+              <ul className={`max-h-80 overflow-auto divide-y ${isDarkMode ? "divide-gray-800" : "divide-gray-100"}`}>
+                {languages.map((lang) => (
+                  <li key={lang.code}>
+                    <button
+                      onClick={() => {
+                        setSelectedLanguage(lang.name);
+                        setIsLanguageOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
+                        selectedLanguage === lang.name
+                          ? isDarkMode
+                            ? "bg-gray-800 text-white"
+                            : "bg-gray-100 text-gray-900"
+                          : isDarkMode
+                          ? "hover:bg-gray-800 text-white"
+                          : "hover:bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      <span>{lang.name}</span>
+                      {selectedLanguage === lang.name && (
+                        <span className={`text-xs ${isDarkMode ? "text-[#FF5A22]" : "text-[#FF5A22]"}`}>✓</span>
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
         {/* Notifications */}
         <div className="relative" ref={notifRef}>
           <button
@@ -216,7 +279,7 @@ export default function AdminNavbar({ onMenuClick, onToggleSidebar, isSidebarCol
             <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#FF5A22] text-white text-[10px] rounded-full flex items-center justify-center">{notifications.length}</span>
           </button>
           {isNotifOpen && (
-            <div className={`sm:absolute sm:right-0 sm:-translate-x-full sm:top-full sm:mt-2 sm:w-80 fixed left-2 right-2 top-16 w-auto rounded-xl shadow-xl overflow-hidden animate-[fadeIn_.2s_ease-out_forwards] z-100 border ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
+            <div className={`sm:absolute sm:right-0 sm:-translate-x-full sm:top-full sm:mt-2 sm:w-80 fixed left-2 right-2 top-16 w-auto rounded-xl shadow-xl overflow-hidden animate-[fadeIn_.2s_ease-out_forwards] z-50 border ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
               <div className={`px-4 py-3 border-b font-semibold ${isDarkMode ? "border-gray-800 text-white" : "border-gray-200 text-gray-900"}`}>Notifications</div>
               <ul className={`max-h-[70vh] overflow-auto divide-y ${isDarkMode ? "divide-gray-800" : "divide-gray-100"}`}>
                 {notifications.map((n) => {
@@ -245,8 +308,9 @@ export default function AdminNavbar({ onMenuClick, onToggleSidebar, isSidebarCol
           }}
           className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-100"}`}
           aria-label="Open right panel"
+          title="Quick Panel"
         >
-          <Menu className={`w-5 h-5 ${isDarkMode ? "text-white" : "text-gray-700"}`} />
+          <LayoutGrid className={`w-5 h-5 ${isDarkMode ? "text-white" : "text-gray-700"}`} />
         </button>
 
         {/* Profile */}
@@ -260,7 +324,7 @@ export default function AdminNavbar({ onMenuClick, onToggleSidebar, isSidebarCol
             <span className={`hidden sm:block text-sm font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>Admin</span>
           </button>
           {isProfileOpen && (
-            <div className={`absolute right-0 mt-2 w-48 rounded-xl shadow-xl overflow-hidden animate-[fadeIn_.2s_ease-out_forwards] border ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
+            <div className={`absolute right-0 mt-2 w-48 rounded-xl shadow-xl overflow-hidden animate-[fadeIn_.2s_ease-out_forwards] border z-50 ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
               <button className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm ${isDarkMode ? "hover:bg-gray-800 text-white" : "hover:bg-gray-50 text-gray-700"}`}>
                 <User className="w-4 h-4" /> Profile
               </button>
@@ -277,101 +341,81 @@ export default function AdminNavbar({ onMenuClick, onToggleSidebar, isSidebarCol
 
       {/* Search modal - small screens only */}
       {isSearchModalOpen && (
-        <>
+        <div className="sm:hidden fixed inset-0 z-[100]">
+          {/* Backdrop */}
           <div
-            className="sm:hidden fixed inset-0 z-100 bg-black/50 opacity-100 animate-[fadeIn_.2s_ease-out_forwards]"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-200"
             onClick={() => setIsSearchModalOpen(false)}
             aria-hidden="true"
           />
-          <div className="sm:hidden fixed inset-0 z-100 flex items-start justify-center pt-20 px-3">
-            <div className={`w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-[modalIn_.2s_ease-out_forwards] translate-y-4 opacity-0 border ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
-              <div className={`relative p-3 border-b ${isDarkMode ? "border-gray-800" : "border-gray-200"}`}>
-                {/* subtle loading bar for smooth loading feel */}
-                <div className="absolute left-0 top-0 h-0.5 w-full overflow-hidden">
-                  <div className="h-full w-1/3 bg-[#FF5A22] animate-[pulse_1.2s_ease-in-out_infinite] rounded-r" />
-                </div>
-                <div className={`flex items-center gap-2 rounded-xl px-3 py-2 border ${isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"}`}>
-                  <Search className={`w-4 h-4 ${isDarkMode ? "text-white" : "text-gray-500"}`} />
+          {/* Modal Content */}
+          <div className="fixed inset-0 flex items-start justify-center pt-16 px-4 z-[101]">
+            <div className={`w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border transform transition-all duration-200 ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
+              <div className={`relative p-4 border-b ${isDarkMode ? "border-gray-800" : "border-gray-200"}`}>
+                {/* Search Input */}
+                <div className={`flex items-center gap-2 rounded-xl px-3 py-2.5 border ${isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"}`}>
+                  <Search className={`w-5 h-5 shrink-0 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
                   <input
                     ref={searchInputRef}
                     type="text"
                     placeholder="Search modules, appointments, tasks..."
-                    className={`flex-1 h-8 bg-transparent outline-none text-sm ${isDarkMode ? "text-white placeholder-gray-400" : "text-gray-900 placeholder-gray-400"}`}
+                    className={`flex-1 h-9 bg-transparent outline-none text-sm ${isDarkMode ? "text-white placeholder-gray-400" : "text-gray-900 placeholder-gray-400"}`}
                     onKeyDown={(e) => {
                       if (e.key === "Escape") setIsSearchModalOpen(false);
                     }}
                   />
-                </div>
-                <div className="mt-2 flex justify-end">
                   <button
                     onClick={() => setIsSearchModalOpen(false)}
-                    className={`text-sm px-3 py-1.5 rounded-md ${isDarkMode ? "text-white hover:bg-gray-800" : "text-gray-600 hover:bg-gray-100"}`}
+                    className={`p-1.5 rounded-md transition-colors ${isDarkMode ? "hover:bg-gray-700 text-gray-400" : "hover:bg-gray-200 text-gray-500"}`}
+                    aria-label="Close search"
                   >
-                    Cancel
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               </div>
               {/* Mobile suggestions */}
-              <div className="p-2">
-                <p className={`text-[11px] uppercase tracking-wide mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>Suggestions</p>
-                <ul className={`max-h-80 overflow-auto divide-y ${isDarkMode ? "divide-gray-800" : "divide-gray-100"}`}>
-                  <li className={`py-2 text-sm px-2 rounded-md cursor-pointer ${isDarkMode ? "text-white hover:bg-gray-800" : "text-gray-700 hover:bg-gray-50"}`}>View all appointments</li>
-                  <li className={`py-2 text-sm px-2 rounded-md cursor-pointer ${isDarkMode ? "text-white hover:bg-gray-800" : "text-gray-700 hover:bg-gray-50"}`}>Create new task</li>
-                  <li className={`py-2 text-sm px-2 rounded-md cursor-pointer ${isDarkMode ? "text-white hover:bg-gray-800" : "text-gray-700 hover:bg-gray-50"}`}>Open communications</li>
-                  <li className={`py-2 text-sm px-2 rounded-md cursor-pointer ${isDarkMode ? "text-white hover:bg-gray-800" : "text-gray-700 hover:bg-gray-50"}`}>Go to colleges</li>
+              <div className="p-4 max-h-[60vh] overflow-y-auto">
+                <p className={`text-xs uppercase tracking-wide mb-3 font-medium ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>Quick Actions</p>
+                <ul className={`space-y-1 ${isDarkMode ? "divide-gray-800" : "divide-gray-100"}`}>
+                  <li>
+                    <button className={`w-full text-left py-2.5 px-3 rounded-lg text-sm transition-colors ${isDarkMode ? "text-white hover:bg-gray-800" : "text-gray-700 hover:bg-gray-50"}`}>
+                      View all appointments
+                    </button>
+                  </li>
+                  <li>
+                    <button className={`w-full text-left py-2.5 px-3 rounded-lg text-sm transition-colors ${isDarkMode ? "text-white hover:bg-gray-800" : "text-gray-700 hover:bg-gray-50"}`}>
+                      Create new task
+                    </button>
+                  </li>
+                  <li>
+                    <button className={`w-full text-left py-2.5 px-3 rounded-lg text-sm transition-colors ${isDarkMode ? "text-white hover:bg-gray-800" : "text-gray-700 hover:bg-gray-50"}`}>
+                      Open communications
+                    </button>
+                  </li>
+                  <li>
+                    <button className={`w-full text-left py-2.5 px-3 rounded-lg text-sm transition-colors ${isDarkMode ? "text-white hover:bg-gray-800" : "text-gray-700 hover:bg-gray-50"}`}>
+                      Go to colleges
+                    </button>
+                  </li>
                 </ul>
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
 
       {/* Large screens: no modal/panel for search (inline input used) */}
 
       {/* Right slide-over panel */}
-      {isRightPanelOpen && (
-        <>
-          <div
-            className={`fixed inset-0 z-90 bg-black/50 transition-opacity duration-300 ${
-              isRightPanelVisible ? "opacity-100" : "opacity-0"
-            }`}
-            onClick={() => {
-              setIsRightPanelVisible(false);
-              setTimeout(() => setIsRightPanelOpen(false), 300);
-            }}
-            aria-hidden="true"
-          />
-          <aside
-            className={`fixed inset-y-0 right-0 w-full max-w-md border-l z-95 shadow-xl transform transition-transform duration-300 ease-out ${
-              isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
-            } ${
-              isRightPanelVisible ? "translate-x-0" : "translate-x-full"
-            }`}
-          >
-            <div className={`h-16 px-4 border-b flex items-center justify-between ${isDarkMode ? "border-gray-800" : "border-gray-200"}`}>
-              <h3 className={`text-base font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>Quick Panel</h3>
-              <button
-                onClick={() => {
-                  setIsRightPanelVisible(false);
-                  setTimeout(() => setIsRightPanelOpen(false), 300);
-                }}
-                className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-gray-800 text-white" : "hover:bg-gray-100"}`}
-                aria-label="Close panel"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="p-4 space-y-4">
-              <div className={`p-4 rounded-xl border ${isDarkMode ? "border-gray-800 bg-gray-800" : "border-gray-200 bg-gray-50"}`}>
-                <p className={`text-sm ${isDarkMode ? "text-white" : "text-gray-700"}`}>Appointments overview and work management widgets can go here.</p>
-              </div>
-              <div className={`p-4 rounded-xl border ${isDarkMode ? "border-gray-800 bg-gray-800" : "border-gray-200 bg-gray-50"}`}>
-                <p className={`text-sm ${isDarkMode ? "text-white" : "text-gray-700"}`}>Add shortcuts or recent activity tailored for church SaaS.</p>
-              </div>
-            </div>
-          </aside>
-        </>
-      )}
+      <QuickPanel
+        isOpen={isRightPanelOpen}
+        isVisible={isRightPanelVisible}
+        isDarkMode={isDarkMode}
+        onClose={() => {
+          setIsRightPanelVisible(false);
+          setTimeout(() => setIsRightPanelOpen(false), 300);
+        }}
+      />
     </nav>
   );
 }
