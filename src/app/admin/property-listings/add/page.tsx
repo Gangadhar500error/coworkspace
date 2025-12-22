@@ -69,9 +69,8 @@ export default function AddPropertyPage() {
     longitude: "",
     
     // Workspace Types
-    openDesks: false,
-    dedicatedDesks: false,
-    meetingConferenceRooms: false,
+    coworking: false,
+    meetingRooms: false,
     virtualOffice: false,
     privateOffice: false,
     
@@ -521,11 +520,10 @@ export default function AddPropertyPage() {
                       Workspace Types Available
                     </h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {[
-                        { key: "openDesks", label: "Open Desks", icon: Users },
-                        { key: "dedicatedDesks", label: "Dedicated Desks", icon: Briefcase },
-                        { key: "meetingConferenceRooms", label: "Meeting / Conference Rooms", icon: Building2 },
+                        { key: "coworking", label: "Coworking", icon: Users },
+                        { key: "meetingRooms", label: "Meeting Rooms", icon: Building2 },
                         { key: "virtualOffice", label: "Virtual Office", icon: PhoneCall },
                         { key: "privateOffice", label: "Private Office", icon: Home },
                       ].map(({ key, label, icon: Icon }) => (

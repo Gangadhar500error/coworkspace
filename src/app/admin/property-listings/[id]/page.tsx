@@ -356,23 +356,17 @@ export default function PropertyViewPage() {
                     <Briefcase className="w-5 h-5 text-[#FF5A22]" />
                     Workspace Types Available
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {property.workspaceTypes.openDesks && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {property.workspaceTypes.coworking && (
                       <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${isDarkMode ? "bg-gray-800 text-gray-300" : "bg-gray-50 text-gray-700"}`}>
                         <Users className="w-4 h-4" />
-                        <span className="text-sm font-medium">Open Desks</span>
+                        <span className="text-sm font-medium">Coworking</span>
                       </div>
                     )}
-                    {property.workspaceTypes.dedicatedDesks && (
-                      <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${isDarkMode ? "bg-gray-800 text-gray-300" : "bg-gray-50 text-gray-700"}`}>
-                        <Briefcase className="w-4 h-4" />
-                        <span className="text-sm font-medium">Dedicated Desks</span>
-                      </div>
-                    )}
-                    {property.workspaceTypes.meetingConferenceRooms && (
+                    {property.workspaceTypes.meetingRooms && (
                       <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${isDarkMode ? "bg-gray-800 text-gray-300" : "bg-gray-50 text-gray-700"}`}>
                         <Building2 className="w-4 h-4" />
-                        <span className="text-sm font-medium">Meeting/Conference Rooms</span>
+                        <span className="text-sm font-medium">Meeting Rooms</span>
                       </div>
                     )}
                     {property.workspaceTypes.virtualOffice && (

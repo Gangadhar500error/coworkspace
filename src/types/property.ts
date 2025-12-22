@@ -44,9 +44,8 @@ export interface Property {
   
   // Workspace Types Available
   workspaceTypes?: {
-    openDesks?: boolean;
-    dedicatedDesks?: boolean;
-    meetingConferenceRooms?: boolean;
+    coworking?: boolean;
+    meetingRooms?: boolean;
     virtualOffice?: boolean;
     privateOffice?: boolean;
   };
@@ -149,9 +148,8 @@ export interface PropertyFormData {
   longitude: string;
   
   // Workspace Types Available
-  openDesks: boolean;
-  dedicatedDesks: boolean;
-  meetingConferenceRooms: boolean;
+  coworking: boolean;
+  meetingRooms: boolean;
   virtualOffice: boolean;
   privateOffice: boolean;
   

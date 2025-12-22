@@ -72,9 +72,8 @@ export default function EditPropertyPage() {
     longitude: "",
     
     // Workspace Types
-    openDesks: false,
-    dedicatedDesks: false,
-    meetingConferenceRooms: false,
+    coworking: false,
+    meetingRooms: false,
     virtualOffice: false,
     privateOffice: false,
     
@@ -153,9 +152,8 @@ export default function EditPropertyPage() {
         address: property.address || "",
         latitude: property.latitude?.toString() || "",
         longitude: property.longitude?.toString() || "",
-        openDesks: property.workspaceTypes?.openDesks || false,
-        dedicatedDesks: property.workspaceTypes?.dedicatedDesks || false,
-        meetingConferenceRooms: property.workspaceTypes?.meetingConferenceRooms || false,
+        coworking: property.workspaceTypes?.coworking || false,
+        meetingRooms: property.workspaceTypes?.meetingRooms || false,
         virtualOffice: property.workspaceTypes?.virtualOffice || false,
         privateOffice: property.workspaceTypes?.privateOffice || false,
         numberOfPrivateOffices: property.numberOfPrivateOffices?.toString() || "",
@@ -593,11 +591,10 @@ export default function EditPropertyPage() {
                       Workspace Types Available
                     </h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {[
-                        { key: "openDesks", label: "Open Desks", icon: Users },
-                        { key: "dedicatedDesks", label: "Dedicated Desks", icon: Briefcase },
-                        { key: "meetingConferenceRooms", label: "Meeting / Conference Rooms", icon: Building2 },
+                        { key: "coworking", label: "Coworking", icon: Users },
+                        { key: "meetingRooms", label: "Meeting Rooms", icon: Building2 },
                         { key: "virtualOffice", label: "Virtual Office", icon: PhoneCall },
                         { key: "privateOffice", label: "Private Office", icon: Home },
                       ].map(({ key, label, icon: Icon }) => (
