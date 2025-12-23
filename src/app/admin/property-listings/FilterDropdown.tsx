@@ -11,14 +11,15 @@ interface FilterDropdownProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   filters: {
-    propertyType: string;
-    listingType: string;
-    status: string;
+    workspaceType: string;
+    propertyStatus: string;
+    verificationStatus: string;
   };
-  onFilterChange: (key: "propertyType" | "listingType" | "status", value: string) => void;
+  onFilterChange: (key: "workspaceType" | "propertyStatus" | "verificationStatus", value: string) => void;
   onClearFilters: () => void;
   activeFiltersCount: number;
   getStatusColor: (status: string) => string;
+  getVerificationColor: (status: string) => string;
   buttonRef: React.RefObject<HTMLButtonElement | null>;
 }
 
@@ -32,6 +33,7 @@ export default function FilterDropdown({
   onClearFilters,
   activeFiltersCount,
   getStatusColor,
+  getVerificationColor,
   buttonRef,
 }: FilterDropdownProps) {
   const { isDarkMode } = useTheme();
@@ -67,31 +69,16 @@ export default function FilterDropdown({
     };
   }, [isOpen, onClose, buttonRef]);
 
-  const getPropertyTypeColor = (type: string) => {
+  const getWorkspaceTypeColor = (type: string) => {
     switch (type) {
-      case "Residential":
+      case "Coworking":
         return "bg-blue-500/10 text-blue-500 border-blue-500/30";
-      case "Commercial":
+      case "Private Office":
         return "bg-purple-500/10 text-purple-500 border-purple-500/30";
-      case "Industrial":
+      case "Meeting Room":
+        return "bg-green-500/10 text-green-500 border-green-500/30";
+      case "Virtual Office":
         return "bg-orange-500/10 text-orange-500 border-orange-500/30";
-      case "Land":
-        return "bg-green-500/10 text-green-500 border-green-500/30";
-      case "Other":
-        return "bg-gray-500/10 text-gray-500 border-gray-500/30";
-      default:
-        return "bg-gray-500/10 text-gray-500 border-gray-500/30";
-    }
-  };
-
-  const getListingTypeColor = (type: string) => {
-    switch (type) {
-      case "Sale":
-        return "bg-green-500/10 text-green-500 border-green-500/30";
-      case "Rent":
-        return "bg-blue-500/10 text-blue-500 border-blue-500/30";
-      case "Lease":
-        return "bg-purple-500/10 text-purple-500 border-purple-500/30";
       default:
         return "bg-gray-500/10 text-gray-500 border-gray-500/30";
     }
@@ -180,7 +167,7 @@ export default function FilterDropdown({
                     />
                     <input
                       type="text"
-                      placeholder="Search by title, address, city, manager..."
+                      placeholder="Search by property name, city, area, brand..."
                       value={searchTerm}
                       onChange={(e) => onSearchChange(e.target.value)}
                       className={`w-full pl-10 pr-4 py-2.5 rounded-lg border text-sm transition-all ${
@@ -209,55 +196,55 @@ export default function FilterDropdown({
                       Active Filters ({activeFiltersCount})
                     </label>
                     <div className="flex flex-wrap items-center gap-2">
-                      {filters.propertyType && (
+                      {filters.workspaceType && (
                         <motion.span
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getPropertyTypeColor(
-                            filters.propertyType
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getWorkspaceTypeColor(
+                            filters.workspaceType
                           )}`}
                         >
-                          Type: {filters.propertyType}
+                          Type: {filters.workspaceType}
                           <button
-                            onClick={() => onFilterChange("propertyType", "")}
+                            onClick={() => onFilterChange("workspaceType", "")}
                             className="hover:opacity-70 transition-opacity"
-                            aria-label="Remove property type filter"
+                            aria-label="Remove workspace type filter"
                           >
                             <X className="w-3 h-3" />
                           </button>
                         </motion.span>
                       )}
-                      {filters.listingType && (
-                        <motion.span
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getListingTypeColor(
-                            filters.listingType
-                          )}`}
-                        >
-                          Listing: {filters.listingType}
-                          <button
-                            onClick={() => onFilterChange("listingType", "")}
-                            className="hover:opacity-70 transition-opacity"
-                            aria-label="Remove listing type filter"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </motion.span>
-                      )}
-                      {filters.status && (
+                      {filters.propertyStatus && (
                         <motion.span
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-                            filters.status
+                            filters.propertyStatus
                           )}`}
                         >
-                          Status: {filters.status}
+                          Status: {filters.propertyStatus}
                           <button
-                            onClick={() => onFilterChange("status", "")}
+                            onClick={() => onFilterChange("propertyStatus", "")}
                             className="hover:opacity-70 transition-opacity"
                             aria-label="Remove status filter"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </motion.span>
+                      )}
+                      {filters.verificationStatus && (
+                        <motion.span
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getVerificationColor(
+                            filters.verificationStatus
+                          )}`}
+                        >
+                          Verification: {filters.verificationStatus}
+                          <button
+                            onClick={() => onFilterChange("verificationStatus", "")}
+                            className="hover:opacity-70 transition-opacity"
+                            aria-label="Remove verification filter"
                           >
                             <X className="w-3 h-3" />
                           </button>
@@ -277,20 +264,20 @@ export default function FilterDropdown({
                     Filter Options
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {/* Property Type Filter */}
+                    {/* Workspace Type Filter */}
                     <div className="space-y-2">
                       <label
-                        htmlFor="dropdown-propertyType"
+                        htmlFor="dropdown-workspaceType"
                         className={`block text-xs font-medium ${
                           isDarkMode ? "text-gray-400" : "text-gray-600"
                         }`}
                       >
-                        Property Type
+                        Workspace Type
                       </label>
                       <select
-                        id="dropdown-propertyType"
-                        value={filters.propertyType}
-                        onChange={(e) => onFilterChange("propertyType", e.target.value)}
+                        id="dropdown-workspaceType"
+                        value={filters.workspaceType}
+                        onChange={(e) => onFilterChange("workspaceType", e.target.value)}
                         className={`w-full px-3 py-2 rounded-lg border text-sm transition-all ${
                           isDarkMode
                             ? "bg-gray-800 border-gray-700 text-white focus:border-[#FF5A22] focus:ring-2 focus:ring-[#FF5A22]/20"
@@ -298,55 +285,27 @@ export default function FilterDropdown({
                         }`}
                       >
                         <option value="">All Types</option>
-                        <option value="Residential">Residential</option>
-                        <option value="Commercial">Commercial</option>
-                        <option value="Industrial">Industrial</option>
-                        <option value="Land">Land</option>
-                        <option value="Other">Other</option>
+                        <option value="Coworking">Coworking</option>
+                        <option value="Private Office">Private Office</option>
+                        <option value="Meeting Room">Meeting Room</option>
+                        <option value="Virtual Office">Virtual Office</option>
                       </select>
                     </div>
 
-                    {/* Listing Type Filter */}
+                    {/* Property Status Filter */}
                     <div className="space-y-2">
                       <label
-                        htmlFor="dropdown-listingType"
+                        htmlFor="dropdown-propertyStatus"
                         className={`block text-xs font-medium ${
                           isDarkMode ? "text-gray-400" : "text-gray-600"
                         }`}
                       >
-                        Listing Type
+                        Property Status
                       </label>
                       <select
-                        id="dropdown-listingType"
-                        value={filters.listingType}
-                        onChange={(e) => onFilterChange("listingType", e.target.value)}
-                        className={`w-full px-3 py-2 rounded-lg border text-sm transition-all ${
-                          isDarkMode
-                            ? "bg-gray-800 border-gray-700 text-white focus:border-[#FF5A22] focus:ring-2 focus:ring-[#FF5A22]/20"
-                            : "bg-white border-gray-300 text-gray-900 focus:border-[#FF5A22] focus:ring-2 focus:ring-[#FF5A22]/20"
-                        }`}
-                      >
-                        <option value="">All Listings</option>
-                        <option value="Sale">Sale</option>
-                        <option value="Rent">Rent</option>
-                        <option value="Lease">Lease</option>
-                      </select>
-                    </div>
-
-                    {/* Status Filter */}
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="dropdown-status"
-                        className={`block text-xs font-medium ${
-                          isDarkMode ? "text-gray-400" : "text-gray-600"
-                        }`}
-                      >
-                        Status
-                      </label>
-                      <select
-                        id="dropdown-status"
-                        value={filters.status}
-                        onChange={(e) => onFilterChange("status", e.target.value)}
+                        id="dropdown-propertyStatus"
+                        value={filters.propertyStatus}
+                        onChange={(e) => onFilterChange("propertyStatus", e.target.value)}
                         className={`w-full px-3 py-2 rounded-lg border text-sm transition-all ${
                           isDarkMode
                             ? "bg-gray-800 border-gray-700 text-white focus:border-[#FF5A22] focus:ring-2 focus:ring-[#FF5A22]/20"
@@ -354,11 +313,35 @@ export default function FilterDropdown({
                         }`}
                       >
                         <option value="">All Status</option>
-                        <option value="Available">Available</option>
-                        <option value="Sold">Sold</option>
-                        <option value="Rented">Rented</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Off Market">Off Market</option>
+                        <option value="draft">Draft</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </select>
+                    </div>
+
+                    {/* Verification Status Filter */}
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="dropdown-verificationStatus"
+                        className={`block text-xs font-medium ${
+                          isDarkMode ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
+                        Verification Status
+                      </label>
+                      <select
+                        id="dropdown-verificationStatus"
+                        value={filters.verificationStatus}
+                        onChange={(e) => onFilterChange("verificationStatus", e.target.value)}
+                        className={`w-full px-3 py-2 rounded-lg border text-sm transition-all ${
+                          isDarkMode
+                            ? "bg-gray-800 border-gray-700 text-white focus:border-[#FF5A22] focus:ring-2 focus:ring-[#FF5A22]/20"
+                            : "bg-white border-gray-300 text-gray-900 focus:border-[#FF5A22] focus:ring-2 focus:ring-[#FF5A22]/20"
+                        }`}
+                      >
+                        <option value="">All Verification</option>
+                        <option value="approved">Approved</option>
+                        <option value="pending">Pending</option>
                       </select>
                     </div>
                   </div>
@@ -391,4 +374,3 @@ export default function FilterDropdown({
     </>
   );
 }
-

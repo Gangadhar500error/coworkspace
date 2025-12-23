@@ -14,17 +14,21 @@ import {
   Building2,
   DollarSign,
   Calendar,
-  Home,
-  User,
-  Image as ImageIcon,
   Filter,
   CheckCircle,
   XCircle,
   Clock,
+  Power,
+  PowerOff,
+  Star,
+  StarOff,
+  Phone,
+  Mail,
+  FileText,
 } from "lucide-react";
 import Image from "next/image";
-import { Property } from "@/types/property";
-import { mockProperties, filterProperties } from "@/data/properties";
+import { Property, getStartingPrice } from "@/types/property";
+import { mockProperties, filterProperties, filterByWorkspaceType, filterByStatus, filterByVerificationStatus } from "@/data/properties";
 import { Pagination } from "@/components/pagination";
 import FilterDropdown from "./FilterDropdown";
 
@@ -40,9 +44,9 @@ export default function PropertyListingsPage() {
 
   // Filter states
   const [filters, setFilters] = useState({
-    propertyType: "" as "" | "Residential" | "Commercial" | "Industrial" | "Land" | "Other",
-    listingType: "" as "" | "Sale" | "Rent" | "Lease",
-    status: "" as "" | "Available" | "Sold" | "Rented" | "Pending" | "Off Market",
+    workspaceType: "" as "" | "Coworking" | "Private Office" | "Meeting Room" | "Virtual Office",
+    propertyStatus: "" as "" | "draft" | "active" | "inactive",
+    verificationStatus: "" as "" | "approved" | "pending",
   });
 
   const toggleRow = (id: number) => {
@@ -58,18 +62,18 @@ export default function PropertyListingsPage() {
   };
 
   const handleView = (property: Property) => {
-    const slug = property.slug || property.title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
-    router.push(`/admin/property-listings/${slug}`);
+    router.push(`/admin/property-listings/${property.id}`);
   };
 
   const handleEdit = (property: Property) => {
-    const slug = property.slug || property.title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
-    router.push(`/admin/property-listings/${slug}/edit`);
+    router.push(`/admin/property-listings/${property.id}/edit`);
   };
 
-  const handleAccept = (id: number) => {
-    console.log("Accept property:", id);
-    // Implement accept functionality
+  const handleApprove = (id: number) => {
+    if (confirm("Are you sure you want to approve this property?")) {
+      console.log("Approve property:", id);
+      // Implement approve functionality
+    }
   };
 
   const handleReject = (id: number) => {
@@ -86,24 +90,39 @@ export default function PropertyListingsPage() {
     }
   };
 
+  const handleToggleStatus = (id: number, currentStatus: Property["propertyStatus"]) => {
+    const newStatus = currentStatus === "active" ? "inactive" : "active";
+    if (confirm(`Are you sure you want to ${newStatus === "active" ? "enable" : "disable"} this property?`)) {
+      console.log(`Toggle property status: ${id} -> ${newStatus}`);
+      // Implement toggle functionality
+    }
+  };
+
+  const handleToggleFeatured = (id: number, currentFeatured: Property["featuredProperty"]) => {
+    const newFeatured = currentFeatured === "yes" ? "no" : "yes";
+    console.log(`Toggle featured: ${id} -> ${newFeatured}`);
+    // Implement toggle functionality
+  };
+
   const handleAddProperty = () => {
     router.push("/admin/property-listings/add");
   };
 
   // Apply filters
   const applyFilters = (properties: Property[]) => {
-    return properties.filter((property) => {
-      if (filters.propertyType && property.propertyType !== filters.propertyType) {
-        return false;
-      }
-      if (filters.listingType && property.listingType !== filters.listingType) {
-        return false;
-      }
-      if (filters.status && property.status !== filters.status) {
-        return false;
-      }
-      return true;
-    });
+    let filtered = properties;
+    
+    if (filters.workspaceType) {
+      filtered = filterByWorkspaceType(filtered, filters.workspaceType);
+    }
+    if (filters.propertyStatus) {
+      filtered = filterByStatus(filtered, filters.propertyStatus);
+    }
+    if (filters.verificationStatus) {
+      filtered = filterByVerificationStatus(filtered, filters.verificationStatus);
+    }
+    
+    return filtered;
   };
 
   const searchedProperties = filterProperties(mockProperties, searchTerm);
@@ -132,9 +151,9 @@ export default function PropertyListingsPage() {
 
   const clearFilters = () => {
     setFilters({
-      propertyType: "",
-      listingType: "",
-      status: "",
+      workspaceType: "",
+      propertyStatus: "",
+      verificationStatus: "",
     });
   };
 
@@ -148,24 +167,31 @@ export default function PropertyListingsPage() {
     setSearchTerm(value);
   };
 
-  const getStatusColor = (status?: string) => {
+  const getStatusColor = (status: Property["propertyStatus"]) => {
     switch (status) {
-      case "Available":
+      case "active":
         return "bg-green-500/10 text-green-500 border-green-500/30";
-      case "Sold":
-        return "bg-blue-500/10 text-blue-500 border-blue-500/30";
-      case "Rented":
-        return "bg-purple-500/10 text-purple-500 border-purple-500/30";
-      case "Pending":
-        return "bg-yellow-500/10 text-yellow-500 border-yellow-500/30";
-      case "Off Market":
+      case "inactive":
         return "bg-gray-500/10 text-gray-500 border-gray-500/30";
+      case "draft":
+        return "bg-yellow-500/10 text-yellow-500 border-yellow-500/30";
       default:
         return "bg-gray-500/10 text-gray-500 border-gray-500/30";
     }
   };
 
-  const formatPrice = (price: number, currency: string) => {
+  const getVerificationColor = (status: Property["verificationStatus"]) => {
+    switch (status) {
+      case "approved":
+        return "bg-green-500/10 text-green-500 border-green-500/30";
+      case "pending":
+        return "bg-yellow-500/10 text-yellow-500 border-yellow-500/30";
+      default:
+        return "bg-gray-500/10 text-gray-500 border-gray-500/30";
+    }
+  };
+
+  const formatPrice = (price: number, currency: string = "USD") => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: currency,
@@ -246,10 +272,11 @@ export default function PropertyListingsPage() {
                 searchTerm={searchTerm}
                 onSearchChange={handleSearchChange}
                 filters={filters}
-                onFilterChange={handleFilterChange}
+                onFilterChange={handleFilterChange as any}
                 onClearFilters={clearFilters}
                 activeFiltersCount={activeFiltersCount}
-                getStatusColor={getStatusColor}
+                getStatusColor={getStatusColor as any}
+                getVerificationColor={getVerificationColor as any}
                 buttonRef={filterButtonRef}
               />
             </div>
@@ -277,22 +304,22 @@ export default function PropertyListingsPage() {
           <table className="w-full">
             <thead className={isDarkMode ? "bg-gray-800" : "bg-gray-50"}>
               <tr>
-                <th className={`px-3 md:px-4 lg:px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider w-12 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                <th className={`px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider w-16 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                   S.No
                 </th>
-                <th className={`px-3 md:px-4 lg:px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  Property Details
+                <th className={`px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  Property
                 </th>
-                <th className={`hidden lg:table-cell px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  Type
+                <th className={`px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  Workspace Type
                 </th>
-                <th className={`hidden md:table-cell px-4 lg:px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  Updated
+                <th className={`px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  City
                 </th>
-                <th className={`hidden md:table-cell px-4 lg:px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                <th className={`px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                   Actions
                 </th>
-                <th className={`px-3 md:px-4 lg:px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                <th className={`px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider w-12 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                   {/* Expand column */}
                 </th>
               </tr>
@@ -300,7 +327,8 @@ export default function PropertyListingsPage() {
             <tbody className={`divide-y ${isDarkMode ? "divide-gray-800" : "divide-gray-200"}`}>
               {paginatedProperties.map((property, idx) => {
                 const isExpanded = expandedRows.has(property.id);
-                const serialNumber = startIndex + idx + 1;
+                const startingPrice = getStartingPrice(property);
+                const serialNumber = (currentPage - 1) * itemsPerPage + idx + 1;
                 return (
                   <Fragment key={property.id}>
                     <motion.tr
@@ -310,120 +338,92 @@ export default function PropertyListingsPage() {
                       className={`transition-colors ${isDarkMode ? "hover:bg-gray-800/50" : "hover:bg-gray-50"}`}
                     >
                       {/* S.No */}
-                      <td className={`px-3 md:px-4 lg:px-6 py-4 text-center ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      <td className={`px-4 py-4 text-center ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                         <span className="text-sm font-medium">{serialNumber}</span>
                       </td>
 
-                      {/* Property Details - Left Side */}
-                      <td className={`px-3 md:px-4 lg:px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                        <div className="flex items-start gap-3 md:gap-4">
-                          {/* Image */}
-                          <div className={`w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden shrink-0 ${isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-gray-100 border border-gray-200"}`}>
-                            {property.images && property.images.length > 0 ? (
+                      {/* Property Image & Name */}
+                      <td className={`px-4 py-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                        <div className="flex items-start gap-3">
+                          {/* Property Image */}
+                          {property.coverImage ? (
+                            <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0 border-2 border-gray-200 dark:border-gray-700">
                               <Image
-                                src={property.images[0]}
-                                alt={property.title}
-                                width={80}
-                                height={80}
-                                className="w-full h-full object-cover"
+                                src={property.coverImage}
+                                alt={property.propertyName}
+                                fill
+                                className="object-cover"
                                 unoptimized
                               />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center">
-                                <Home className={`w-8 h-8 ${isDarkMode ? "text-gray-600" : "text-gray-400"}`} />
-                              </div>
-                            )}
-                          </div>
-                          
-                          {/* Property Info */}
-                          <div className="min-w-0 flex-1">
-                            <div className="font-semibold text-sm md:text-base truncate mb-1">{property.title}</div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <MapPin className={`w-3.5 h-3.5 shrink-0 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
-                              <span className={`text-xs md:text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                {property.city}, {property.state}
-                              </span>
                             </div>
-                            
-                            {/* Accept/Reject Buttons */}
-                            <div className="flex items-center gap-2 mt-2">
-                              <button
-                                onClick={() => handleAccept(property.id)}
-                                className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
-                                  isDarkMode
-                                    ? "bg-green-500/10 text-green-400 hover:bg-green-500/20 border border-green-500/30"
-                                    : "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200"
-                                }`}
-                                title="Accept"
-                              >
-                                <CheckCircle className="w-3.5 h-3.5" />
-                                Accept
-                              </button>
-                              <button
-                                onClick={() => handleReject(property.id)}
-                                className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
-                                  isDarkMode
-                                    ? "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30"
-                                    : "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
-                                }`}
-                                title="Reject"
-                              >
-                                <XCircle className="w-3.5 h-3.5" />
-                                Reject
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Type - Right Side */}
-                      <td className={`hidden lg:table-cell px-6 py-4 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Building2 className={`w-4 h-4 shrink-0 text-blue-500`} />
-                            <span className="text-sm font-medium">{property.propertyType}</span>
-                          </div>
-                          {property.bedrooms !== null && property.bedrooms !== undefined && (
-                            <div className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-600"}`}>
-                              {property.bedrooms} Bed • {property.bathrooms} Bath
+                          ) : (
+                            <div className={`w-16 h-16 rounded-lg shrink-0 border-2 flex items-center justify-center ${
+                              isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-100 border-gray-300"
+                            }`}>
+                              <Building2 className={`w-6 h-6 ${isDarkMode ? "text-gray-600" : "text-gray-400"}`} />
                             </div>
                           )}
-                          <div className={`text-sm font-semibold mt-1 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                            {property.listingType === "Sale" 
-                              ? formatPrice(property.price, property.currency)
-                              : property.monthlyRent 
-                              ? formatPrice(property.monthlyRent, property.currency) + "/mo"
-                              : formatPrice(property.price, property.currency)
-                            }
-                          </div>
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border mt-1 ${getStatusColor(property.status)}`}>
-                            {property.status || "N/A"}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* Updated Time */}
-                      <td className={`hidden md:table-cell px-4 lg:px-6 py-4 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                        <div className="flex items-center gap-2">
-                          <Clock className={`w-4 h-4 shrink-0 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
-                          <div>
-                            <div className="text-sm font-medium">{formatDate(property.listingDate)}</div>
-                            {property.listingDate && (
-                              <div className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
-                                {new Date(property.listingDate).toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                })}
+                          {/* Property Name & Brand */}
+                          <div className="min-w-0 flex-1">
+                            <div className="font-semibold text-sm md:text-base truncate">{property.propertyName}</div>
+                            {property.brandOperatorName && (
+                              <div className={`text-xs mt-0.5 truncate ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                {property.brandOperatorName}
+                              </div>
+                            )}
+                            {/* Accept/Reject buttons below property name */}
+                            {property.verificationStatus === "pending" && (
+                              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                                <button
+                                  onClick={() => handleApprove(property.id)}
+                                  className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-all ${
+                                    isDarkMode
+                                      ? "bg-green-500/10 text-green-400 hover:bg-green-500/20 border border-green-500/30"
+                                      : "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200"
+                                  }`}
+                                  title="Approve"
+                                >
+                                  <CheckCircle className="w-3 h-3" />
+                                  Approve
+                                </button>
+                                <button
+                                  onClick={() => handleReject(property.id)}
+                                  className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-all ${
+                                    isDarkMode
+                                      ? "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30"
+                                      : "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                                  }`}
+                                  title="Reject"
+                                >
+                                  <XCircle className="w-3 h-3" />
+                                  Reject
+                                </button>
                               </div>
                             )}
                           </div>
                         </div>
                       </td>
 
-                      {/* Actions - Right Side */}
-                      <td className={`hidden md:table-cell px-4 lg:px-6 py-4`}>
-                        <div className="flex items-center justify-center gap-1 flex-wrap">
+                      {/* Workspace Type */}
+                      <td className={`px-4 py-4 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                          isDarkMode ? "bg-blue-500/10 text-blue-400 border border-blue-500/30" : "bg-blue-50 text-blue-600 border border-blue-200"
+                        }`}>
+                          {property.workspaceType}
+                        </span>
+                      </td>
+
+                      {/* City */}
+                      <td className={`px-4 py-4 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                        <div className="flex items-center gap-2">
+                          <MapPin className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
+                          <span className="text-sm font-medium">{property.city}</span>
+                        </div>
+                      </td>
+
+                      {/* Actions */}
+                      <td className={`px-4 py-4`}>
+                        <div className="flex items-center justify-center gap-1">
                           <button
                             onClick={() => handleView(property)}
                             className={`p-1.5 rounded-lg transition-all ${
@@ -460,30 +460,24 @@ export default function PropertyListingsPage() {
                         </div>
                       </td>
 
-                      {/* Expand Button - Always visible */}
-                      <td className={`px-3 md:px-4 lg:px-6 py-4 text-center`}>
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            onClick={() => toggleRow(property.id)}
-                            className={`p-1.5 md:p-2 rounded-lg transition-all ${
-                              isDarkMode
-                                ? "hover:bg-gray-800 text-gray-400 hover:text-white"
-                                : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
-                            }`}
-                            aria-label={isExpanded ? "Collapse" : "Expand"}
+                      {/* Expand Button */}
+                      <td className={`px-4 py-4 text-center`}>
+                        <button
+                          onClick={() => toggleRow(property.id)}
+                          className={`p-1.5 md:p-2 rounded-lg transition-all ${
+                            isDarkMode
+                              ? "hover:bg-gray-800 text-gray-400 hover:text-white"
+                              : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
+                          }`}
+                          aria-label={isExpanded ? "Collapse" : "Expand"}
+                        >
+                          <motion.div
+                            animate={{ rotate: isExpanded ? 180 : 0 }}
+                            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                           >
-                            <span className="md:hidden text-xs font-semibold">
-                              #{serialNumber}
-                            </span>
-                            <motion.div
-                              animate={{ rotate: isExpanded ? 180 : 0 }}
-                              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                              className="hidden md:block"
-                            >
-                              <ChevronDown className="w-4 h-4 md:w-5 md:h-5" />
-                            </motion.div>
-                          </button>
-                        </div>
+                            <ChevronDown className="w-4 h-4 md:w-5 md:h-5" />
+                          </motion.div>
+                        </button>
                       </td>
                     </motion.tr>
 
@@ -501,152 +495,194 @@ export default function PropertyListingsPage() {
                             opacity: { duration: 0.3 }
                           }}
                         >
-                          <td colSpan={6} className={`px-3 md:px-4 lg:px-6 py-4 ${isDarkMode ? "bg-gray-800/50" : "bg-gray-50"}`}>
+                          <td colSpan={6} className={`px-4 py-6 ${isDarkMode ? "bg-gray-800/50" : "bg-gray-50"}`}>
                             <motion.div
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               transition={{ delay: 0.1 }}
-                              className="space-y-4"
+                              className="space-y-6"
                             >
-                              {/* Mobile Actions */}
-                              <div className="md:hidden space-y-3 pb-3 border-b border-gray-200 dark:border-gray-800">
-                                {/* Accept/Reject Buttons */}
-                                <div className="flex items-center justify-center gap-2">
-                                  <button
-                                    onClick={() => handleAccept(property.id)}
-                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                                      isDarkMode
-                                        ? "bg-green-500/10 text-green-400 hover:bg-green-500/20 border border-green-500/30"
-                                        : "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200"
-                                    }`}
-                                  >
-                                    <CheckCircle className="w-3 h-3" />
-                                    Accept
-                                  </button>
-                                  <button
-                                    onClick={() => handleReject(property.id)}
-                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                                      isDarkMode
-                                        ? "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30"
-                                        : "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
-                                    }`}
-                                  >
-                                    <XCircle className="w-3 h-3" />
-                                    Reject
-                                  </button>
+                              {/* Status & Verification Badges */}
+                              <div className="flex flex-wrap items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-800">
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-xs font-semibold uppercase tracking-wide ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                    Status:
+                                  </span>
+                                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(property.propertyStatus)}`}>
+                                    {property.propertyStatus.charAt(0).toUpperCase() + property.propertyStatus.slice(1)}
+                                  </span>
                                 </div>
-                                
-                                {/* Action Buttons */}
-                                <div className="flex items-center justify-center gap-2">
-                                  <button
-                                    onClick={() => handleView(property)}
-                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                                      isDarkMode
-                                        ? "bg-blue-500/10 text-blue-400 hover:bg-blue-500/20"
-                                        : "bg-blue-50 text-blue-600 hover:bg-blue-100"
-                                    }`}
-                                  >
-                                    <Eye className="w-3 h-3" />
-                                    View
-                                  </button>
-                                  <button
-                                    onClick={() => handleEdit(property)}
-                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                                      isDarkMode
-                                        ? "bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20"
-                                        : "bg-yellow-50 text-yellow-600 hover:bg-yellow-100"
-                                    }`}
-                                  >
-                                    <Edit className="w-3 h-3" />
-                                    Edit
-                                  </button>
-                                  <button
-                                    onClick={() => handleDelete(property.id)}
-                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                                      isDarkMode
-                                        ? "bg-red-500/10 text-red-400 hover:bg-red-500/20"
-                                        : "bg-red-50 text-red-600 hover:bg-red-100"
-                                    }`}
-                                  >
-                                    <Trash2 className="w-3 h-3" />
-                                    Delete
-                                  </button>
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-xs font-semibold uppercase tracking-wide ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                    Verification:
+                                  </span>
+                                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getVerificationColor(property.verificationStatus)}`}>
+                                    {property.verificationStatus === "approved" ? "✓ Approved" : "Pending"}
+                                  </span>
                                 </div>
+                                {property.featuredProperty === "yes" && (
+                                  <div className="flex items-center gap-2">
+                                    <span className={`text-xs font-semibold uppercase tracking-wide ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                      Featured:
+                                    </span>
+                                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+                                      isDarkMode ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30" : "bg-yellow-50 text-yellow-600 border border-yellow-200"
+                                    }`}>
+                                      <Star className="w-3 h-3" />
+                                      Yes
+                                    </span>
+                                  </div>
+                                )}
                               </div>
 
                               {/* Details Grid */}
-                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                {/* Location */}
-                                <div className="space-y-1">
-                                  <div className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-wide ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                    <MapPin className="w-3 h-3" />
-                                    Location
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {/* Location Details */}
+                                <div className={`p-4 rounded-lg border ${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
+                                  <div className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-wide mb-3 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                    <MapPin className="w-4 h-4" />
+                                    Location Details
                                   </div>
-                                  <div className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                    <div>{property.address}</div>
-                                    <div>{property.city}, {property.state} {property.zipCode}</div>
+                                  <div className={`text-sm space-y-1 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                    <div className="font-medium">{property.fullAddress}</div>
+                                    <div>{property.areaLocality}</div>
+                                    <div>{property.city}, {property.state}</div>
+                                    {property.pincode && <div>Pincode: {property.pincode}</div>}
+                                    <div className="text-xs mt-2">{property.country}</div>
                                   </div>
                                 </div>
 
-                                {/* Property Details */}
-                                {(property.bedrooms !== null && property.bedrooms !== undefined) && (
-                                  <div className="space-y-1">
-                                    <div className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-wide ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                      <Home className="w-3 h-3" />
-                                      Details
+                                {/* Contact Details */}
+                                <div className={`p-4 rounded-lg border ${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
+                                  <div className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-wide mb-3 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                    <Building2 className="w-4 h-4" />
+                                    Contact Details
+                                  </div>
+                                  <div className={`text-sm space-y-1 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                    <div className="font-medium">{property.contactPersonName}</div>
+                                    <div className="flex items-center gap-1.5">
+                                      <Phone className="w-3.5 h-3.5" />
+                                      <span>{property.phoneNumber}</span>
                                     </div>
-                                    <div className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                      {property.bedrooms} Bed • {property.bathrooms} Bath
-                                      {property.squareFeet && <div>{property.squareFeet.toLocaleString()} sq ft</div>}
-                                      {property.yearBuilt && <div>Built: {property.yearBuilt}</div>}
+                                    <div className="flex items-center gap-1.5">
+                                      <Mail className="w-3.5 h-3.5" />
+                                      <span className="break-all">{property.emailId}</span>
                                     </div>
                                   </div>
-                                )}
+                                </div>
 
-                                {/* Property Manager */}
-                                {property.propertyManagerName && (
-                                  <div className="space-y-1">
-                                    <div className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-wide ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                      <User className="w-3 h-3" />
-                                      Manager
-                                    </div>
-                                    <div className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                      {property.propertyManagerName}
-                                    </div>
+                                {/* Pricing & Info */}
+                                <div className={`p-4 rounded-lg border ${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
+                                  <div className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-wide mb-3 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                    <DollarSign className="w-4 h-4" />
+                                    Pricing & Info
                                   </div>
-                                )}
-
-                                {/* Listing Info */}
-                                <div className="space-y-1">
-                                  <div className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-wide ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                    <Calendar className="w-3 h-3" />
-                                    Listing Info
-                                  </div>
-                                  <div className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                    {property.listingDate && (
-                                      <div>Listed: {formatDate(property.listingDate)}</div>
-                                    )}
-                                    {property.availableDate && (
-                                      <div>Available: {formatDate(property.availableDate)}</div>
-                                    )}
-                                    {property.mlsNumber && (
-                                      <div>MLS: {property.mlsNumber}</div>
-                                    )}
+                                  <div className={`text-sm space-y-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                    <div>
+                                      <div className={`text-xs mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Starting Price</div>
+                                      <div className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                                        {startingPrice > 0 ? formatPrice(startingPrice) : "N/A"}
+                                      </div>
+                                    </div>
+                                    <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                                      <div className={`text-xs mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Created Date</div>
+                                      <div className="flex items-center gap-1.5">
+                                        <Clock className="w-3.5 h-3.5" />
+                                        <span>{formatDate(property.createdAt)}</span>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
 
                               {/* Description */}
-                              {property.description && (
-                                <div className="space-y-1 pt-2 border-t border-gray-200 dark:border-gray-800">
-                                  <div className={`text-xs font-semibold uppercase tracking-wide ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              {property.shortDescription && (
+                                <div className={`p-4 rounded-lg border ${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
+                                  <div className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-wide mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                    <FileText className="w-4 h-4" />
                                     Description
                                   </div>
                                   <div className={`text-sm leading-relaxed ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                    {property.description}
+                                    {property.shortDescription}
                                   </div>
                                 </div>
                               )}
+
+                              {/* Additional Actions */}
+                              <div className="flex items-center justify-center gap-2 pt-4 border-t border-gray-200 dark:border-gray-800">
+                                <button
+                                  onClick={() => handleView(property)}
+                                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                    isDarkMode
+                                      ? "bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/30"
+                                      : "bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200"
+                                  }`}
+                                >
+                                  <Eye className="w-4 h-4" />
+                                  View Details
+                                </button>
+                                <button
+                                  onClick={() => handleEdit(property)}
+                                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                    isDarkMode
+                                      ? "bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 border border-yellow-500/30"
+                                      : "bg-yellow-50 text-yellow-600 hover:bg-yellow-100 border border-yellow-200"
+                                  }`}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                  Edit Property
+                                </button>
+                                <button
+                                  onClick={() => handleToggleStatus(property.id, property.propertyStatus)}
+                                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                    property.propertyStatus === "active"
+                                      ? isDarkMode
+                                        ? "bg-green-500/10 text-green-400 hover:bg-green-500/20 border border-green-500/30"
+                                        : "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200"
+                                      : isDarkMode
+                                      ? "bg-gray-500/10 text-gray-400 hover:bg-gray-500/20 border border-gray-500/30"
+                                      : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200"
+                                  }`}
+                                >
+                                  {property.propertyStatus === "active" ? (
+                                    <>
+                                      <PowerOff className="w-4 h-4" />
+                                      Disable
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Power className="w-4 h-4" />
+                                      Enable
+                                    </>
+                                  )}
+                                </button>
+                                <button
+                                  onClick={() => handleToggleFeatured(property.id, property.featuredProperty)}
+                                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                    property.featuredProperty === "yes"
+                                      ? isDarkMode
+                                        ? "bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 border border-yellow-500/30"
+                                        : "bg-yellow-50 text-yellow-600 hover:bg-yellow-100 border border-yellow-200"
+                                      : isDarkMode
+                                      ? "bg-gray-500/10 text-gray-400 hover:bg-gray-500/20 border border-gray-500/30"
+                                      : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200"
+                                  }`}
+                                >
+                                  <Star className={`w-4 h-4 ${property.featuredProperty === "yes" ? "fill-current" : ""}`} />
+                                  {property.featuredProperty === "yes" ? "Remove Featured" : "Mark Featured"}
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(property.id)}
+                                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                    isDarkMode
+                                      ? "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30"
+                                      : "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                                  }`}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                  Delete
+                                </button>
+                              </div>
                             </motion.div>
                           </td>
                         </motion.tr>

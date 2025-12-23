@@ -1,245 +1,249 @@
 /**
  * Property Type Definitions
- * This file contains TypeScript interfaces for Property data structure
- * Used across the application for type safety
+ * Updated structure for workspace property management
  */
 
-export interface ConferenceRoom {
-  name: string;
-  availableSeats: number;
-  pricePerHour: number;
-  pricePerDay: number;
+export type WorkspaceType = "Coworking" | "Private Office" | "Meeting Room" | "Virtual Office";
+export type PropertyStatus = "draft" | "active" | "inactive";
+export type VerificationStatus = "approved" | "pending";
+export type YesNo = "yes" | "no";
+
+// Coworking Space Specific Fields
+export interface CoworkingSpaceFields {
+  totalSeats: number;
+  hotDesksCount: number;
+  dedicatedDesksCount: number;
+  dailyPrice: number;
+  weeklyPrice: number;
+  monthlyPrice: number;
+  minimumBookingDuration: string; // e.g., "1 day", "1 week", "1 month"
 }
 
-export interface OpenHours {
-  monday?: { from: string; to: string };
-  tuesday?: { from: string; to: string };
-  wednesday?: { from: string; to: string };
-  thursday?: { from: string; to: string };
-  friday?: { from: string; to: string };
-  saturday?: { from: string; to: string };
-  sunday?: { from: string; to: string };
+// Private Office Specific Fields
+export interface PrivateOfficeFields {
+  officeSizes: string[]; // ["2 seats", "4 seats", "6 seats", "10+ seats"]
+  numberOfCabins: number;
+  monthlyRent: number;
+  securityDeposit: number;
+  furnished: YesNo;
+  privateAccess: YesNo;
 }
 
+// Meeting Room Specific Fields
+export interface MeetingRoomFields {
+  roomName: string;
+  seatingCapacity: number;
+  roomLayout: "boardroom" | "classroom" | "u-shape";
+  hourlyPrice: number;
+  halfDayPrice: number;
+  fullDayPrice: number;
+  projectorTv: YesNo;
+  whiteboard: YesNo;
+  videoConferencing: YesNo;
+}
+
+// Virtual Office Specific Fields
+export interface VirtualOfficeFields {
+  businessAddress: string;
+  city: string;
+  addressProofProvided: YesNo;
+  gstRegistrationSupport: YesNo;
+  mailHandling: YesNo;
+  monthlyPrice: number;
+  yearlyPrice: number;
+}
+
+// Common Amenities
+export interface CommonAmenities {
+  wifi: YesNo;
+  acNonAc: "ac" | "non-ac";
+  powerBackup: YesNo;
+  lift: YesNo;
+  parking: YesNo;
+  securityCctv: YesNo;
+  pantryCafeteria: YesNo;
+}
+
+// Working Days
+export interface WorkingDays {
+  monday: boolean;
+  tuesday: boolean;
+  wednesday: boolean;
+  thursday: boolean;
+  friday: boolean;
+  saturday: boolean;
+  sunday: boolean;
+}
+
+// Main Property Interface
 export interface Property {
   id: number;
-  title: string;
-  slug?: string;
-  description: string;
-  propertyType: "Residential" | "Commercial" | "Industrial" | "Land" | "Other" | "Cowork Space";
-  listingType: "Sale" | "Rent" | "Lease";
   
-  // Cowork Space Basic Details
-  area?: number; // in sq.ft.
-  isApproved?: boolean; // yes/no
+  // Section 1: Basic Property Info
+  propertyName: string;
+  workspaceType: WorkspaceType;
+  brandOperatorName: string;
+  shortDescription: string;
+  detailedDescription: string;
   
-  // Location
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
+  // Section 2: Location Details
   country: string;
+  state: string;
+  city: string;
+  areaLocality: string;
+  fullAddress: string;
+  pincode: string;
+  googleMapLink?: string;
   latitude?: number;
   longitude?: number;
   
-  // Workspace Types Available
-  workspaceTypes?: {
-    coworking?: boolean;
-    meetingRooms?: boolean;
-    virtualOffice?: boolean;
-    privateOffice?: boolean;
-  };
+  // Section 3: Media Uploads
+  coverImage?: string;
+  galleryImages: string[];
+  floorPlan?: string;
+  videoLink?: string;
   
-  // Workspace Counts
-  numberOfPrivateOffices?: number;
-  numberOfMeetingRooms?: number;
+  // Section 4: Availability & Timings
+  openingTime: string; // HH:MM format
+  closingTime: string; // HH:MM format
+  workingDays: WorkingDays;
+  available24x7: YesNo;
   
-  // Workspace Pricing & Capacity
-  conferenceRooms?: ConferenceRoom[];
+  // Section 5: Contact Details
+  contactPersonName: string;
+  phoneNumber: string;
+  emailId: string;
   
-  // Cowork Space Amenities
-  coworkAmenities?: {
-    highSpeedWifi?: boolean;
-    projectorLed?: boolean;
-    eventsWorkshops?: boolean;
-    phoneBooth?: boolean;
-    accessControl?: boolean;
-    receptionDesk?: boolean;
-    scannerPrinter?: boolean;
-    cafeKitchen?: boolean;
-    parking?: boolean;
-    securitySystem?: boolean;
-    mailService?: boolean;
-    swimming?: boolean;
-  };
+  // Section 6: Legal & Compliance
+  gstRegistered: YesNo;
+  gstNumber?: string; // Conditional - only if gstRegistered === "yes"
   
-  // Open Hours
-  openHours?: OpenHours;
+  // Section 7: Common Amenities
+  amenities: CommonAmenities;
   
-  // Contact Details
-  contactName?: string;
-  contactEmail?: string;
-  contactPhone?: string;
+  // Section 8: Type-Specific Fields (Dynamic)
+  coworkingFields?: CoworkingSpaceFields;
+  privateOfficeFields?: PrivateOfficeFields;
+  meetingRoomFields?: MeetingRoomFields;
+  virtualOfficeFields?: VirtualOfficeFields;
   
-  // Invoice Related Details
-  companyName?: string;
-  billingAddress?: string;
+  // Section 9: Admin Controls
+  propertyStatus: PropertyStatus;
+  verificationStatus: VerificationStatus;
+  featuredProperty: YesNo;
+  priorityRanking: number;
   
-  // Property Details (for non-cowork spaces)
-  bedrooms?: number;
-  bathrooms?: number;
-  squareFeet?: number;
-  lotSize?: number;
-  yearBuilt?: number;
-  floors?: number;
-  parkingSpaces?: number;
+  // Section 10: SEO
+  seoTitle?: string;
+  seoDescription?: string;
   
-  // Pricing
-  price: number;
-  currency: string;
-  pricePerSquareFoot?: number;
-  monthlyRent?: number;
-  deposit?: number;
-  
-  // Features & Amenities (legacy)
-  amenities: string[];
-  features: string[];
-  
-  // Media
-  coverImage?: string; // Single cover image
-  images: string[]; // Image gallery
-  videos?: string[];
-  virtualTour?: string;
-  
-  // Status & Management
-  status: "Available" | "Sold" | "Rented" | "Pending" | "Off Market";
-  propertyManagerId?: number;
-  propertyManagerName?: string;
-  
-  // Additional Info
-  mlsNumber?: string;
-  listingDate?: string;
-  availableDate?: string;
-  tags?: string[];
-  notes?: string;
-  
-  // SEO
-  metaTitle?: string;
-  metaDescription?: string;
+  // Metadata
+  createdAt: string; // ISO date string
+  updatedAt?: string; // ISO date string
+  slug?: string;
 }
 
+// Form Data Interface (for Add/Edit forms)
 export interface PropertyFormData {
-  title: string;
-  description: string;
-  propertyType: "Residential" | "Commercial" | "Industrial" | "Land" | "Other" | "Cowork Space";
-  listingType: "Sale" | "Rent" | "Lease";
+  // Section 1: Basic Property Info
+  propertyName: string;
+  workspaceType: WorkspaceType | "";
+  brandOperatorName: string;
+  shortDescription: string;
+  detailedDescription: string;
   
-  // Cowork Space Basic Details
-  area: string;
-  isApproved: string; // "yes" | "no"
-  
-  // Location
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
+  // Section 2: Location Details
   country: string;
+  state: string;
+  city: string;
+  areaLocality: string;
+  fullAddress: string;
+  pincode: string;
+  googleMapLink: string;
   latitude: string;
   longitude: string;
   
-  // Workspace Types Available
-  coworking: boolean;
-  meetingRooms: boolean;
-  virtualOffice: boolean;
-  privateOffice: boolean;
-  
-  // Workspace Counts
-  numberOfPrivateOffices: string;
-  numberOfMeetingRooms: string;
-  
-  // Workspace Pricing & Capacity
-  conferenceRooms: ConferenceRoom[];
-  
-  // Cowork Space Amenities
-  highSpeedWifi: boolean;
-  projectorLed: boolean;
-  eventsWorkshops: boolean;
-  phoneBooth: boolean;
-  accessControl: boolean;
-  receptionDesk: boolean;
-  scannerPrinter: boolean;
-  cafeKitchen: boolean;
-  parking: boolean;
-  securitySystem: boolean;
-  mailService: boolean;
-  swimming: boolean;
-  
-  // Open Hours
-  mondayFrom: string;
-  mondayTo: string;
-  tuesdayFrom: string;
-  tuesdayTo: string;
-  wednesdayFrom: string;
-  wednesdayTo: string;
-  thursdayFrom: string;
-  thursdayTo: string;
-  fridayFrom: string;
-  fridayTo: string;
-  saturdayFrom: string;
-  saturdayTo: string;
-  sundayFrom: string;
-  sundayTo: string;
-  
-  // Contact Details
-  contactName: string;
-  contactEmail: string;
-  contactPhone: string;
-  
-  // Invoice Related Details
-  companyName: string;
-  billingAddress: string;
-  
-  // Property Details (for non-cowork spaces)
-  bedrooms: string;
-  bathrooms: string;
-  squareFeet: string;
-  lotSize: string;
-  yearBuilt: string;
-  floors: string;
-  parkingSpaces: string;
-  
-  // Pricing
-  price: string;
-  currency: string;
-  pricePerSquareFoot: string;
-  monthlyRent: string;
-  deposit: string;
-  
-  // Features & Amenities (legacy)
-  amenities: string[];
-  features: string[];
-  
-  // Media
+  // Section 3: Media Uploads
   coverImage: File | null;
-  images: File[];
-  videos: string[];
-  virtualTour: string;
+  galleryImages: File[];
+  floorPlan: File | null;
+  videoLink: string;
   
-  // Status & Management
-  status: "Available" | "Sold" | "Rented" | "Pending" | "Off Market";
-  propertyManagerId: string;
+  // Section 4: Availability & Timings
+  openingTime: string;
+  closingTime: string;
+  workingDays: WorkingDays;
+  available24x7: YesNo;
   
-  // Additional Info
-  mlsNumber: string;
-  listingDate: string;
-  availableDate: string;
-  tags: string[];
-  notes: string;
+  // Section 5: Contact Details
+  contactPersonName: string;
+  phoneNumber: string;
+  emailId: string;
+  
+  // Section 6: Legal & Compliance
+  gstRegistered: YesNo;
+  gstNumber: string;
+  
+  // Section 7: Common Amenities
+  wifi: YesNo;
+  acNonAc: "ac" | "non-ac" | "";
+  powerBackup: YesNo;
+  lift: YesNo;
+  parking: YesNo;
+  securityCctv: YesNo;
+  pantryCafeteria: YesNo;
+  
+  // Section 8: Type-Specific Fields - Coworking
+  totalSeats: string;
+  hotDesksCount: string;
+  dedicatedDesksCount: string;
+  dailyPrice: string;
+  weeklyPrice: string;
+  monthlyPrice: string;
+  minimumBookingDuration: string;
+  
+  // Section 8: Type-Specific Fields - Private Office
+  officeSizes: string[]; // Array of selected sizes
+  numberOfCabins: string;
+  privateOfficeMonthlyRent: string;
+  securityDeposit: string;
+  furnished: YesNo;
+  privateAccess: YesNo;
+  
+  // Section 8: Type-Specific Fields - Meeting Room
+  roomName: string;
+  seatingCapacity: string;
+  roomLayout: "boardroom" | "classroom" | "u-shape" | "";
+  hourlyPrice: string;
+  halfDayPrice: string;
+  fullDayPrice: string;
+  projectorTv: YesNo;
+  whiteboard: YesNo;
+  videoConferencing: YesNo;
+  
+  // Section 8: Type-Specific Fields - Virtual Office
+  businessAddress: string;
+  virtualOfficeCity: string;
+  addressProofProvided: YesNo;
+  gstRegistrationSupport: YesNo;
+  mailHandling: YesNo;
+  virtualOfficeMonthlyPrice: string;
+  yearlyPrice: string;
+  
+  // Section 9: Admin Controls
+  propertyStatus: PropertyStatus;
+  verificationStatus: VerificationStatus;
+  featuredProperty: YesNo;
+  priorityRanking: string;
+  
+  // Section 10: SEO
+  seoTitle: string;
+  seoDescription: string;
 }
 
-// Helper function to generate slug from title
-export function generatePropertySlug(title: string): string {
-  return title
+// Helper function to generate slug from property name
+export function generatePropertySlug(propertyName: string): string {
+  return propertyName
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, '')
@@ -247,3 +251,18 @@ export function generatePropertySlug(title: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+// Helper function to get starting price based on workspace type
+export function getStartingPrice(property: Property): number {
+  switch (property.workspaceType) {
+    case "Coworking":
+      return property.coworkingFields?.dailyPrice || property.coworkingFields?.monthlyPrice || 0;
+    case "Private Office":
+      return property.privateOfficeFields?.monthlyRent || 0;
+    case "Meeting Room":
+      return property.meetingRoomFields?.hourlyPrice || 0;
+    case "Virtual Office":
+      return property.virtualOfficeFields?.monthlyPrice || 0;
+    default:
+      return 0;
+  }
+}
