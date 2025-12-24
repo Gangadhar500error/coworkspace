@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { PropertyManager } from "@/types/property-manager";
-import { mockPropertyManagers, getPropertyManagerBySlug } from "@/data/property-managers";
+import { mockPropertyManagers, getPropertyManagerBySlug, getTotalEarningsForManager } from "@/data/property-managers";
 
 export default function EditPropertyManagerPage() {
   const { isDarkMode } = useTheme();
@@ -522,6 +522,36 @@ export default function EditPropertyManagerPage() {
                     <option value="AUD">AUD - Australian Dollar</option>
                   </select>
                 </div>
+
+                {/* Total Earnings (Read-only) */}
+                {formData.name && (
+                  <div className="space-y-2">
+                    <label className={`flex items-center gap-2 text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                      <DollarSign className="w-4 h-4 text-green-500" />
+                      Total Earnings
+                    </label>
+                    <div className={`w-full px-4 py-2.5 rounded-lg border ${
+                      isDarkMode
+                        ? "bg-gray-800/50 border-gray-700"
+                        : "bg-gray-50 border-gray-300"
+                    }`}>
+                      <div className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: formData.currency || "USD",
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        }).format(getTotalEarningsForManager(formData.name, formData.company, formData.currency))}
+                      </div>
+                      <div className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-600"}`}>
+                        {formData.currency || "USD"}
+                      </div>
+                    </div>
+                    <p className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+                      Calculated from associated properties
+                    </p>
+                  </div>
+                )}
 
                 {/* Join Date */}
                 <div className="space-y-2">

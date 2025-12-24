@@ -17,6 +17,7 @@ export interface PropertyManager {
   joinDate?: string;
   status?: "active" | "inactive" | "pending";
   totalProperties?: number;
+  totalEarnings?: number;
   role?: string;
   company?: string;
   mobileVerification?: "verified" | "unverified" | "pending";

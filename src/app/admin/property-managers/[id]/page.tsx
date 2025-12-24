@@ -192,9 +192,9 @@ export default function PropertyManagerViewPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Profile Card */}
+        {/* Left Column - Profile Card (Sticky) */}
         <div className="lg:col-span-1">
-          <div className={`rounded-lg border overflow-hidden ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
+          <div className={`sticky top-6 rounded-lg border overflow-hidden ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
             {/* Profile Image */}
             <div className={`p-6 ${isDarkMode ? "bg-gray-800" : "bg-gray-50"} flex flex-col items-center`}>
               <div className={`relative w-32 h-32 rounded-full overflow-hidden border-4 ${isDarkMode ? "border-gray-700" : "border-white shadow-lg"}`}>
@@ -222,8 +222,8 @@ export default function PropertyManagerViewPage() {
               )}
             </div>
 
-            {/* Status Badges */}
-            <div className="p-4 space-y-3 border-t border-gray-200 dark:border-gray-800">
+            {/* Status Badges & Quick Info */}
+            <div className="p-4 space-y-4 border-t border-gray-200 dark:border-gray-800">
               {propertyManager.status && (
                 <div className="flex items-center justify-between">
                   <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
@@ -243,6 +243,38 @@ export default function PropertyManagerViewPage() {
                     {getMobileVerificationIcon(propertyManager.mobileVerification)}
                     {propertyManager.mobileVerification.charAt(0).toUpperCase() + propertyManager.mobileVerification.slice(1)}
                   </span>
+                </div>
+              )}
+              
+              {/* Total Properties */}
+              {propertyManager.totalProperties !== undefined && (
+                <div className="pt-3 border-t border-gray-200 dark:border-gray-800">
+                  <div className={`text-xs font-semibold uppercase tracking-wide mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    Total Properties
+                  </div>
+                  <div className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                    {propertyManager.totalProperties}
+                  </div>
+                </div>
+              )}
+
+              {/* Total Earnings */}
+              {propertyManager.totalEarnings !== undefined && (
+                <div className="pt-3 border-t border-gray-200 dark:border-gray-800">
+                  <div className={`text-xs font-semibold uppercase tracking-wide mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    Total Earnings
+                  </div>
+                  <div className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                    {new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: propertyManager.currency || "USD",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    }).format(propertyManager.totalEarnings)}
+                  </div>
+                  <div className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-600"}`}>
+                    {propertyManager.currency || "USD"}
+                  </div>
                 </div>
               )}
             </div>
@@ -352,22 +384,9 @@ export default function PropertyManagerViewPage() {
                     </div>
                   </div>
                 )}
-                {propertyManager.totalProperties !== undefined && (
-                  <div className="flex items-start gap-3">
-                    <Building2 className={`w-5 h-5 mt-0.5 shrink-0 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
-                    <div>
-                      <p className={`text-xs font-medium uppercase tracking-wide ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                        Total Properties
-                      </p>
-                      <p className={`mt-1 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                        {propertyManager.totalProperties}
-                      </p>
-                    </div>
-                  </div>
-                )}
                 {propertyManager.currency && (
                   <div className="flex items-start gap-3">
-                    <DollarSign className={`w-5 h-5 mt-0.5 shrink-0 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
+                    <Globe className={`w-5 h-5 mt-0.5 shrink-0 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
                     <div>
                       <p className={`text-xs font-medium uppercase tracking-wide ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                         Currency

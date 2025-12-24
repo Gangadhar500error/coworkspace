@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, Fragment } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../_components/ThemeProvider";
 import {
@@ -25,6 +25,7 @@ import {
   Phone,
   Mail,
   FileText,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import { Property, getStartingPrice } from "@/types/property";
@@ -35,12 +36,14 @@ import FilterDropdown from "./FilterDropdown";
 export default function PropertyListingsPage() {
   const { isDarkMode } = useTheme();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const filterButtonRef = useRef<HTMLButtonElement>(null);
   const itemsPerPage = 10;
+  const [managerFilter, setManagerFilter] = useState<{ id: string; name: string } | null>(null);
 
   // Filter states
   const [filters, setFilters] = useState({
@@ -48,6 +51,17 @@ export default function PropertyListingsPage() {
     propertyStatus: "" as "" | "draft" | "active" | "inactive",
     verificationStatus: "" as "" | "approved" | "pending",
   });
+
+  // Read manager filter from URL on mount
+  useEffect(() => {
+    const managerId = searchParams.get("managerId");
+    const managerName = searchParams.get("managerName");
+    if (managerId && managerName) {
+      setManagerFilter({ id: managerId, name: decodeURIComponent(managerName) });
+      // Set search term to manager name to filter properties
+      setSearchTerm(decodeURIComponent(managerName));
+    }
+  }, [searchParams]);
 
   const toggleRow = (id: number) => {
     setExpandedRows((prev) => {
@@ -112,6 +126,15 @@ export default function PropertyListingsPage() {
   const applyFilters = (properties: Property[]) => {
     let filtered = properties;
     
+    // Filter by manager (using brandOperatorName or contactPersonName)
+    if (managerFilter) {
+      filtered = filtered.filter((property) => {
+        const brandMatch = property.brandOperatorName?.toLowerCase().includes(managerFilter.name.toLowerCase());
+        const contactMatch = property.contactPersonName?.toLowerCase().includes(managerFilter.name.toLowerCase());
+        return brandMatch || contactMatch;
+      });
+    }
+    
     if (filters.workspaceType) {
       filtered = filterByWorkspaceType(filtered, filters.workspaceType);
     }
@@ -123,6 +146,16 @@ export default function PropertyListingsPage() {
     }
     
     return filtered;
+  };
+
+  const handleClearManagerFilter = () => {
+    setManagerFilter(null);
+    setSearchTerm("");
+    // Remove query params from URL
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("managerId");
+    params.delete("managerName");
+    router.push(`/admin/property-listings${params.toString() ? `?${params.toString()}` : ""}`);
   };
 
   const searchedProperties = filterProperties(mockProperties, searchTerm);
@@ -139,8 +172,8 @@ export default function PropertyListingsPage() {
     setCurrentPage(1);
   }, [searchTerm, filters]);
 
-  // Count active filters
-  const activeFiltersCount = Object.values(filters).filter((f) => f !== "").length;
+  // Count active filters (including manager filter)
+  const activeFiltersCount = Object.values(filters).filter((f) => f !== "").length + (managerFilter ? 1 : 0);
 
   const handleFilterChange = (key: keyof typeof filters, value: string) => {
     setFilters((prev) => ({
@@ -236,6 +269,28 @@ export default function PropertyListingsPage() {
             <p className={`mt-1 md:mt-2 text-xs md:text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
               Manage all property listings and their details
             </p>
+            {/* Manager Filter Badge */}
+            {managerFilter && (
+              <div className="mt-3">
+                <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium ${
+                  isDarkMode
+                    ? "bg-blue-500/10 text-blue-400 border border-blue-500/30"
+                    : "bg-blue-50 text-blue-600 border border-blue-200"
+                }`}>
+                  <Building2 className="w-4 h-4" />
+                  Filtered by: {managerFilter.name}
+                  <button
+                    onClick={handleClearManagerFilter}
+                    className={`ml-1 p-0.5 rounded hover:opacity-70 transition-opacity ${
+                      isDarkMode ? "hover:bg-blue-500/20" : "hover:bg-blue-100"
+                    }`}
+                    title="Clear manager filter"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Right Side - Filter Icon and Add Button */}

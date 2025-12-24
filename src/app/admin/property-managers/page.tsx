@@ -25,6 +25,7 @@ import {
   FileText,
   Image as ImageIcon,
   Filter,
+  MoreVertical,
 } from "lucide-react";
 import Image from "next/image";
 import { PropertyManager } from "@/types/property-manager";
@@ -39,7 +40,9 @@ export default function PropertyManagersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const filterButtonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const itemsPerPage = 10;
 
   // Filter states
@@ -122,6 +125,27 @@ export default function PropertyManagersPage() {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, filters]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openDropdownId !== null) {
+        const dropdownElement = dropdownRefs.current[openDropdownId];
+        if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
+          setOpenDropdownId(null);
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdownId]);
+
+  const toggleDropdown = (id: number) => {
+    setOpenDropdownId(openDropdownId === id ? null : id);
+  };
 
 
   // Count active filters
@@ -288,6 +312,9 @@ export default function PropertyManagersPage() {
                 <th className={`hidden md:table-cell px-4 lg:px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                   Status
                 </th>
+                <th className={`hidden lg:table-cell px-4 lg:px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  Earnings
+                </th>
                 <th className={`hidden md:table-cell px-4 lg:px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                   Actions
                 </th>
@@ -366,64 +393,131 @@ export default function PropertyManagersPage() {
                         </span>
                       </td>
 
+                      {/* Earnings - Hidden on small/medium screens */}
+                      <td className="hidden lg:table-cell px-4 lg:px-6 py-4 text-center">
+                        {manager.totalEarnings !== undefined ? (
+                          <div className="flex flex-col items-center">
+                            <div className={`text-sm font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                              {new Intl.NumberFormat("en-US", {
+                                style: "currency",
+                                currency: manager.currency || "USD",
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              }).format(manager.totalEarnings)}
+                            </div>
+                            <div className={`text-xs mt-0.5 ${isDarkMode ? "text-gray-500" : "text-gray-600"}`}>
+                              {manager.currency || "USD"}
+                            </div>
+                          </div>
+                        ) : (
+                          <span className={`text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>N/A</span>
+                        )}
+                      </td>
+
                       {/* Actions - Hidden on small screens */}
                       <td className="hidden md:table-cell px-4 lg:px-6 py-4">
-                        <div className="flex items-center justify-center gap-1 flex-wrap">
+                        <div className="relative flex items-center justify-center" ref={(el) => { dropdownRefs.current[manager.id] = el; }}>
                           <button
-                            onClick={() => handleView(manager)}
+                            onClick={() => toggleDropdown(manager.id)}
                             className={`p-1.5 rounded-lg transition-all ${
                               isDarkMode
-                                ? "text-blue-400 hover:bg-blue-500/10"
-                                : "text-blue-600 hover:bg-blue-100"
+                                ? "text-gray-400 hover:bg-gray-800 hover:text-white"
+                                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                             }`}
-                            title="View"
+                            title="Actions"
                           >
-                            <Eye className="w-4 h-4" />
+                            <MoreVertical className="w-4 h-4" />
                           </button>
-                          <button
-                            onClick={() => handleReject(manager.id)}
-                            className={`p-1.5 rounded-lg transition-all ${
-                              isDarkMode
-                                ? "text-orange-400 hover:bg-orange-500/10"
-                                : "text-orange-600 hover:bg-orange-100"
-                            }`}
-                            title="Reject"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleEdit(manager)}
-                            className={`p-1.5 rounded-lg transition-all ${
-                              isDarkMode
-                                ? "text-yellow-400 hover:bg-yellow-500/10"
-                                : "text-yellow-600 hover:bg-yellow-100"
-                            }`}
-                            title="Edit"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(manager.id)}
-                            className={`p-1.5 rounded-lg transition-all ${
-                              isDarkMode
-                                ? "text-red-400 hover:bg-red-500/10"
-                                : "text-red-600 hover:bg-red-100"
-                            }`}
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleAddProperty(manager.id)}
-                            className={`p-1.5 rounded-lg transition-all ${
-                              isDarkMode
-                                ? "text-green-400 hover:bg-green-500/10"
-                                : "text-green-600 hover:bg-green-100"
-                            }`}
-                            title="Add Property"
-                          >
-                            <Plus className="w-4 h-4" />
-                          </button>
+                          
+                          <AnimatePresence>
+                            {openDropdownId === manager.id && (
+                              <motion.div
+                                initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                transition={{ duration: 0.15 }}
+                                className={`absolute right-0 top-full mt-1 z-50 min-w-[180px] rounded-lg border shadow-lg ${
+                                  isDarkMode
+                                    ? "bg-gray-800 border-gray-700"
+                                    : "bg-white border-gray-200"
+                                }`}
+                              >
+                                <div className="py-1">
+                                  <button
+                                    onClick={() => {
+                                      handleView(manager);
+                                      setOpenDropdownId(null);
+                                    }}
+                                    className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                      isDarkMode
+                                        ? "text-gray-300 hover:bg-gray-700"
+                                        : "text-gray-700 hover:bg-gray-50"
+                                    }`}
+                                  >
+                                    <Eye className="w-4 h-4 text-blue-500" />
+                                    View
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      handleEdit(manager);
+                                      setOpenDropdownId(null);
+                                    }}
+                                    className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                      isDarkMode
+                                        ? "text-gray-300 hover:bg-gray-700"
+                                        : "text-gray-700 hover:bg-gray-50"
+                                    }`}
+                                  >
+                                    <Edit className="w-4 h-4 text-yellow-500" />
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      handleAddProperty(manager.id);
+                                      setOpenDropdownId(null);
+                                    }}
+                                    className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                      isDarkMode
+                                        ? "text-gray-300 hover:bg-gray-700"
+                                        : "text-gray-700 hover:bg-gray-50"
+                                    }`}
+                                  >
+                                    <Plus className="w-4 h-4 text-green-500" />
+                                    Add Property
+                                  </button>
+                                  <div className={`my-1 border-t ${isDarkMode ? "border-gray-700" : "border-gray-200"}`} />
+                                  <button
+                                    onClick={() => {
+                                      handleReject(manager.id);
+                                      setOpenDropdownId(null);
+                                    }}
+                                    className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                      isDarkMode
+                                        ? "text-gray-300 hover:bg-gray-700"
+                                        : "text-gray-700 hover:bg-gray-50"
+                                    }`}
+                                  >
+                                    <X className="w-4 h-4 text-orange-500" />
+                                    Reject
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      handleDelete(manager.id);
+                                      setOpenDropdownId(null);
+                                    }}
+                                    className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                      isDarkMode
+                                        ? "text-red-400 hover:bg-red-500/10"
+                                        : "text-red-600 hover:bg-red-50"
+                                    }`}
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                    Delete
+                                  </button>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
                       </td>
 
@@ -520,62 +614,108 @@ export default function PropertyManagersPage() {
                                   <div className={`text-xs font-semibold uppercase mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
                                     Actions
                                   </div>
-                                  <div className="flex items-center gap-2 flex-wrap">
+                                  <div className="relative" ref={(el) => { dropdownRefs.current[manager.id] = el; }}>
                                     <button
-                                      onClick={() => handleView(manager)}
-                                      className={`p-2 rounded-lg transition-all ${
+                                      onClick={() => toggleDropdown(manager.id)}
+                                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${
                                         isDarkMode
-                                          ? "text-blue-400 hover:bg-blue-500/10"
-                                          : "text-blue-600 hover:bg-blue-100"
+                                          ? "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700"
+                                          : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                                       }`}
-                                      title="View"
                                     >
-                                      <Eye className="w-4 h-4" />
+                                      <span className="text-sm font-medium">Select Action</span>
+                                      <ChevronDown className={`w-4 h-4 transition-transform ${openDropdownId === manager.id ? "rotate-180" : ""}`} />
                                     </button>
-                                    <button
-                                      onClick={() => handleReject(manager.id)}
-                                      className={`p-2 rounded-lg transition-all ${
-                                        isDarkMode
-                                          ? "text-orange-400 hover:bg-orange-500/10"
-                                          : "text-orange-600 hover:bg-orange-100"
-                                      }`}
-                                      title="Reject"
-                                    >
-                                      <X className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                      onClick={() => handleEdit(manager)}
-                                      className={`p-2 rounded-lg transition-all ${
-                                        isDarkMode
-                                          ? "text-yellow-400 hover:bg-yellow-500/10"
-                                          : "text-yellow-600 hover:bg-yellow-100"
-                                      }`}
-                                      title="Edit"
-                                    >
-                                      <Edit className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                      onClick={() => handleDelete(manager.id)}
-                                      className={`p-2 rounded-lg transition-all ${
-                                        isDarkMode
-                                          ? "text-red-400 hover:bg-red-500/10"
-                                          : "text-red-600 hover:bg-red-100"
-                                      }`}
-                                      title="Delete"
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                      onClick={() => handleAddProperty(manager.id)}
-                                      className={`p-2 rounded-lg transition-all ${
-                                        isDarkMode
-                                          ? "text-green-400 hover:bg-green-500/10"
-                                          : "text-green-600 hover:bg-green-100"
-                                      }`}
-                                      title="Add Property"
-                                    >
-                                      <Plus className="w-4 h-4" />
-                                    </button>
+                                    
+                                    <AnimatePresence>
+                                      {openDropdownId === manager.id && (
+                                        <motion.div
+                                          initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                                          exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                          transition={{ duration: 0.15 }}
+                                          className={`absolute left-0 right-0 top-full mt-1 z-50 rounded-lg border shadow-lg ${
+                                            isDarkMode
+                                              ? "bg-gray-800 border-gray-700"
+                                              : "bg-white border-gray-200"
+                                          }`}
+                                        >
+                                          <div className="py-1">
+                                            <button
+                                              onClick={() => {
+                                                handleView(manager);
+                                                setOpenDropdownId(null);
+                                              }}
+                                              className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                                isDarkMode
+                                                  ? "text-gray-300 hover:bg-gray-700"
+                                                  : "text-gray-700 hover:bg-gray-50"
+                                              }`}
+                                            >
+                                              <Eye className="w-4 h-4 text-blue-500" />
+                                              View
+                                            </button>
+                                            <button
+                                              onClick={() => {
+                                                handleEdit(manager);
+                                                setOpenDropdownId(null);
+                                              }}
+                                              className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                                isDarkMode
+                                                  ? "text-gray-300 hover:bg-gray-700"
+                                                  : "text-gray-700 hover:bg-gray-50"
+                                              }`}
+                                            >
+                                              <Edit className="w-4 h-4 text-yellow-500" />
+                                              Edit
+                                            </button>
+                                            <button
+                                              onClick={() => {
+                                                handleAddProperty(manager.id);
+                                                setOpenDropdownId(null);
+                                              }}
+                                              className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                                isDarkMode
+                                                  ? "text-gray-300 hover:bg-gray-700"
+                                                  : "text-gray-700 hover:bg-gray-50"
+                                              }`}
+                                            >
+                                              <Plus className="w-4 h-4 text-green-500" />
+                                              Add Property
+                                            </button>
+                                            <div className={`my-1 border-t ${isDarkMode ? "border-gray-700" : "border-gray-200"}`} />
+                                            <button
+                                              onClick={() => {
+                                                handleReject(manager.id);
+                                                setOpenDropdownId(null);
+                                              }}
+                                              className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                                isDarkMode
+                                                  ? "text-gray-300 hover:bg-gray-700"
+                                                  : "text-gray-700 hover:bg-gray-50"
+                                              }`}
+                                            >
+                                              <X className="w-4 h-4 text-orange-500" />
+                                              Reject
+                                            </button>
+                                            <button
+                                              onClick={() => {
+                                                handleDelete(manager.id);
+                                                setOpenDropdownId(null);
+                                              }}
+                                              className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                                isDarkMode
+                                                  ? "text-red-400 hover:bg-red-500/10"
+                                                  : "text-red-600 hover:bg-red-50"
+                                              }`}
+                                            >
+                                              <Trash2 className="w-4 h-4" />
+                                              Delete
+                                            </button>
+                                          </div>
+                                        </motion.div>
+                                      )}
+                                    </AnimatePresence>
                                   </div>
                                 </div>
                               </div>
@@ -666,12 +806,28 @@ export default function PropertyManagersPage() {
                                         <div className={`text-xs font-semibold uppercase mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
                                           Total Properties
                                         </div>
-                                        <div className={`text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                          {manager.totalProperties}
+                                        <div className="flex items-center gap-2">
+                                          <div className={`text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                            {manager.totalProperties}
+                                          </div>
+                                          {manager.totalProperties > 0 && (
+                                            <button
+                                              onClick={() => router.push(`/admin/property-listings?managerId=${manager.id}&managerName=${encodeURIComponent(manager.name)}`)}
+                                              className={`text-xs px-2 py-1 rounded-md font-medium transition-all ${
+                                                isDarkMode
+                                                  ? "bg-[#FF5A22]/10 text-[#FF5A22] hover:bg-[#FF5A22]/20 border border-[#FF5A22]/30"
+                                                  : "bg-[#FF5A22]/10 text-[#FF5A22] hover:bg-[#FF5A22]/20 border border-[#FF5A22]/20"
+                                              }`}
+                                              title="View Properties"
+                                            >
+                                              View Properties
+                                            </button>
+                                          )}
                                         </div>
                                       </div>
                                     </div>
                                   )}
+
 
                                   {/* Address */}
                                   {manager.address && (
@@ -782,12 +938,28 @@ export default function PropertyManagersPage() {
                                     <div className={`text-xs font-semibold uppercase mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
                                       Total Properties
                                     </div>
-                                    <div className={`flex items-center gap-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                      <Building2 className="w-4 h-4 shrink-0 text-[#FF5A22]" />
-                                      <span className="text-sm font-semibold">{manager.totalProperties}</span>
+                                    <div className="flex items-center justify-between gap-2">
+                                      <div className={`flex items-center gap-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                        <Building2 className="w-4 h-4 shrink-0 text-[#FF5A22]" />
+                                        <span className="text-sm font-semibold">{manager.totalProperties}</span>
+                                      </div>
+                                      {manager.totalProperties > 0 && (
+                                        <button
+                                          onClick={() => router.push(`/admin/property-listings?managerId=${manager.id}&managerName=${encodeURIComponent(manager.name)}`)}
+                                          className={`text-xs px-2 py-1 rounded-md font-medium transition-all shrink-0 ${
+                                            isDarkMode
+                                              ? "bg-[#FF5A22]/10 text-[#FF5A22] hover:bg-[#FF5A22]/20 border border-[#FF5A22]/30"
+                                              : "bg-[#FF5A22]/10 text-[#FF5A22] hover:bg-[#FF5A22]/20 border border-[#FF5A22]/20"
+                                          }`}
+                                          title="View Properties"
+                                        >
+                                          View
+                                        </button>
+                                      )}
                                     </div>
                                   </div>
                                 )}
+
 
                                 {/* Address */}
                                 {manager.address && (
