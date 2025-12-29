@@ -1,0 +1,874 @@
+/**
+ * Bookings Data
+ * Centralized data file for completed bookings
+ * Can be easily replaced with API calls later
+ */
+
+import { Booking } from "../types/booking";
+
+// Mock completed bookings data
+export const mockCompletedBookings: Booking[] = [
+  {
+    id: 1,
+    bookingId: "BK-2024-001",
+    status: "completed",
+    seeker: {
+      id: 101,
+      name: "John Smith",
+      email: "john.smith@example.com",
+      phone: "+1 234-567-8900",
+    },
+    provider: {
+      id: 201,
+      name: "Sarah Johnson",
+      email: "sarah.johnson@coworkspace.com",
+      phone: "+1 234-567-8901",
+      company: "Premium Workspaces Inc.",
+    },
+    property: {
+      id: 301,
+      name: "Downtown Business Hub",
+      type: "Coworking",
+      address: "123 Main Street, Suite 500",
+      city: "New York",
+    },
+    bookingDetails: {
+      startDate: "2024-01-15",
+      endDate: "2024-02-15",
+      duration: "1 month",
+      workspaceType: "Hot Desk",
+      numberOfSeats: 1,
+      amenities: ["WiFi", "Printing", "Coffee", "Meeting Room Access"],
+    },
+    billing: {
+      subtotal: 450,
+      tax: 45,
+      discount: 0,
+      total: 495,
+      currency: "USD",
+      billingAddress: "123 Customer St, New York, NY 10001",
+    },
+    payment: {
+      method: "credit_card",
+      status: "paid",
+      transactionId: "TXN-2024-001234",
+      paidAt: "2024-01-10T10:30:00Z",
+      paymentGateway: "Stripe",
+    },
+    createdAt: "2024-01-10T09:00:00Z",
+    updatedAt: "2024-02-15T18:00:00Z",
+    completedAt: "2024-02-15T18:00:00Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-001",
+  },
+  {
+    id: 2,
+    bookingId: "BK-2024-002",
+    status: "completed",
+    seeker: {
+      id: 102,
+      name: "Emily Davis",
+      email: "emily.davis@example.com",
+      phone: "+1 234-567-8902",
+    },
+    provider: {
+      id: 202,
+      name: "Michael Chen",
+      email: "michael.chen@coworkspace.com",
+      phone: "+1 234-567-8903",
+      company: "Elite Office Solutions",
+    },
+    property: {
+      id: 302,
+      name: "Tech Innovation Center",
+      type: "Private Office",
+      address: "456 Tech Avenue, Floor 10",
+      city: "San Francisco",
+    },
+    bookingDetails: {
+      startDate: "2024-01-20",
+      endDate: "2024-04-20",
+      duration: "3 months",
+      workspaceType: "Private Office",
+      numberOfSeats: 4,
+      amenities: ["WiFi", "Printing", "Coffee", "Dedicated Phone Line", "Parking"],
+    },
+    billing: {
+      subtotal: 3600,
+      tax: 360,
+      discount: 180,
+      total: 3780,
+      currency: "USD",
+      billingAddress: "456 Business Ave, San Francisco, CA 94102",
+    },
+    payment: {
+      method: "bank_transfer",
+      status: "paid",
+      transactionId: "TXN-2024-002345",
+      paidAt: "2024-01-18T14:20:00Z",
+      paymentGateway: "Bank Transfer",
+    },
+    createdAt: "2024-01-18T12:00:00Z",
+    updatedAt: "2024-04-20T17:30:00Z",
+    completedAt: "2024-04-20T17:30:00Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-002",
+  },
+  {
+    id: 3,
+    bookingId: "BK-2024-003",
+    status: "completed",
+    seeker: {
+      id: 103,
+      name: "Robert Wilson",
+      email: "robert.wilson@example.com",
+      phone: "+1 234-567-8904",
+    },
+    provider: {
+      id: 203,
+      name: "Lisa Anderson",
+      email: "lisa.anderson@coworkspace.com",
+      phone: "+1 234-567-8905",
+      company: "Modern Workspaces LLC",
+    },
+    property: {
+      id: 303,
+      name: "Executive Meeting Suite",
+      type: "Meeting Room",
+      address: "789 Corporate Blvd, Level 5",
+      city: "Chicago",
+    },
+    bookingDetails: {
+      startDate: "2024-02-01",
+      endDate: "2024-02-01",
+      duration: "1 day",
+      workspaceType: "Conference Room",
+      numberOfSeats: 12,
+      amenities: ["Projector", "Whiteboard", "Video Conferencing", "Catering"],
+    },
+    billing: {
+      subtotal: 350,
+      tax: 35,
+      discount: 50,
+      total: 335,
+      currency: "USD",
+      billingAddress: "789 Client Street, Chicago, IL 60601",
+    },
+    payment: {
+      method: "upi",
+      status: "paid",
+      transactionId: "TXN-2024-003456",
+      paidAt: "2024-01-30T16:45:00Z",
+      paymentGateway: "UPI",
+    },
+    createdAt: "2024-01-30T15:00:00Z",
+    updatedAt: "2024-02-01T20:00:00Z",
+    completedAt: "2024-02-01T20:00:00Z",
+    invoiceGenerated: false,
+  },
+  {
+    id: 4,
+    bookingId: "BK-2024-004",
+    status: "completed",
+    seeker: {
+      id: 104,
+      name: "Maria Garcia",
+      email: "maria.garcia@example.com",
+      phone: "+1 234-567-8906",
+    },
+    provider: {
+      id: 204,
+      name: "David Brown",
+      email: "david.brown@coworkspace.com",
+      phone: "+1 234-567-8907",
+      company: "Flexible Spaces Co.",
+    },
+    property: {
+      id: 304,
+      name: "Virtual Business Address",
+      type: "Virtual Office",
+      address: "321 Virtual Plaza",
+      city: "Los Angeles",
+    },
+    bookingDetails: {
+      startDate: "2024-01-01",
+      endDate: "2024-12-31",
+      duration: "12 months",
+      workspaceType: "Virtual Office",
+      amenities: ["Business Address", "Mail Handling", "Phone Answering", "Call Forwarding"],
+    },
+    billing: {
+      subtotal: 1200,
+      tax: 120,
+      discount: 0,
+      total: 1320,
+      currency: "USD",
+      billingAddress: "321 Remote St, Los Angeles, CA 90001",
+    },
+    payment: {
+      method: "credit_card",
+      status: "paid",
+      transactionId: "TXN-2024-004567",
+      paidAt: "2023-12-28T11:15:00Z",
+      paymentGateway: "Stripe",
+    },
+    createdAt: "2023-12-28T10:00:00Z",
+    updatedAt: "2024-12-31T23:59:59Z",
+    completedAt: "2024-12-31T23:59:59Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-004",
+  },
+  {
+    id: 5,
+    bookingId: "BK-2024-005",
+    status: "completed",
+    seeker: {
+      id: 105,
+      name: "James Taylor",
+      email: "james.taylor@example.com",
+      phone: "+1 234-567-8908",
+    },
+    provider: {
+      id: 205,
+      name: "Jennifer Martinez",
+      email: "jennifer.martinez@coworkspace.com",
+      phone: "+1 234-567-8909",
+      company: "Urban Workspace Solutions",
+    },
+    property: {
+      id: 305,
+      name: "Creative Co-working Space",
+      type: "Coworking",
+      address: "555 Creative Lane, Suite 200",
+      city: "Austin",
+    },
+    bookingDetails: {
+      startDate: "2024-02-10",
+      endDate: "2024-03-10",
+      duration: "1 month",
+      workspaceType: "Dedicated Desk",
+      numberOfSeats: 1,
+      amenities: ["WiFi", "Printing", "Coffee", "Kitchen", "Event Space"],
+    },
+    billing: {
+      subtotal: 550,
+      tax: 55,
+      discount: 55,
+      total: 550,
+      currency: "USD",
+      billingAddress: "555 Artist Blvd, Austin, TX 78701",
+    },
+    payment: {
+      method: "debit_card",
+      status: "paid",
+      transactionId: "TXN-2024-005678",
+      paidAt: "2024-02-08T09:30:00Z",
+      paymentGateway: "Stripe",
+    },
+    createdAt: "2024-02-08T08:00:00Z",
+    updatedAt: "2024-03-10T19:00:00Z",
+    completedAt: "2024-03-10T19:00:00Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-005",
+  },
+  {
+    id: 6,
+    bookingId: "BK-2024-006",
+    status: "completed",
+    seeker: {
+      id: 106,
+      name: "Patricia Lee",
+      email: "patricia.lee@example.com",
+      phone: "+1 234-567-8910",
+    },
+    provider: {
+      id: 206,
+      name: "Thomas White",
+      email: "thomas.white@coworkspace.com",
+      phone: "+1 234-567-8911",
+      company: "Corporate Spaces Ltd.",
+    },
+    property: {
+      id: 306,
+      name: "Metro Co-working Hub",
+      type: "Coworking",
+      address: "100 Business Park Drive",
+      city: "Seattle",
+    },
+    bookingDetails: {
+      startDate: "2024-03-01",
+      endDate: "2024-06-01",
+      duration: "3 months",
+      workspaceType: "Hot Desk",
+      numberOfSeats: 2,
+      amenities: ["WiFi", "Printing", "Coffee", "Kitchen", "Parking"],
+    },
+    billing: {
+      subtotal: 1200,
+      tax: 120,
+      discount: 120,
+      total: 1200,
+      currency: "USD",
+      billingAddress: "100 Tech Way, Seattle, WA 98101",
+    },
+    payment: {
+      method: "credit_card",
+      status: "paid",
+      transactionId: "TXN-2024-006789",
+      paidAt: "2024-02-25T11:00:00Z",
+      paymentGateway: "Stripe",
+    },
+    createdAt: "2024-02-25T10:00:00Z",
+    updatedAt: "2024-06-01T17:00:00Z",
+    completedAt: "2024-06-01T17:00:00Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-006",
+  },
+  {
+    id: 7,
+    bookingId: "BK-2024-007",
+    status: "completed",
+    seeker: {
+      id: 107,
+      name: "Daniel Kim",
+      email: "daniel.kim@example.com",
+      phone: "+1 234-567-8912",
+    },
+    provider: {
+      id: 207,
+      name: "Amanda Rodriguez",
+      email: "amanda.rodriguez@coworkspace.com",
+      phone: "+1 234-567-8913",
+      company: "Prime Office Solutions",
+    },
+    property: {
+      id: 307,
+      name: "Executive Private Suite",
+      type: "Private Office",
+      address: "200 Executive Boulevard, Suite 1500",
+      city: "Boston",
+    },
+    bookingDetails: {
+      startDate: "2024-02-15",
+      endDate: "2024-05-15",
+      duration: "3 months",
+      workspaceType: "Private Office",
+      numberOfSeats: 6,
+      amenities: ["WiFi", "Printing", "Coffee", "Dedicated Phone", "Parking", "Reception"],
+    },
+    billing: {
+      subtotal: 4500,
+      tax: 450,
+      discount: 0,
+      total: 4950,
+      currency: "USD",
+      billingAddress: "200 Corporate Ave, Boston, MA 02101",
+    },
+    payment: {
+      method: "bank_transfer",
+      status: "paid",
+      transactionId: "TXN-2024-007890",
+      paidAt: "2024-02-12T15:30:00Z",
+      paymentGateway: "Bank Transfer",
+    },
+    createdAt: "2024-02-12T14:00:00Z",
+    updatedAt: "2024-05-15T18:30:00Z",
+    completedAt: "2024-05-15T18:30:00Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-007",
+  },
+  {
+    id: 8,
+    bookingId: "BK-2024-008",
+    status: "completed",
+    seeker: {
+      id: 108,
+      name: "Sophie Anderson",
+      email: "sophie.anderson@example.com",
+      phone: "+1 234-567-8914",
+    },
+    provider: {
+      id: 208,
+      name: "Christopher Moore",
+      email: "christopher.moore@coworkspace.com",
+      phone: "+1 234-567-8915",
+      company: "Flexible Workspace Group",
+    },
+    property: {
+      id: 308,
+      name: "Boardroom Excellence",
+      type: "Meeting Room",
+      address: "300 Conference Center, Floor 8",
+      city: "Miami",
+    },
+    bookingDetails: {
+      startDate: "2024-03-10",
+      endDate: "2024-03-10",
+      duration: "1 day",
+      workspaceType: "Boardroom",
+      numberOfSeats: 20,
+      amenities: ["Projector", "Whiteboard", "Video Conferencing", "Catering", "WiFi"],
+    },
+    billing: {
+      subtotal: 800,
+      tax: 80,
+      discount: 100,
+      total: 780,
+      currency: "USD",
+      billingAddress: "300 Business Plaza, Miami, FL 33101",
+    },
+    payment: {
+      method: "credit_card",
+      status: "paid",
+      transactionId: "TXN-2024-008901",
+      paidAt: "2024-03-08T09:15:00Z",
+      paymentGateway: "Stripe",
+    },
+    createdAt: "2024-03-08T08:00:00Z",
+    updatedAt: "2024-03-10T19:00:00Z",
+    completedAt: "2024-03-10T19:00:00Z",
+    invoiceGenerated: false,
+  },
+  {
+    id: 9,
+    bookingId: "BK-2024-009",
+    status: "completed",
+    seeker: {
+      id: 109,
+      name: "Michael Thompson",
+      email: "michael.thompson@example.com",
+      phone: "+1 234-567-8916",
+    },
+    provider: {
+      id: 209,
+      name: "Jessica Parker",
+      email: "jessica.parker@coworkspace.com",
+      phone: "+1 234-567-8917",
+      company: "Elite Business Centers",
+    },
+    property: {
+      id: 309,
+      name: "Virtual Office Pro",
+      type: "Virtual Office",
+      address: "400 Virtual Business Center",
+      city: "Denver",
+    },
+    bookingDetails: {
+      startDate: "2024-01-15",
+      endDate: "2024-12-15",
+      duration: "11 months",
+      workspaceType: "Virtual Office",
+      amenities: ["Business Address", "Mail Handling", "Phone Answering", "Call Forwarding", "Fax Service"],
+    },
+    billing: {
+      subtotal: 1100,
+      tax: 110,
+      discount: 0,
+      total: 1210,
+      currency: "USD",
+      billingAddress: "400 Remote Blvd, Denver, CO 80201",
+    },
+    payment: {
+      method: "upi",
+      status: "paid",
+      transactionId: "TXN-2024-009012",
+      paidAt: "2024-01-12T10:45:00Z",
+      paymentGateway: "UPI",
+    },
+    createdAt: "2024-01-12T09:00:00Z",
+    updatedAt: "2024-12-15T23:59:59Z",
+    completedAt: "2024-12-15T23:59:59Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-009",
+  },
+  {
+    id: 10,
+    bookingId: "BK-2024-010",
+    status: "completed",
+    seeker: {
+      id: 110,
+      name: "Olivia Brown",
+      email: "olivia.brown@example.com",
+      phone: "+1 234-567-8918",
+    },
+    provider: {
+      id: 210,
+      name: "Ryan Mitchell",
+      email: "ryan.mitchell@coworkspace.com",
+      phone: "+1 234-567-8919",
+      company: "Innovation Workspaces",
+    },
+    property: {
+      id: 310,
+      name: "Startup Co-working Space",
+      type: "Coworking",
+      address: "500 Innovation Drive, Floor 3",
+      city: "Portland",
+    },
+    bookingDetails: {
+      startDate: "2024-04-01",
+      endDate: "2024-07-01",
+      duration: "3 months",
+      workspaceType: "Dedicated Desk",
+      numberOfSeats: 1,
+      amenities: ["WiFi", "Printing", "Coffee", "Kitchen", "Event Space", "Networking Events"],
+    },
+    billing: {
+      subtotal: 900,
+      tax: 90,
+      discount: 90,
+      total: 900,
+      currency: "USD",
+      billingAddress: "500 Startup Ave, Portland, OR 97201",
+    },
+    payment: {
+      method: "debit_card",
+      status: "paid",
+      transactionId: "TXN-2024-010123",
+      paidAt: "2024-03-28T14:20:00Z",
+      paymentGateway: "Stripe",
+    },
+    createdAt: "2024-03-28T13:00:00Z",
+    updatedAt: "2024-07-01T18:00:00Z",
+    completedAt: "2024-07-01T18:00:00Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-010",
+  },
+  {
+    id: 11,
+    bookingId: "BK-2024-011",
+    status: "completed",
+    seeker: {
+      id: 111,
+      name: "William Harris",
+      email: "william.harris@example.com",
+      phone: "+1 234-567-8920",
+    },
+    provider: {
+      id: 211,
+      name: "Nicole Taylor",
+      email: "nicole.taylor@coworkspace.com",
+      phone: "+1 234-567-8921",
+      company: "Professional Office Spaces",
+    },
+    property: {
+      id: 311,
+      name: "Luxury Private Office",
+      type: "Private Office",
+      address: "600 Premium Tower, Suite 2500",
+      city: "Las Vegas",
+    },
+    bookingDetails: {
+      startDate: "2024-03-20",
+      endDate: "2024-09-20",
+      duration: "6 months",
+      workspaceType: "Private Office",
+      numberOfSeats: 8,
+      amenities: ["WiFi", "Printing", "Coffee", "Dedicated Phone", "Parking", "Reception", "Concierge"],
+    },
+    billing: {
+      subtotal: 10800,
+      tax: 1080,
+      discount: 540,
+      total: 11340,
+      currency: "USD",
+      billingAddress: "600 Luxury Blvd, Las Vegas, NV 89101",
+    },
+    payment: {
+      method: "bank_transfer",
+      status: "paid",
+      transactionId: "TXN-2024-011234",
+      paidAt: "2024-03-18T16:00:00Z",
+      paymentGateway: "Bank Transfer",
+    },
+    createdAt: "2024-03-18T15:00:00Z",
+    updatedAt: "2024-09-20T19:30:00Z",
+    completedAt: "2024-09-20T19:30:00Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-011",
+  },
+  {
+    id: 12,
+    bookingId: "BK-2024-012",
+    status: "completed",
+    seeker: {
+      id: 112,
+      name: "Emma Wilson",
+      email: "emma.wilson@example.com",
+      phone: "+1 234-567-8922",
+    },
+    provider: {
+      id: 212,
+      name: "Kevin Johnson",
+      email: "kevin.johnson@coworkspace.com",
+      phone: "+1 234-567-8923",
+      company: "Modern Workspace Solutions",
+    },
+    property: {
+      id: 312,
+      name: "Conference Center Pro",
+      type: "Meeting Room",
+      address: "700 Event Center, Level 12",
+      city: "Phoenix",
+    },
+    bookingDetails: {
+      startDate: "2024-04-15",
+      endDate: "2024-04-15",
+      duration: "1 day",
+      workspaceType: "Conference Room",
+      numberOfSeats: 15,
+      amenities: ["Projector", "Whiteboard", "Video Conferencing", "Catering", "WiFi", "Sound System"],
+    },
+    billing: {
+      subtotal: 600,
+      tax: 60,
+      discount: 0,
+      total: 660,
+      currency: "USD",
+      billingAddress: "700 Conference St, Phoenix, AZ 85001",
+    },
+    payment: {
+      method: "credit_card",
+      status: "paid",
+      transactionId: "TXN-2024-012345",
+      paidAt: "2024-04-13T11:30:00Z",
+      paymentGateway: "Stripe",
+    },
+    createdAt: "2024-04-13T10:00:00Z",
+    updatedAt: "2024-04-15T20:00:00Z",
+    completedAt: "2024-04-15T20:00:00Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-012",
+  },
+  {
+    id: 13,
+    bookingId: "BK-2024-013",
+    status: "completed",
+    seeker: {
+      id: 113,
+      name: "Alexander Martinez",
+      email: "alexander.martinez@example.com",
+      phone: "+1 234-567-8924",
+    },
+    provider: {
+      id: 213,
+      name: "Rachel Green",
+      email: "rachel.green@coworkspace.com",
+      phone: "+1 234-567-8925",
+      company: "Co-working Collective",
+    },
+    property: {
+      id: 313,
+      name: "Flexible Workspace Hub",
+      type: "Coworking",
+      address: "800 Flexible Avenue, Suite 100",
+      city: "Atlanta",
+    },
+    bookingDetails: {
+      startDate: "2024-05-01",
+      endDate: "2024-08-01",
+      duration: "3 months",
+      workspaceType: "Hot Desk",
+      numberOfSeats: 3,
+      amenities: ["WiFi", "Printing", "Coffee", "Kitchen", "Parking", "Gym Access"],
+    },
+    billing: {
+      subtotal: 1350,
+      tax: 135,
+      discount: 135,
+      total: 1350,
+      currency: "USD",
+      billingAddress: "800 Business Park, Atlanta, GA 30301",
+    },
+    payment: {
+      method: "upi",
+      status: "paid",
+      transactionId: "TXN-2024-013456",
+      paidAt: "2024-04-28T12:15:00Z",
+      paymentGateway: "UPI",
+    },
+    createdAt: "2024-04-28T11:00:00Z",
+    updatedAt: "2024-08-01T17:45:00Z",
+    completedAt: "2024-08-01T17:45:00Z",
+    invoiceGenerated: false,
+  },
+  {
+    id: 14,
+    bookingId: "BK-2024-014",
+    status: "completed",
+    seeker: {
+      id: 114,
+      name: "Isabella Garcia",
+      email: "isabella.garcia@example.com",
+      phone: "+1 234-567-8926",
+    },
+    provider: {
+      id: 214,
+      name: "Matthew Davis",
+      email: "matthew.davis@coworkspace.com",
+      phone: "+1 234-567-8927",
+      company: "Executive Office Network",
+    },
+    property: {
+      id: 314,
+      name: "Premium Virtual Office",
+      type: "Virtual Office",
+      address: "900 Virtual Business Plaza",
+      city: "Dallas",
+    },
+    bookingDetails: {
+      startDate: "2024-02-01",
+      endDate: "2024-12-31",
+      duration: "11 months",
+      workspaceType: "Virtual Office",
+      amenities: ["Business Address", "Mail Handling", "Phone Answering", "Call Forwarding", "Fax Service", "Live Receptionist"],
+    },
+    billing: {
+      subtotal: 1320,
+      tax: 132,
+      discount: 0,
+      total: 1452,
+      currency: "USD",
+      billingAddress: "900 Corporate Way, Dallas, TX 75201",
+    },
+    payment: {
+      method: "credit_card",
+      status: "paid",
+      transactionId: "TXN-2024-014567",
+      paidAt: "2024-01-28T13:45:00Z",
+      paymentGateway: "Stripe",
+    },
+    createdAt: "2024-01-28T12:00:00Z",
+    updatedAt: "2024-12-31T23:59:59Z",
+    completedAt: "2024-12-31T23:59:59Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-014",
+  },
+  {
+    id: 15,
+    bookingId: "BK-2024-015",
+    status: "completed",
+    seeker: {
+      id: 115,
+      name: "Benjamin Clark",
+      email: "benjamin.clark@example.com",
+      phone: "+1 234-567-8928",
+    },
+    provider: {
+      id: 215,
+      name: "Lauren Adams",
+      email: "lauren.adams@coworkspace.com",
+      phone: "+1 234-567-8929",
+      company: "Dynamic Workspace Group",
+    },
+    property: {
+      id: 315,
+      name: "Tech Hub Co-working",
+      type: "Coworking",
+      address: "1000 Technology Boulevard, Floor 5",
+      city: "San Diego",
+    },
+    bookingDetails: {
+      startDate: "2024-06-01",
+      endDate: "2024-09-01",
+      duration: "3 months",
+      workspaceType: "Dedicated Desk",
+      numberOfSeats: 1,
+      amenities: ["WiFi", "Printing", "Coffee", "Kitchen", "Event Space", "24/7 Access"],
+    },
+    billing: {
+      subtotal: 1050,
+      tax: 105,
+      discount: 105,
+      total: 1050,
+      currency: "USD",
+      billingAddress: "1000 Tech Park, San Diego, CA 92101",
+    },
+    payment: {
+      method: "debit_card",
+      status: "paid",
+      transactionId: "TXN-2024-015678",
+      paidAt: "2024-05-28T10:20:00Z",
+      paymentGateway: "Stripe",
+    },
+    createdAt: "2024-05-28T09:00:00Z",
+    updatedAt: "2024-09-01T18:15:00Z",
+    completedAt: "2024-09-01T18:15:00Z",
+    invoiceGenerated: true,
+    invoiceNumber: "INV-2024-015",
+  },
+];
+
+// Helper function to filter bookings
+export const filterBookings = (
+  bookings: Booking[],
+  searchTerm: string,
+  filters?: {
+    paymentStatus?: string;
+    propertyType?: string;
+    invoiceStatus?: string;
+    paymentMethod?: string;
+  }
+): Booking[] => {
+  let filtered = bookings;
+  
+  // Apply search filter
+  if (searchTerm) {
+    const term = searchTerm.toLowerCase();
+    filtered = filtered.filter(
+      (booking) =>
+        booking.bookingId.toLowerCase().includes(term) ||
+        booking.seeker.name.toLowerCase().includes(term) ||
+        booking.seeker.email.toLowerCase().includes(term) ||
+        booking.provider.name.toLowerCase().includes(term) ||
+        booking.property.name.toLowerCase().includes(term) ||
+        booking.property.city.toLowerCase().includes(term)
+    );
+  }
+  
+  // Apply additional filters
+  if (filters) {
+    // Payment Status filter
+    if (filters.paymentStatus) {
+      filtered = filtered.filter(
+        (booking) => booking.payment.status === filters.paymentStatus
+      );
+    }
+    
+    // Property Type filter
+    if (filters.propertyType) {
+      filtered = filtered.filter(
+        (booking) => booking.property.type === filters.propertyType
+      );
+    }
+    
+    // Invoice Status filter
+    if (filters.invoiceStatus) {
+      if (filters.invoiceStatus === "generated") {
+        filtered = filtered.filter((booking) => booking.invoiceGenerated === true);
+      } else if (filters.invoiceStatus === "not_generated") {
+        filtered = filtered.filter((booking) => booking.invoiceGenerated !== true);
+      }
+    }
+    
+    // Payment Method filter
+    if (filters.paymentMethod) {
+      filtered = filtered.filter(
+        (booking) => booking.payment.method === filters.paymentMethod
+      );
+    }
+  }
+  
+  return filtered;
+};
+
+// Helper function to get booking by ID
+export const getBookingById = (id: number): Booking | undefined => {
+  return mockCompletedBookings.find((booking) => booking.id === id);
+};
+
+// Helper function to get booking by booking ID
+export const getBookingByBookingId = (bookingId: string): Booking | undefined => {
+  return mockCompletedBookings.find((booking) => booking.bookingId === bookingId);
+};
+

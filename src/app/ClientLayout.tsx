@@ -13,7 +13,7 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const hideLayout =
-  pathname === "/signin" || pathname === "/forgot-password" || pathname.startsWith("/admin");
+  pathname === "/signin" || pathname === "/forgot-password" || pathname.startsWith("/admin") || pathname.startsWith("/customer");
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">

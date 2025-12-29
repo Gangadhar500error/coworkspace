@@ -5,22 +5,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../_components/ThemeProvider";
 import {
   ChevronDown,
-  Languages,
+  CreditCard,
   Edit,
   Trash2,
-  Plus,
   Filter,
   CheckCircle,
+  Clock,
   XCircle,
-  Globe,
-  FileText,
-  Copy,
+  ArrowUpRight,
+  ArrowDownRight,
+  DollarSign,
+  User,
+  Receipt,
 } from "lucide-react";
-import { Translation } from "@/types/translation";
-import { mockTranslations, filterTranslations } from "@/data/translations";
+import { Transaction } from "@/types/transaction";
+import { mockTransactions, filterTransactions } from "@/data/transactions";
 import { Pagination } from "@/components/pagination";
 
-export default function TranslationsPage() {
+export default function TransactionsPage() {
   const { isDarkMode } = useTheme();
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,9 +32,9 @@ export default function TranslationsPage() {
   const itemsPerPage = 10;
 
   const [filters, setFilters] = useState({
-    languageCode: "" as "" | "en" | "es" | "fr" | "de" | "it" | "pt" | "ar" | "zh" | "ja" | "hi",
-    group: "" as "" | "common" | "navigation" | "errors" | "booking" | "property",
-    isActive: "" as "" | "active" | "inactive",
+    type: "" as "" | "payment" | "refund" | "withdrawal" | "deposit" | "commission",
+    status: "" as "" | "completed" | "pending" | "failed" | "cancelled" | "refunded",
+    paymentMethod: "" as "" | "credit_card" | "debit_card" | "bank_transfer" | "upi" | "wallet" | "cash",
   });
 
   const toggleRow = (id: number) => {
@@ -47,31 +49,12 @@ export default function TranslationsPage() {
     });
   };
 
-  const handleEdit = (translation: Translation) => {
-    console.log("Edit translation:", translation.id);
-  };
-
-  const handleDelete = (id: number) => {
-    if (confirm("Are you sure you want to delete this translation?")) {
-      console.log("Delete translation:", id);
-    }
-  };
-
-  const handleAdd = () => {
-    console.log("Add new translation");
-  };
-
-  const handleCopyKey = (key: string) => {
-    navigator.clipboard.writeText(key);
-    // You could add a toast notification here
-  };
-
-  const filteredTranslations = filterTranslations(mockTranslations, searchTerm, filters);
+  const filteredTransactions = filterTransactions(mockTransactions, searchTerm, filters);
   
-  const totalPages = Math.ceil(filteredTranslations.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedTranslations = filteredTranslations.slice(startIndex, endIndex);
+  const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -92,65 +75,74 @@ export default function TranslationsPage() {
 
   const clearFilters = () => {
     setFilters({
-      languageCode: "",
-      group: "",
-      isActive: "",
+      type: "",
+      status: "",
+      paymentMethod: "",
     });
   };
 
   const activeFiltersCount = Object.values(filters).filter((f) => f !== "").length;
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
-  const getGroupColor = (group: string) => {
-    switch (group) {
-      case "common":
-        return isDarkMode
-          ? "bg-blue-500/10 text-blue-400 border-blue-500/30"
-          : "bg-blue-50 text-blue-600 border-blue-200";
-      case "navigation":
-        return isDarkMode
-          ? "bg-purple-500/10 text-purple-400 border-purple-500/30"
-          : "bg-purple-50 text-purple-600 border-purple-200";
-      case "errors":
-        return isDarkMode
-          ? "bg-red-500/10 text-red-400 border-red-500/30"
-          : "bg-red-50 text-red-600 border-red-200";
-      case "booking":
-        return isDarkMode
-          ? "bg-green-500/10 text-green-400 border-green-500/30"
-          : "bg-green-50 text-green-600 border-green-200";
-      case "property":
-        return isDarkMode
-          ? "bg-orange-500/10 text-orange-400 border-orange-500/30"
-          : "bg-orange-50 text-orange-600 border-orange-200";
+  const formatCurrency = (amount: number, currency: string = "USD") => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case "payment":
+        return <ArrowDownRight className="w-4 h-4 text-green-500" />;
+      case "refund":
+        return <ArrowUpRight className="w-4 h-4 text-blue-500" />;
+      case "withdrawal":
+        return <ArrowUpRight className="w-4 h-4 text-orange-500" />;
+      case "deposit":
+        return <ArrowDownRight className="w-4 h-4 text-purple-500" />;
+      case "commission":
+        return <DollarSign className="w-4 h-4 text-indigo-500" />;
       default:
-        return isDarkMode
-          ? "bg-gray-500/10 text-gray-400 border-gray-500/30"
-          : "bg-gray-50 text-gray-600 border-gray-200";
+        return <Receipt className="w-4 h-4 text-gray-500" />;
     }
   };
 
-  const getGroupLabel = (group: string) => {
-    return group.charAt(0).toUpperCase() + group.slice(1);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "bg-green-500/10 text-green-500 border-green-500/30";
+      case "pending":
+        return "bg-yellow-500/10 text-yellow-500 border-yellow-500/30";
+      case "failed":
+        return "bg-red-500/10 text-red-500 border-red-500/30";
+      case "cancelled":
+        return "bg-gray-500/10 text-gray-500 border-gray-500/30";
+      case "refunded":
+        return "bg-blue-500/10 text-blue-500 border-blue-500/30";
+      default:
+        return "bg-gray-500/10 text-gray-500 border-gray-500/30";
+    }
   };
 
-  // Get unique groups and languages for filter dropdowns
-  const uniqueGroups = Array.from(new Set(mockTranslations.map((t) => t.group)));
-  const uniqueLanguages = Array.from(
-    new Set(mockTranslations.map((t) => ({ code: t.languageCode, name: t.languageName })))
-  ).reduce((acc, curr) => {
-    if (!acc.find((item) => item.code === curr.code)) {
-      acc.push(curr);
-    }
-    return acc;
-  }, [] as { code: string; name: string }[]);
+  const getTypeLabel = (type: string) => {
+    return type.charAt(0).toUpperCase() + type.slice(1);
+  };
+
+  const getPaymentMethodLabel = (method: string) => {
+    return method.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  };
 
   return (
     <div className="py-6 space-y-6 animate-fadeIn">
@@ -158,10 +150,10 @@ export default function TranslationsPage() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className={`text-2xl md:text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-              Translations
+              Transactions
             </h1>
             <p className={`mt-1 md:mt-2 text-xs md:text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-              Manage translation keys and their values across all languages
+              View and manage all financial transactions
             </p>
           </div>
 
@@ -169,7 +161,7 @@ export default function TranslationsPage() {
             <div className="relative flex-1 max-w-md">
               <input
                 type="text"
-                placeholder="Search translations..."
+                placeholder="Search transactions..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`w-full px-4 py-2.5 rounded-lg border text-sm transition-all ${
@@ -209,44 +201,23 @@ export default function TranslationsPage() {
                   style={{ backgroundColor: isDarkMode ? "#1f2937" : "white", borderColor: isDarkMode ? "#374151" : "#e5e7eb" }}>
                   <div>
                     <label className={`block text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                      Language
+                      Type
                     </label>
                     <select
-                      value={filters.languageCode}
-                      onChange={(e) => handleFilterChange("languageCode", e.target.value)}
+                      value={filters.type}
+                      onChange={(e) => handleFilterChange("type", e.target.value)}
                       className={`w-full px-3 py-2 rounded-lg border text-sm ${
                         isDarkMode
                           ? "bg-gray-800 border-gray-700 text-white"
                           : "bg-white border-gray-300 text-gray-900"
                       }`}
                     >
-                      <option value="">All Languages</option>
-                      {uniqueLanguages.map((lang) => (
-                        <option key={lang.code} value={lang.code}>
-                          {lang.name} ({lang.code})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className={`block text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                      Group
-                    </label>
-                    <select
-                      value={filters.group}
-                      onChange={(e) => handleFilterChange("group", e.target.value)}
-                      className={`w-full px-3 py-2 rounded-lg border text-sm ${
-                        isDarkMode
-                          ? "bg-gray-800 border-gray-700 text-white"
-                          : "bg-white border-gray-300 text-gray-900"
-                      }`}
-                    >
-                      <option value="">All Groups</option>
-                      {uniqueGroups.map((group) => (
-                        <option key={group} value={group}>
-                          {getGroupLabel(group)}
-                        </option>
-                      ))}
+                      <option value="">All Types</option>
+                      <option value="payment">Payment</option>
+                      <option value="refund">Refund</option>
+                      <option value="withdrawal">Withdrawal</option>
+                      <option value="deposit">Deposit</option>
+                      <option value="commission">Commission</option>
                     </select>
                   </div>
                   <div>
@@ -254,8 +225,8 @@ export default function TranslationsPage() {
                       Status
                     </label>
                     <select
-                      value={filters.isActive}
-                      onChange={(e) => handleFilterChange("isActive", e.target.value)}
+                      value={filters.status}
+                      onChange={(e) => handleFilterChange("status", e.target.value)}
                       className={`w-full px-3 py-2 rounded-lg border text-sm ${
                         isDarkMode
                           ? "bg-gray-800 border-gray-700 text-white"
@@ -263,8 +234,33 @@ export default function TranslationsPage() {
                       }`}
                     >
                       <option value="">All Status</option>
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
+                      <option value="completed">Completed</option>
+                      <option value="pending">Pending</option>
+                      <option value="failed">Failed</option>
+                      <option value="cancelled">Cancelled</option>
+                      <option value="refunded">Refunded</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={`block text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      Payment Method
+                    </label>
+                    <select
+                      value={filters.paymentMethod}
+                      onChange={(e) => handleFilterChange("paymentMethod", e.target.value)}
+                      className={`w-full px-3 py-2 rounded-lg border text-sm ${
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700 text-white"
+                          : "bg-white border-gray-300 text-gray-900"
+                      }`}
+                    >
+                      <option value="">All Methods</option>
+                      <option value="credit_card">Credit Card</option>
+                      <option value="debit_card">Debit Card</option>
+                      <option value="bank_transfer">Bank Transfer</option>
+                      <option value="upi">UPI</option>
+                      <option value="wallet">Wallet</option>
+                      <option value="cash">Cash</option>
                     </select>
                   </div>
                   {activeFiltersCount > 0 && (
@@ -282,19 +278,6 @@ export default function TranslationsPage() {
                 </div>
               )}
             </div>
-
-            <button
-              onClick={handleAdd}
-              className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all ${
-                isDarkMode
-                  ? "bg-[#FF5A22] hover:bg-[#FF5A22]/90 text-white shadow-lg shadow-[#FF5A22]/20"
-                  : "bg-[#FF5A22] hover:bg-[#FF5A22]/90 text-white shadow-md hover:shadow-lg"
-              }`}
-            >
-              <Plus className="w-4 h-4 md:w-5 md:h-5" />
-              <span className="hidden sm:inline">Add Translation</span>
-              <span className="sm:hidden">Add</span>
-            </button>
           </div>
         </div>
       </div>
@@ -308,32 +291,29 @@ export default function TranslationsPage() {
                   S.No
                 </th>
                 <th className={`px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  Translation Key
+                  Transaction ID
                 </th>
                 <th className={`hidden md:table-cell px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  Language
-                </th>
-                <th className={`px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  Value
+                  User
                 </th>
                 <th className={`hidden lg:table-cell px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  Group
+                  Type
+                </th>
+                <th className={`hidden md:table-cell px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  Amount
                 </th>
                 <th className={`hidden md:table-cell px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                   Status
-                </th>
-                <th className={`px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  Actions
                 </th>
                 <th className={`px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider w-12 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}></th>
               </tr>
             </thead>
             <tbody className={`divide-y ${isDarkMode ? "divide-gray-800" : "divide-gray-200"}`}>
-              {paginatedTranslations.map((translation, idx) => {
-                const isExpanded = expandedRows.has(translation.id);
+              {paginatedTransactions.map((transaction, idx) => {
+                const isExpanded = expandedRows.has(transaction.id);
                 const serialNumber = startIndex + idx + 1;
                 return (
-                  <Fragment key={translation.id}>
+                  <Fragment key={transaction.id}>
                     <motion.tr
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -349,96 +329,57 @@ export default function TranslationsPage() {
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                             isDarkMode ? "bg-gray-800 border border-gray-700" : "bg-gray-100 border border-gray-200"
                           }`}>
-                            <FileText className="w-5 h-5 text-[#FF5A22]" />
+                            {getTypeIcon(transaction.type)}
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-sm font-semibold">{translation.key}</span>
-                              <button
-                                onClick={() => handleCopyKey(translation.key)}
-                                className={`p-1 rounded transition-all ${
-                                  isDarkMode
-                                    ? "hover:bg-gray-700 text-gray-400 hover:text-white"
-                                    : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
-                                }`}
-                                title="Copy key"
-                              >
-                                <Copy className="w-3 h-3" />
-                              </button>
+                          <div>
+                            <div className="font-semibold text-sm">{transaction.transactionId}</div>
+                            <div className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              {formatDate(transaction.createdAt)}
                             </div>
-                            {translation.description && (
-                              <div className={`text-xs truncate max-w-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                {translation.description}
-                              </div>
-                            )}
                           </div>
                         </div>
                       </td>
 
                       <td className={`hidden md:table-cell px-4 py-4 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                         <div className="flex items-center gap-2">
-                          <Globe className="w-4 h-4 text-blue-500" />
+                          <User className="w-4 h-4 text-blue-500" />
                           <div>
-                            <div className="text-sm font-medium">{translation.languageName}</div>
+                            <div className="text-sm font-medium">{transaction.userName}</div>
                             <div className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
-                              {translation.languageCode}
+                              {transaction.userEmail}
                             </div>
                           </div>
                         </div>
                       </td>
 
-                      <td className={`px-4 py-4 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                        <div className="text-sm max-w-md truncate" title={translation.value}>
-                          {translation.value}
-                        </div>
-                      </td>
-
                       <td className={`hidden lg:table-cell px-4 py-4 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getGroupColor(translation.group)}`}>
-                          {getGroupLabel(translation.group)}
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                          isDarkMode ? "bg-blue-500/10 text-blue-400 border border-blue-500/30" : "bg-blue-50 text-blue-600 border border-blue-200"
+                        }`}>
+                          {getTypeLabel(transaction.type)}
                         </span>
                       </td>
 
                       <td className="hidden md:table-cell px-4 py-4 text-center">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${
-                          translation.isActive
-                            ? "bg-green-500/10 text-green-500 border-green-500/30"
-                            : "bg-gray-500/10 text-gray-500 border-gray-500/30"
-                        }`}>
-                          {translation.isActive ? "Active" : "Inactive"}
-                        </span>
+                        <div className={`text-sm font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                          {formatCurrency(transaction.amount, transaction.currency)}
+                        </div>
+                        {transaction.fee && transaction.fee > 0 && (
+                          <div className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-600"}`}>
+                            Fee: {formatCurrency(transaction.fee, transaction.currency)}
+                          </div>
+                        )}
                       </td>
 
-                      <td className="px-4 py-4">
-                        <div className="flex items-center justify-center gap-1">
-                          <button
-                            onClick={() => handleEdit(translation)}
-                            className={`p-1.5 rounded-lg transition-all ${
-                              isDarkMode
-                                ? "text-yellow-400 hover:bg-yellow-500/10"
-                                : "text-yellow-600 hover:bg-yellow-100"
-                            }`}
-                            title="Edit"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(translation.id)}
-                            className={`p-1.5 rounded-lg transition-all ${
-                              isDarkMode
-                                ? "text-red-400 hover:bg-red-500/10"
-                                : "text-red-600 hover:bg-red-100"
-                            }`}
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
+                      <td className="hidden md:table-cell px-4 py-4 text-center">
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(transaction.status)}`}>
+                          {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                        </span>
                       </td>
 
                       <td className="px-4 py-4 text-center">
                         <button
-                          onClick={() => toggleRow(translation.id)}
+                          onClick={() => toggleRow(transaction.id)}
                           className={`p-1.5 rounded-lg transition-all ${
                             isDarkMode
                               ? "hover:bg-gray-800 text-gray-400 hover:text-[#FF5A22]"
@@ -458,14 +399,14 @@ export default function TranslationsPage() {
                     <AnimatePresence>
                       {isExpanded && (
                         <motion.tr
-                          key={`expanded-${translation.id}`}
+                          key={`expanded-${transaction.id}`}
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.4 }}
                           className={`overflow-hidden ${isDarkMode ? "bg-gray-800/30" : "bg-gray-50"}`}
                         >
-                          <td colSpan={8} className="px-4 py-6">
+                          <td colSpan={7} className="px-4 py-6">
                             <motion.div
                               initial={{ opacity: 0, y: -5 }}
                               animate={{ opacity: 1, y: 0 }}
@@ -473,45 +414,55 @@ export default function TranslationsPage() {
                             >
                               <div className={`p-4 rounded-lg border ${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
                                 <div className={`text-xs font-semibold uppercase mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                  Translation Key
+                                  User Details
                                 </div>
                                 <div className={`text-sm space-y-1 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                  <div className="font-mono font-medium">{translation.key}</div>
-                                  {translation.description && (
-                                    <div className="text-xs mt-1">{translation.description}</div>
+                                  <div><span className="font-medium">Name:</span> {transaction.userName}</div>
+                                  <div><span className="font-medium">Email:</span> {transaction.userEmail}</div>
+                                  {transaction.bookingId && (
+                                    <div><span className="font-medium">Booking:</span> {transaction.bookingId}</div>
                                   )}
                                 </div>
                               </div>
 
                               <div className={`p-4 rounded-lg border ${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
                                 <div className={`text-xs font-semibold uppercase mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                  Language & Group
+                                  Amount Details
                                 </div>
                                 <div className={`text-sm space-y-1 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                  <div><span className="font-medium">Language:</span> {translation.languageName} ({translation.languageCode})</div>
-                                  <div><span className="font-medium">Group:</span> {getGroupLabel(translation.group)}</div>
-                                  <div><span className="font-medium">Status:</span> {translation.isActive ? "Active" : "Inactive"}</div>
+                                  <div><span className="font-medium">Amount:</span> {formatCurrency(transaction.amount, transaction.currency)}</div>
+                                  {transaction.fee && transaction.fee > 0 && (
+                                    <div><span className="font-medium">Fee:</span> {formatCurrency(transaction.fee, transaction.currency)}</div>
+                                  )}
+                                  <div><span className="font-medium">Net:</span> {formatCurrency(transaction.netAmount, transaction.currency)}</div>
                                 </div>
                               </div>
 
                               <div className={`p-4 rounded-lg border ${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
                                 <div className={`text-xs font-semibold uppercase mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                  Translated Value
+                                  Payment Details
                                 </div>
-                                <div className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                  {translation.value}
+                                <div className={`text-sm space-y-1 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                  <div><span className="font-medium">Method:</span> {getPaymentMethodLabel(transaction.paymentMethod)}</div>
+                                  {transaction.paymentGateway && (
+                                    <div><span className="font-medium">Gateway:</span> {transaction.paymentGateway}</div>
+                                  )}
+                                  {transaction.gatewayTransactionId && (
+                                    <div className="text-xs font-mono">{transaction.gatewayTransactionId}</div>
+                                  )}
                                 </div>
                               </div>
 
-                              <div className={`p-4 rounded-lg border md:col-span-2 lg:col-span-3 ${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
-                                <div className={`text-xs font-semibold uppercase mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                  Timestamps
+                              {transaction.description && (
+                                <div className={`p-4 rounded-lg border md:col-span-2 lg:col-span-3 ${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
+                                  <div className={`text-xs font-semibold uppercase mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                    Description
+                                  </div>
+                                  <div className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                    {transaction.description}
+                                  </div>
                                 </div>
-                                <div className={`text-sm space-y-1 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                  <div><span className="font-medium">Created:</span> {formatDate(translation.createdAt)}</div>
-                                  <div><span className="font-medium">Updated:</span> {formatDate(translation.updatedAt)}</div>
-                                </div>
-                              </div>
+                              )}
                             </motion.div>
                           </td>
                         </motion.tr>
@@ -525,29 +476,30 @@ export default function TranslationsPage() {
         </div>
       </div>
 
-      {filteredTranslations.length > 0 && (
+      {filteredTransactions.length > 0 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
-          totalItems={filteredTranslations.length}
+          totalItems={filteredTransactions.length}
           itemsPerPage={itemsPerPage}
           showInfo={true}
           isDarkMode={isDarkMode}
         />
       )}
 
-      {filteredTranslations.length === 0 && (
+      {filteredTransactions.length === 0 && (
         <div className={`rounded-lg border p-12 text-center ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
-          <Languages className={`w-12 h-12 mx-auto mb-4 ${isDarkMode ? "text-gray-600" : "text-gray-400"}`} />
+          <CreditCard className={`w-12 h-12 mx-auto mb-4 ${isDarkMode ? "text-gray-600" : "text-gray-400"}`} />
           <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-            No translations found
+            No transactions found
           </h3>
           <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-            {searchTerm ? "Try adjusting your search criteria" : "No translations have been added yet"}
+            {searchTerm ? "Try adjusting your search criteria" : "No transactions have been recorded yet"}
           </p>
         </div>
       )}
     </div>
   );
 }
+
