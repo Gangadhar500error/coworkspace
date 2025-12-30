@@ -34,7 +34,7 @@ const navItems: NavItem[] = [
     label: "My Bookings",
     href: "/customer/bookings",
     icon: Calendar,
-    badge: 3,
+    badge: 10,
   },
   {
     label: "My Properties",
@@ -45,12 +45,13 @@ const navItems: NavItem[] = [
     label: "Invoices",
     href: "/customer/invoices",
     icon: FileText,
-    badge: 2,
+    badge: 2, // Pending invoices
   },
   {
     label: "Payments",
     href: "/customer/payments",
     icon: CreditCard,
+    badge: 2, // Pending payments
   },
   {
     label: "Messages",
@@ -68,11 +69,11 @@ const navItems: NavItem[] = [
     href: "/customer/settings",
     icon: Settings,
   },
-  {
-    label: "Help & Support",
-    href: "/customer/help",
-    icon: HelpCircle,
-  },
+  // {
+  //   label: "Help & Support",
+  //   href: "/customer/help",
+  //   icon: HelpCircle,
+  // },
 ];
 
 interface CustomerSecondNavProps {

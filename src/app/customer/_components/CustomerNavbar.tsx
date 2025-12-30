@@ -192,7 +192,7 @@ export default function CustomerNavbar({
                   </div>
                   <div className="hidden lg:block text-left">
                     <p className={`text-sm font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                      John Doe
+                      Madan
                     </p>
                     <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
                       Customer
@@ -203,10 +203,10 @@ export default function CustomerNavbar({
                   <div className={`absolute right-0 mt-2 w-56 rounded-xl shadow-xl overflow-hidden animate-[fadeIn_.2s_ease-out_forwards] border z-50 ${isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
                     <div className={`px-4 py-3 border-b ${isDarkMode ? "border-gray-800" : "border-gray-200"}`}>
                       <p className={`text-sm font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                        John Doe
+                        Madan
                       </p>
                       <p className={`text-xs mt-1 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-                        john@example.com
+                        madan@example.com
                       </p>
                     </div>
                     <div className={`py-2 divide-y ${isDarkMode ? "divide-gray-800" : "divide-gray-100"}`}>
