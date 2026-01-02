@@ -1,3 +1,22 @@
+/**
+ * Manager Property Listing Page
+ * 
+ * Displays properties managed by the logged-in manager with filtering and management capabilities.
+ * 
+ * DATA SOURCE:
+ * - Uses mockProperties from @/data/properties (shared with admin)
+ * - Customer counts calculated from bookings data
+ * 
+ * FEATURES:
+ * - Search by property name, brand, city
+ * - Filter by workspace type, status, verification status
+ * - Customer count display (clickable to filter customers)
+ * - Expandable rows with detailed information
+ * - Pagination
+ * 
+ * NOTE: Uses same data source as admin, but manager may see filtered subset based on permissions
+ */
+
 "use client";
 
 import { useState, useEffect, useRef, Fragment } from "react";

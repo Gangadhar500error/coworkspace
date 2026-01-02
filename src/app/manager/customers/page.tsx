@@ -1,3 +1,23 @@
+/**
+ * Manager Customers Page
+ * 
+ * Displays customers for the logged-in manager's properties with filtering and management capabilities.
+ * 
+ * DATA SOURCE:
+ * - Uses mockCustomers from @/data/customers (shared with admin)
+ * - Customer stats calculated dynamically from bookings data
+ * 
+ * FEATURES:
+ * - Search by name, email, phone, city
+ * - Filter by status, workspace type, property
+ * - Property filtering from URL params (when clicked from property listings)
+ * - Expandable rows with detailed information
+ * - Clickable booking count (navigates to bookings page)
+ * - Pagination
+ * 
+ * NOTE: Uses same data source as admin, but manager may see filtered subset based on property ownership
+ */
+
 "use client";
 
 import { useState, useEffect, useRef, Fragment } from "react";

@@ -1,66 +1,118 @@
-# Property Managers Data
+# Data Structure Documentation
 
-This directory contains centralized data files for Property Managers that can be used across multiple pages and shared with backend developers.
+This directory contains all centralized data files used across Admin and Manager dashboards.
 
-## Files
+## 📁 File Structure
 
-- **property-managers.json** - JSON file containing all property manager data
-- **property-managers.ts** - TypeScript wrapper with helper functions
-
-## Usage
-
-### Importing Data
-
-```typescript
-import { mockPropertyManagers, getPropertyManagerById, filterPropertyManagers } from "@/data/property-managers";
+```
+src/data/
+├── README.md              # This file - Data structure overview
+├── customers.ts           # Customer data (shared by admin & manager)
+├── properties.ts          # Property data (shared by admin & manager)
+├── properties.json        # Property JSON data source
+├── bookings.ts            # Booking data with helper functions
+└── ...
 ```
 
-### Using in Components
+## 🔄 Single Source of Truth
 
-```typescript
-// Get all property managers
-const managers = mockPropertyManagers;
+### Customer Data
+- **File**: `src/data/customers.ts`
+- **Export**: `mockCustomers`, `filterCustomers()`
+- **Used By**: 
+  - Admin: `src/app/admin/customers/page.tsx`
+  - Manager: `src/app/manager/customers/page.tsx`
+- **Note**: Both admin and manager use the SAME customer data source
 
-// Get specific property manager by ID
-const manager = getPropertyManagerById(1);
+### Property Data
+- **File**: `src/data/properties.ts`
+- **Export**: `mockProperties`, `filterProperties()`, `getPropertyById()`, etc.
+- **Used By**:
+  - Admin: `src/app/admin/property-listings/page.tsx`
+  - Manager: `src/app/manager/property-listing/page.tsx`
+- **Note**: Both admin and manager use the SAME property data source
 
-// Filter property managers
-const filtered = filterPropertyManagers(managers, "search term");
+### Booking Data
+- **File**: `src/data/bookings.ts`
+- **Export**: `mockCompletedBookings`, helper functions for customer/property matching
+- **Used By**: All dashboards for calculating stats and relationships
+
+## 🔗 Data Relationships
+
+### Customer ↔ Property Relationship
+- Customers are linked to properties through **bookings**
+- Matching is done by: `workspaceType + city` (since property IDs differ between data sources)
+- Helper functions:
+  - `getCustomersByPropertyId()` - Get customers for a property
+  - `getCustomerCountByPropertyId()` - Get customer count for a property
+  - `getCustomerBookingStats()` - Calculate customer statistics
+
+### Property ↔ Booking Relationship
+- Properties in `properties.json` have IDs: 1-15
+- Bookings reference property IDs: 301-315
+- **Solution**: Matching by workspace type + city combination
+
+## 📊 Data Flow
+
+```
+Properties (properties.json)
+    ↓
+mockProperties (properties.ts)
+    ↓
+Admin/Manager Property Listings Pages
+    ↓
+Customer Count (calculated from bookings)
+    ↓
+Click Customer Count
+    ↓
+Customers Page (filtered by property)
 ```
 
-## Data Structure
+## 🔌 Backend Integration
 
-Each property manager object contains:
+### Replace Mock Data with API Calls
 
-- `id` (number) - Unique identifier
-- `name` (string) - Full name
-- `mobile` (string) - Mobile phone number
-- `email` (string) - Email address
-- `address` (string, optional) - Street address
-- `city` (string, optional) - City name
-- `state` (string, optional) - State/Province
-- `zipCode` (string, optional) - ZIP/Postal code
-- `joinDate` (string, optional) - Join date (ISO format)
-- `status` (string, optional) - Status: "active" | "inactive" | "pending"
-- `totalProperties` (number, optional) - Total number of properties
-- `role` (string, optional) - Job role/title
-- `company` (string, optional) - Company name
-- `mobileVerification` (string, optional) - Verification status: "verified" | "unverified" | "pending"
-- `currency` (string, optional) - Currency code (e.g., "USD")
-- `description` (string, optional) - Description/bio
-- `image` (string, optional) - Profile image URL
+1. **Customers API**
+   ```typescript
+   // Replace in customers.ts
+   export const mockCustomers = await fetch('/api/customers').then(r => r.json());
+   ```
 
-## Backend Integration
+2. **Properties API**
+   ```typescript
+   // Replace in properties.ts
+   const propertiesData = await fetch('/api/properties').then(r => r.json());
+   ```
 
-When connecting to a backend API, replace the import in `property-managers.ts`:
+3. **Bookings API**
+   ```typescript
+   // Replace in bookings.ts
+   export const mockCompletedBookings = await fetch('/api/bookings').then(r => r.json());
+   ```
 
-```typescript
-// Replace mock data with API call
-export const getPropertyManagers = async (): Promise<PropertyManager[]> => {
-  const response = await fetch('/api/property-managers');
-  return response.json();
-};
-```
+### Expected API Endpoints
 
-The JSON structure matches the expected API response format, making it easy for backend developers to implement the same structure.
+- `GET /api/customers` - Fetch all customers
+- `GET /api/customers?propertyId={id}` - Fetch customers for a property
+- `GET /api/properties` - Fetch all properties
+- `GET /api/properties/{id}` - Fetch single property
+- `GET /api/bookings` - Fetch all bookings
+- `GET /api/bookings?customerId={id}` - Fetch bookings for a customer
+- `GET /api/bookings?propertyId={id}` - Fetch bookings for a property
 
+## ✅ Consistency Checklist
+
+- ✅ Admin and Manager use same customer data (`mockCustomers`)
+- ✅ Admin and Manager use same property data (`mockProperties`)
+- ✅ Customer stats calculated dynamically from bookings
+- ✅ Property-customer matching uses workspace type + city
+- ✅ All helper functions documented
+- ✅ Data structure clearly defined
+
+## 📝 Notes for Backend Developers
+
+1. **Property IDs**: Ensure property IDs are consistent across all endpoints
+2. **Customer Stats**: Calculate `totalBookings`, `totalSpent`, `lastBookingDate` from bookings
+3. **Filtering**: Support filtering by property, status, workspace type
+4. **Pagination**: All list endpoints should support pagination
+5. **Search**: Support search by name, email, phone, city for customers

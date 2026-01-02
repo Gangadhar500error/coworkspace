@@ -1,3 +1,21 @@
+/**
+ * Admin Customers Page
+ * 
+ * Displays all customers across the platform with filtering and management capabilities.
+ * 
+ * DATA SOURCE:
+ * - Uses mockCustomers from @/data/customers (shared with manager)
+ * - Customer stats calculated dynamically from bookings data
+ * 
+ * FEATURES:
+ * - Search by name, email, phone, city
+ * - Filter by status, workspace type, property
+ * - Property filtering from URL params (when clicked from property listings)
+ * - Expandable rows with detailed information
+ * - Clickable booking count (navigates to bookings page)
+ * - Pagination
+ */
+
 "use client";
 
 import { useState, useEffect, useRef, Fragment } from "react";

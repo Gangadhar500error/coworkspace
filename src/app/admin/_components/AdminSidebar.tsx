@@ -57,6 +57,7 @@ const navItems: NavItem[] = [
     href: "/admin/bookings",
     icon: Calendar,
     children: [
+      { label: "All Bookings", href: "/admin/bookings", icon: Calendar },
       { label: "Unpaid Invoices", href: "/admin/bookings/unpaid-invoices", icon: FileText },
       { label: "Paid Invoices", href: "/admin/bookings/paid-invoices", icon: FileText },
       { label: "Bookings Completed", href: "/admin/bookings/completed", icon: Calendar },
@@ -129,6 +130,24 @@ export default function AdminSidebar({
   const [tooltipVisible, setTooltipVisible] = useState<string | null>(null);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
 
+  // Auto-open parent menu if child is active
+  useEffect(() => {
+    const activeParent = navItems.find((item) => {
+      if (item.children) {
+        return item.children.some((child) => pathname === child.href);
+      }
+      return false;
+    });
+    if (activeParent) {
+      setOpenItems((prev) => {
+        if (!prev.includes(activeParent.label)) {
+          return [...prev, activeParent.label];
+        }
+        return prev;
+      });
+    }
+  }, [pathname]);
+
   useEffect(() => {
     const checkScreenSize = () => {
       setIsLargeScreen(window.innerWidth >= 1024);
@@ -147,6 +166,11 @@ export default function AdminSidebar({
   };
 
   const isActive = (href: string) => pathname === href;
+  
+  const isChildActive = (children?: NavItem[]) => {
+    if (!children) return false;
+    return children.some((child) => pathname === child.href);
+  };
 
   const NavItemComponent = ({
     item,
@@ -158,7 +182,7 @@ export default function AdminSidebar({
     const Icon = item.icon;
     const hasChildren = item.children && item.children.length > 0;
     const isOpen = openItems.includes(item.label);
-    const active = isActive(item.href);
+    const active = isActive(item.href) || isChildActive(item.children);
 
     const handleClick = (e: React.MouseEvent) => {
       if (hasChildren) {

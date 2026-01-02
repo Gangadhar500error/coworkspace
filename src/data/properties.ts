@@ -1,7 +1,29 @@
 /**
  * Properties Data
- * Centralized data file for properties
- * Can be easily replaced with API calls later
+ * 
+ * CENTRALIZED PROPERTY DATA - Used by both Admin and Manager dashboards
+ * 
+ * BACKEND INTEGRATION NOTES:
+ * - Replace propertiesData import with API call to fetch properties
+ * - This is the SINGLE SOURCE OF TRUTH for property data
+ * - Both admin and manager use the same mockProperties array
+ * 
+ * API ENDPOINTS EXPECTED:
+ * - GET /api/properties - Fetch all properties
+ * - GET /api/properties/{id} - Fetch single property details
+ * - POST /api/properties - Create new property
+ * - PUT /api/properties/{id} - Update property
+ * - DELETE /api/properties/{id} - Delete property
+ * 
+ * DATA STRUCTURE:
+ * - Properties loaded from properties.json (will be replaced with API)
+ * - Property interface defined in types/property.ts
+ * - Customer counts calculated dynamically from bookings (see bookings.ts)
+ * 
+ * USAGE:
+ * - Admin: src/app/admin/property-listings/page.tsx
+ * - Manager: src/app/manager/property-listing/page.tsx
+ * - Both import: import { mockProperties } from "@/data/properties"
  */
 
 import propertiesData from "./properties.json";
@@ -17,6 +39,7 @@ export const mockProperties: Property[] = propertiesData.properties.map((propert
   featuredProperty: property.featuredProperty as Property["featuredProperty"],
   available24x7: property.available24x7 as Property["available24x7"],
   gstRegistered: property.gstRegistered as Property["gstRegistered"],
+  floorPlan: property.floorPlan || undefined, // Convert null to undefined
   amenities: {
     wifi: property.amenities.wifi as Property["amenities"]["wifi"],
     acNonAc: property.amenities.acNonAc as Property["amenities"]["acNonAc"],
@@ -26,7 +49,7 @@ export const mockProperties: Property[] = propertiesData.properties.map((propert
     securityCctv: property.amenities.securityCctv as Property["amenities"]["securityCctv"],
     pantryCafeteria: property.amenities.pantryCafeteria as Property["amenities"]["pantryCafeteria"],
   },
-}));
+})) as unknown as Property[]; // Type assertion: JSON data structure matches Property interface
 
 // Helper function to get property by ID
 export const getPropertyById = (id: number): Property | undefined => {

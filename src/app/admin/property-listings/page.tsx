@@ -1,3 +1,21 @@
+/**
+ * Admin Property Listings Page
+ * 
+ * Displays all properties in the system with filtering, search, and management capabilities.
+ * 
+ * DATA SOURCE:
+ * - Uses mockProperties from @/data/properties (shared with manager)
+ * - Customer counts calculated from bookings data
+ * 
+ * FEATURES:
+ * - Search by property name, brand, city
+ * - Filter by workspace type, status, verification status
+ * - Filter by property manager (from URL params)
+ * - Customer count display (clickable to filter customers)
+ * - Expandable rows with detailed information
+ * - Pagination
+ */
+
 "use client";
 
 import { useState, useEffect, useRef, Fragment } from "react";
