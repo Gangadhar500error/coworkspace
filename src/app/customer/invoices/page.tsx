@@ -19,9 +19,12 @@ import {
 } from "lucide-react";
 import { customerInvoices } from "../../../data/invoices";
 import { Invoice, InvoiceStatus } from "../../../types/invoice";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function CustomerInvoicesPage() {
   const { isDarkMode } = useTheme();
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
@@ -340,46 +343,52 @@ export default function CustomerInvoicesPage() {
 
                         {/* Action Buttons */}
                         <div className="flex flex-col gap-2">
-                          <button className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-md hover:shadow-lg ${
-                            invoice.status === "paid"
-                              ? isDarkMode
-                                ? "bg-green-600 hover:bg-green-700 text-white"
-                                : "bg-green-600 hover:bg-green-700 text-white"
-                              : invoice.status === "pending"
-                              ? isDarkMode
-                                ? "bg-blue-600 hover:bg-blue-700 text-white"
-                                : "bg-blue-600 hover:bg-blue-700 text-white"
-                              : invoice.status === "overdue"
-                              ? isDarkMode
-                                ? "bg-red-600 hover:bg-red-700 text-white"
-                                : "bg-red-600 hover:bg-red-700 text-white"
-                              : isDarkMode
-                              ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
-                              : "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-200"
-                          }`}>
+                          <Link
+                            href={`/customer/invoices/${invoice.id}`}
+                            className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-md hover:shadow-lg ${
+                              invoice.status === "paid"
+                                ? isDarkMode
+                                  ? "bg-green-600 hover:bg-green-700 text-white"
+                                  : "bg-green-600 hover:bg-green-700 text-white"
+                                : invoice.status === "pending"
+                                ? isDarkMode
+                                  ? "bg-blue-600 hover:bg-blue-700 text-white"
+                                  : "bg-blue-600 hover:bg-blue-700 text-white"
+                                : invoice.status === "overdue"
+                                ? isDarkMode
+                                  ? "bg-red-600 hover:bg-red-700 text-white"
+                                  : "bg-red-600 hover:bg-red-700 text-white"
+                                : isDarkMode
+                                ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
+                                : "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-200"
+                            }`}
+                          >
                             <Eye className="w-4 h-4" />
                             View Invoice
-                          </button>
-                          <button className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-md hover:shadow-lg ${
-                            invoice.status === "paid"
-                              ? isDarkMode
-                                ? "bg-green-500/20 hover:bg-green-500/30 text-green-400 border border-green-500/30"
-                                : "bg-green-50 hover:bg-green-100 text-green-700 border border-green-200"
-                              : invoice.status === "pending"
-                              ? isDarkMode
-                                ? "bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30"
-                                : "bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200"
-                              : invoice.status === "overdue"
-                              ? isDarkMode
-                                ? "bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30"
-                                : "bg-red-50 hover:bg-red-100 text-red-700 border border-red-200"
-                              : isDarkMode
-                              ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
-                              : "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-200"
-                          }`}>
+                          </Link>
+                          <Link
+                            href={`/customer/invoices/${invoice.id}`}
+                            className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-md hover:shadow-lg ${
+                              invoice.status === "paid"
+                                ? isDarkMode
+                                  ? "bg-green-500/20 hover:bg-green-500/30 text-green-400 border border-green-500/30"
+                                  : "bg-green-50 hover:bg-green-100 text-green-700 border border-green-200"
+                                : invoice.status === "pending"
+                                ? isDarkMode
+                                  ? "bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30"
+                                  : "bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200"
+                                : invoice.status === "overdue"
+                                ? isDarkMode
+                                  ? "bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30"
+                                  : "bg-red-50 hover:bg-red-100 text-red-700 border border-red-200"
+                                : isDarkMode
+                                ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
+                                : "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-200"
+                            }`}
+                          >
                             <Download className="w-4 h-4" />
                             Download PDF
-                          </button>
+                          </Link>
                         </div>
                       </div>
                     </div>

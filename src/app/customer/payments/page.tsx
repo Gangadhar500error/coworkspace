@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { customerPayments } from "../../../data/payments";
 import { Payment, PaymentStatus, PaymentMethod } from "../../../types/payment";
+import Link from "next/link";
 
 export default function CustomerPaymentsPage() {
   const { isDarkMode } = useTheme();
@@ -343,30 +344,33 @@ export default function CustomerPaymentsPage() {
                         </div>
 
                         {/* Download Button */}
-                        <button className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-md hover:shadow-lg ${
-                          payment.status === "completed"
-                            ? isDarkMode
-                              ? "bg-green-600 hover:bg-green-700 text-white"
-                              : "bg-green-600 hover:bg-green-700 text-white"
-                            : payment.status === "pending"
-                            ? isDarkMode
-                              ? "bg-blue-600 hover:bg-blue-700 text-white"
-                              : "bg-blue-600 hover:bg-blue-700 text-white"
-                            : payment.status === "failed"
-                            ? isDarkMode
-                              ? "bg-red-600 hover:bg-red-700 text-white"
-                              : "bg-red-600 hover:bg-red-700 text-white"
-                            : payment.status === "refunded"
-                            ? isDarkMode
-                              ? "bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30"
-                              : "bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200"
-                            : isDarkMode
-                            ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
-                            : "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-200"
-                        }`}>
+                        <Link
+                          href={`/customer/payments/${payment.id}`}
+                          className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-md hover:shadow-lg ${
+                            payment.status === "completed"
+                              ? isDarkMode
+                                ? "bg-green-600 hover:bg-green-700 text-white"
+                                : "bg-green-600 hover:bg-green-700 text-white"
+                              : payment.status === "pending"
+                              ? isDarkMode
+                                ? "bg-blue-600 hover:bg-blue-700 text-white"
+                                : "bg-blue-600 hover:bg-blue-700 text-white"
+                              : payment.status === "failed"
+                              ? isDarkMode
+                                ? "bg-red-600 hover:bg-red-700 text-white"
+                                : "bg-red-600 hover:bg-red-700 text-white"
+                              : payment.status === "refunded"
+                              ? isDarkMode
+                                ? "bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30"
+                                : "bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200"
+                              : isDarkMode
+                              ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
+                              : "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-200"
+                          }`}
+                        >
                           <Download className="w-4 h-4" />
                           Download Receipt
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   </div>

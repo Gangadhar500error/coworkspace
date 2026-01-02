@@ -1,6 +1,22 @@
 /**
  * Customers Data
- * Mock data for manager's customers
+ * 
+ * This file contains mock customer data for both admin and manager dashboards.
+ * 
+ * BACKEND INTEGRATION NOTES:
+ * - Replace mockCustomers with API call to fetch customers
+ * - Customer stats (totalBookings, totalSpent, lastBookingDate) are calculated dynamically from bookings
+ * - Property filtering: Customers are linked to properties through bookings (see bookings.ts)
+ * - Customer matching: Uses workspace type + city to match customers to properties
+ * 
+ * API ENDPOINTS EXPECTED:
+ * - GET /api/customers - Fetch all customers
+ * - GET /api/customers?propertyId={id} - Fetch customers for a specific property
+ * - GET /api/customers/{id} - Fetch single customer details
+ * 
+ * DATA STRUCTURE:
+ * - Customer interface defined in types/customer.ts
+ * - Customer stats calculated from bookings data (see bookings.ts helpers)
  */
 
 import { Customer } from "../types/customer";

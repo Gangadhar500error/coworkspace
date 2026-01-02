@@ -1,6 +1,26 @@
 /**
  * Customer Type Definition
- * Represents a customer in the manager's system
+ * 
+ * Represents a customer in the system (used by both admin and manager).
+ * 
+ * BACKEND INTEGRATION:
+ * This interface matches the expected API response structure for customer data.
+ * 
+ * Fields:
+ * - id: Unique customer identifier (number)
+ * - name: Customer's full name (string)
+ * - email: Customer's email address (string)
+ * - phone: Customer's phone number (string)
+ * - image: Optional profile image URL (string)
+ * - status: Customer account status - "active" | "inactive" | "pending"
+ * - joinDate: Date when customer joined (ISO date string)
+ * - location: Optional location/area (string)
+ * - city: Optional city name (string)
+ * - totalBookings: Total number of bookings (calculated from bookings)
+ * - totalSpent: Total amount spent (calculated from bookings)
+ * - lastBookingDate: Date of most recent booking (ISO date string)
+ * - preferredWorkspaceType: Customer's preferred workspace type
+ * - notes: Optional internal notes about the customer
  */
 
 export interface Customer {

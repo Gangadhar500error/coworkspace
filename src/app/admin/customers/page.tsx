@@ -29,7 +29,7 @@ import { mockProperties } from "@/data/properties";
 import { Pagination } from "@/components/pagination";
 import FilterDropdown from "./FilterDropdown";
 
-export default function ManagerCustomersPage() {
+export default function AdminCustomersPage() {
   const { isDarkMode } = useTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -74,7 +74,7 @@ export default function ManagerCustomersPage() {
   };
 
   const handleView = (customer: Customer) => {
-    router.push(`/manager/customers/${customer.id}`);
+    router.push(`/admin/customers/${customer.id}`);
   };
 
   // Apply filters
@@ -140,7 +140,7 @@ export default function ManagerCustomersPage() {
       const params = new URLSearchParams(searchParams.toString());
       params.delete("propertyId");
       params.delete("propertyName");
-      router.push(`/manager/customers${params.toString() ? `?${params.toString()}` : ""}`);
+      router.push(`/admin/customers${params.toString() ? `?${params.toString()}` : ""}`);
     }
   };
 
@@ -155,7 +155,7 @@ export default function ManagerCustomersPage() {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("propertyId");
     params.delete("propertyName");
-    router.push(`/manager/customers${params.toString() ? `?${params.toString()}` : ""}`);
+    router.push(`/admin/customers${params.toString() ? `?${params.toString()}` : ""}`);
   };
 
   const handlePageChange = (page: number) => {
@@ -215,8 +215,30 @@ export default function ManagerCustomersPage() {
               Customers
             </h1>
             <p className={`mt-1 md:mt-2 text-xs md:text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-              Manage your customers and their booking history
+              Manage all customers across the platform
             </p>
+            {/* Property Filter Badge */}
+            {propertyFilter && (
+              <div className="mt-3">
+                <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium ${
+                  isDarkMode
+                    ? "bg-blue-500/10 text-blue-400 border border-blue-500/30"
+                    : "bg-blue-50 text-blue-600 border border-blue-200"
+                }`}>
+                  <Building2 className="w-4 h-4" />
+                  Filtered by: {propertyFilter.name}
+                  <button
+                    onClick={() => handleFilterChange("propertyId", "")}
+                    className={`ml-1 p-0.5 rounded hover:opacity-70 transition-opacity ${
+                      isDarkMode ? "hover:bg-blue-500/20" : "hover:bg-blue-100"
+                    }`}
+                    title="Clear property filter"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Filter Button */}
@@ -398,7 +420,7 @@ export default function ManagerCustomersPage() {
                         {/* Bookings - Hidden on mobile/tablet */}
                         <td className={`hidden lg:table-cell px-4 py-4 text-center ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                           <button
-                            onClick={() => router.push(`/manager/bookings?customerId=${customer.id}`)}
+                            onClick={() => router.push(`/admin/bookings?customerId=${customer.id}`)}
                             className="flex flex-col items-center hover:opacity-80 transition-opacity cursor-pointer group"
                             title="View customer bookings"
                           >
@@ -651,3 +673,4 @@ export default function ManagerCustomersPage() {
     </div>
   );
 }
+

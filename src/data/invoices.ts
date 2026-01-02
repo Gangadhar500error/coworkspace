@@ -68,3 +68,10 @@ export const customerInvoices: Invoice[] = [
   },
 ];
 
+/**
+ * Get invoice by ID
+ */
+export const getCustomerInvoiceById = (id: number): Invoice | undefined => {
+  return customerInvoices.find((invoice) => invoice.id === id);
+};
+

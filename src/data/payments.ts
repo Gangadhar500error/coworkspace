@@ -75,3 +75,10 @@ export const customerPayments: Payment[] = [
   },
 ];
 
+/**
+ * Get payment by ID
+ */
+export const getCustomerPaymentById = (id: number): Payment | undefined => {
+  return customerPayments.find((payment) => payment.id === id);
+};
+

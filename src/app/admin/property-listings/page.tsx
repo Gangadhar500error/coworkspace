@@ -30,6 +30,7 @@ import {
 import Image from "next/image";
 import { Property, getStartingPrice } from "@/types/property";
 import { mockProperties, filterProperties, filterByWorkspaceType, filterByStatus, filterByVerificationStatus } from "@/data/properties";
+import { getCustomerCountByPropertyId } from "@/data/bookings";
 import { Pagination } from "@/components/pagination";
 import FilterDropdown from "./FilterDropdown";
 
@@ -372,6 +373,9 @@ export default function PropertyListingsPage() {
                   City
                 </th>
                 <th className={`px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  Customers
+                </th>
+                <th className={`px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                   Actions
                 </th>
                 <th className={`px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider w-12 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
@@ -384,6 +388,7 @@ export default function PropertyListingsPage() {
                 const isExpanded = expandedRows.has(property.id);
                 const startingPrice = getStartingPrice(property);
                 const serialNumber = (currentPage - 1) * itemsPerPage + idx + 1;
+                const customerCount = getCustomerCountByPropertyId(property.id, property.propertyName, property.workspaceType, property.city);
                 return (
                   <Fragment key={property.id}>
                     <motion.tr
@@ -476,6 +481,22 @@ export default function PropertyListingsPage() {
                         </div>
                       </td>
 
+                      {/* Customers */}
+                      <td className={`px-4 py-4 text-center ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                        <button
+                          onClick={() => router.push(`/admin/customers?propertyId=${property.id}&propertyName=${encodeURIComponent(property.propertyName)}`)}
+                          className="flex flex-col items-center hover:opacity-80 transition-opacity cursor-pointer group"
+                          title="View property customers"
+                        >
+                          <span className={`text-sm font-semibold group-hover:text-[#FF5A22] transition-colors ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                            {customerCount}
+                          </span>
+                          <span className={`text-xs group-hover:text-[#FF5A22] transition-colors ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                            {customerCount === 1 ? "customer" : "customers"}
+                          </span>
+                        </button>
+                      </td>
+
                       {/* Actions */}
                       <td className={`px-4 py-4`}>
                         <div className="flex items-center justify-center gap-1">
@@ -550,7 +571,7 @@ export default function PropertyListingsPage() {
                             opacity: { duration: 0.3 }
                           }}
                         >
-                          <td colSpan={6} className={`px-4 py-6 ${isDarkMode ? "bg-gray-800/50" : "bg-gray-50"}`}>
+                          <td colSpan={7} className={`px-4 py-6 ${isDarkMode ? "bg-gray-800/50" : "bg-gray-50"}`}>
                             <motion.div
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}

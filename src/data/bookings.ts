@@ -1,7 +1,31 @@
 /**
  * Bookings Data
- * Centralized data file for completed bookings
- * Can be easily replaced with API calls later
+ * 
+ * Centralized data file for completed bookings.
+ * Used by admin, manager, and customer dashboards.
+ * 
+ * BACKEND INTEGRATION NOTES:
+ * - Replace mockCompletedBookings with API call to fetch bookings
+ * - Property-Customer matching: Uses workspace type + city (since property IDs/names differ)
+ * - Helper functions calculate customer stats dynamically from bookings
+ * 
+ * IMPORTANT: Property Matching Logic
+ * - Properties have IDs 1-15 in properties.json
+ * - Bookings reference property IDs 301-315
+ * - Matching is done by workspace type + city combination (see getBookingsByPropertyId)
+ * 
+ * API ENDPOINTS EXPECTED:
+ * - GET /api/bookings - Fetch all bookings
+ * - GET /api/bookings?customerId={id} - Fetch bookings for a customer
+ * - GET /api/bookings?propertyId={id} - Fetch bookings for a property
+ * - GET /api/bookings/{id} - Fetch single booking details
+ * 
+ * HELPER FUNCTIONS:
+ * - getBookingsByCustomerId(customerId) - Get all bookings for a customer
+ * - getBookingsByPropertyId(propertyId, propertyName, workspaceType, city) - Get bookings for a property
+ * - getCustomersByPropertyId(propertyId, propertyName, workspaceType, city) - Get unique customer IDs for a property
+ * - getCustomerCountByPropertyId(...) - Get customer count for a property
+ * - getCustomerBookingStats(customerId) - Calculate booking statistics for a customer
  */
 
 import { Booking } from "../types/booking";
@@ -2689,6 +2713,49 @@ export const getBookingByBookingId = (bookingId: string): Booking | undefined =>
 // Helper function to get bookings by customer ID
 export const getBookingsByCustomerId = (customerId: number): Booking[] => {
   return mockCompletedBookings.filter((booking) => booking.seeker.id === customerId);
+};
+
+// Helper function to get bookings by property ID (matches by workspace type and city since names/IDs differ)
+export const getBookingsByPropertyId = (propertyId: number, propertyName?: string, workspaceType?: string, city?: string): Booking[] => {
+  // Match by workspace type and city (most reliable since property names don't match)
+  if (workspaceType && city) {
+    return mockCompletedBookings.filter((booking) => 
+      booking.property.type === workspaceType && 
+      booking.property.city.toLowerCase().trim() === city.toLowerCase().trim()
+    );
+  }
+  // Fallback: If property name is provided, try partial name matching
+  if (propertyName) {
+    const nameLower = propertyName.toLowerCase().trim();
+    return mockCompletedBookings.filter((booking) => {
+      const bookingNameLower = booking.property.name.toLowerCase().trim();
+      // Check for exact match or if property name contains key words from booking name
+      return bookingNameLower === nameLower || 
+             bookingNameLower.includes(nameLower.split(' ')[0]) ||
+             nameLower.includes(bookingNameLower.split(' ')[0]);
+    });
+  }
+  // Last resort: ID matching (won't work but keeps function signature)
+  return mockCompletedBookings.filter((booking) => booking.property.id === propertyId);
+};
+
+// Helper function to get bookings by property name
+export const getBookingsByPropertyName = (propertyName: string): Booking[] => {
+  return mockCompletedBookings.filter((booking) => 
+    booking.property.name.toLowerCase().trim() === propertyName.toLowerCase().trim()
+  );
+};
+
+// Helper function to get unique customers for a property
+export const getCustomersByPropertyId = (propertyId: number, propertyName?: string, workspaceType?: string, city?: string): number[] => {
+  const bookings = getBookingsByPropertyId(propertyId, propertyName, workspaceType, city);
+  const uniqueCustomerIds = new Set(bookings.map((booking) => booking.seeker.id));
+  return Array.from(uniqueCustomerIds);
+};
+
+// Helper function to get customer count for a property
+export const getCustomerCountByPropertyId = (propertyId: number, propertyName?: string, workspaceType?: string, city?: string): number => {
+  return getCustomersByPropertyId(propertyId, propertyName, workspaceType, city).length;
 };
 
 // Helper function to calculate booking stats for a customer

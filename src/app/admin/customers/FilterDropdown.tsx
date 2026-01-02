@@ -16,11 +16,11 @@ interface FilterDropdownProps {
     propertyId: string;
   };
   onFilterChange: (key: "status" | "workspaceType" | "propertyId", value: string) => void;
-  properties: Array<{ id: number; name: string }>;
   onClearFilters: () => void;
   activeFiltersCount: number;
   getStatusColor: (status: string) => string;
   buttonRef: React.RefObject<HTMLButtonElement | null>;
+  properties: Array<{ id: number; name: string }>;
 }
 
 export default function FilterDropdown({
@@ -34,6 +34,7 @@ export default function FilterDropdown({
   activeFiltersCount,
   getStatusColor,
   buttonRef,
+  properties,
 }: FilterDropdownProps) {
   const { isDarkMode } = useTheme();
   const dropdownRef = useRef<HTMLDivElement>(null);

@@ -105,7 +105,7 @@ export default function CustomerBookingsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className={`text-2xl lg:text-3xl font-bold mb-1 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+          <h1 className={`text-2xl lg:text-3xl font-bold mb-1 text-[#FF5A22]`}>
             My Bookings
           </h1>
         </div>
@@ -222,21 +222,39 @@ export default function CustomerBookingsPage() {
             >
               <div className="flex flex-col h-full">
                 {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1 min-w-0">
-                    <h3 className={`text-lg font-bold mb-2 truncate ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                      {booking.property}
-                    </h3>
-                    <p className={`text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                      Booking ID: {booking.bookingId}
-                    </p>
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(booking.status)}`}
-                    >
-                      {getStatusIcon(booking.status)}
-                      {booking.status}
-                    </span>
+                <div className="mb-4">
+                  {/* Space Name - Simple & Beautiful */}
+                  <div className="mb-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={`p-1.5 rounded-lg ${
+                        isDarkMode 
+                          ? "bg-[#FF5A22]/20 text-[#FF5A22]" 
+                          : "bg-[#FF5A22]/10 text-[#FF5A22]"
+                      }`}>
+                        {getTypeIcon(booking.type)}
+                      </div>
+                      <h3 className={`text-xl font-bold text-[#FF5A22]`}>
+                        {booking.property}
+                      </h3>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(booking.status)}`}>
+                        {getStatusIcon(booking.status)}
+                        {booking.status}
+                      </span>
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${
+                        isDarkMode
+                          ? "bg-gray-800 text-gray-300"
+                          : "bg-gray-100 text-gray-700"
+                      }`}>
+                        {getTypeIcon(booking.type)}
+                        {booking.type}
+                      </span>
+                    </div>
                   </div>
+                  <p className={`text-xs font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    Booking ID: <span className={`font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>{booking.bookingId}</span>
+                  </p>
                 </div>
 
                 {/* Details Grid */}
@@ -272,17 +290,6 @@ export default function CustomerBookingsPage() {
                   </div>
                 </div>
 
-                {/* Type Badge */}
-                <div className="flex items-center gap-2 mb-4">
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold ${
-                    isDarkMode
-                      ? "bg-gray-800 text-gray-300"
-                      : "bg-gray-100 text-gray-700"
-                  }`}>
-                    {getTypeIcon(booking.type)}
-                    {booking.type}
-                  </span>
-                </div>
 
                 {/* Footer - Amount and Actions */}
                 <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-800">

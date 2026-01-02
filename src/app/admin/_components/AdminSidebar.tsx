@@ -48,6 +48,11 @@ const navItems: NavItem[] = [
     icon: Building2,
   },
   {
+    label: "Customers",
+    href: "/admin/customers",
+    icon: Users,
+  },
+  {
     label: "Bookings",
     href: "/admin/bookings",
     icon: Calendar,
