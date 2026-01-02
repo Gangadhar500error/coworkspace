@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   X,
 } from "lucide-react";
+import { mockConversations } from "../messages/data";
 
 interface NavItem {
   label: string;
@@ -23,6 +24,11 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
   badge?: number;
 }
+
+// Calculate total unread messages count
+const getTotalUnreadCount = () => {
+  return mockConversations.reduce((total, conv) => total + conv.unreadCount, 0);
+};
 
 const navItems: NavItem[] = [
   {
@@ -49,7 +55,7 @@ const navItems: NavItem[] = [
     label: "Messages",
     href: "/manager/messages",
     icon: MessageSquare,
-    badge: 3,
+    badge: getTotalUnreadCount(),
   },
   {
     label: "Payment",

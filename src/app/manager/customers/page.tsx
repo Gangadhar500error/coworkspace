@@ -23,6 +23,7 @@ import {
 import Image from "next/image";
 import { Customer } from "@/types/customer";
 import { mockCustomers, filterCustomers } from "@/data/customers";
+import { getCustomerBookingStats } from "@/data/bookings";
 import { Pagination } from "@/components/pagination";
 import FilterDropdown from "./FilterDropdown";
 
@@ -71,7 +72,18 @@ export default function ManagerCustomersPage() {
     });
   };
 
-  const searchedCustomers = filterCustomers(mockCustomers, searchTerm);
+  // Calculate booking stats for each customer dynamically
+  const customersWithStats = mockCustomers.map((customer) => {
+    const stats = getCustomerBookingStats(customer.id);
+    return {
+      ...customer,
+      totalBookings: stats.totalBookings,
+      totalSpent: stats.totalSpent,
+      lastBookingDate: stats.lastBookingDate || customer.lastBookingDate,
+    };
+  });
+
+  const searchedCustomers = filterCustomers(customersWithStats, searchTerm);
   const filteredCustomers = applyFilters(searchedCustomers);
   
   // Pagination calculations
@@ -334,12 +346,18 @@ export default function ManagerCustomersPage() {
 
                         {/* Bookings - Hidden on mobile/tablet */}
                         <td className={`hidden lg:table-cell px-4 py-4 text-center ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                          <div className="flex flex-col items-center">
-                            <span className="text-sm font-semibold">{customer.totalBookings}</span>
-                            <span className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                          <button
+                            onClick={() => router.push(`/manager/bookings?customerId=${customer.id}`)}
+                            className="flex flex-col items-center hover:opacity-80 transition-opacity cursor-pointer group"
+                            title="View customer bookings"
+                          >
+                            <span className={`text-sm font-semibold group-hover:text-[#FF5A22] transition-colors ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                              {customer.totalBookings}
+                            </span>
+                            <span className={`text-xs group-hover:text-[#FF5A22] transition-colors ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
                               {customer.totalBookings === 1 ? "booking" : "bookings"}
                             </span>
-                          </div>
+                          </button>
                         </td>
 
                         {/* Total Spent - Hidden on mobile/tablet */}

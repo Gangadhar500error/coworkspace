@@ -140,7 +140,7 @@ export default function CustomerPropertiesPage() {
           </h1>
         </div>
         <Link
-          href="/customer/properties/new"
+          href="/customer/properties/add"
           className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all ${
             isDarkMode
               ? "bg-[#FF5A22] hover:bg-[#FF5A22]/90 text-white"

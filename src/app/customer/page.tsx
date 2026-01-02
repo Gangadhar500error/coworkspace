@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useTheme } from "../admin/_components/ThemeProvider";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -21,54 +22,84 @@ import {
   Settings,
   HelpCircle,
 } from "lucide-react";
+import { customerBookings } from "@/data/customer-bookings";
+import { customerPayments } from "@/data/payments";
+import { customerInvoices } from "@/data/invoices";
 
 export default function CustomerDashboardPage() {
   const { isDarkMode } = useTheme();
 
-  // Statistics Cards
-  const stats = [
-    {
-      id: 1,
-      label: "Total Bookings",
-      value: "24",
-      change: "+3 this month",
-      icon: CalendarCheck,
-      color: "from-blue-500 to-blue-600",
-    },
-    {
-      id: 2,
-      label: "Active Bookings",
-      value: "5",
-      change: "2 upcoming",
-      icon: Calendar,
-      color: "from-green-500 to-green-600",
-    },
-    {
-      id: 3,
-      label: "Total Spent",
-      value: "$3,240",
-      change: "This month",
-      icon: DollarSign,
-      color: "from-purple-500 to-purple-600",
-    },
-    {
-      id: 4,
-      label: "Saved Spaces",
-      value: "8",
-      change: "Favorites",
-      icon: Star,
-      color: "from-orange-500 to-orange-600",
-    },
-  ];
+  // Calculate stats from real data
+  const stats = useMemo(() => {
+    const totalBookings = customerBookings.length;
+    const activeBookings = customerBookings.filter(b => b.status === "confirmed" || b.status === "pending").length;
+    const totalSpent = customerPayments
+      .filter(p => p.status === "completed")
+      .reduce((sum, p) => sum + p.amount, 0);
+    
+    // Get this month's bookings count
+    const thisMonth = new Date().getMonth();
+    const thisYear = new Date().getFullYear();
+    const thisMonthBookings = customerBookings.filter(b => {
+      const bookingDate = new Date(b.date);
+      return bookingDate.getMonth() === thisMonth && bookingDate.getFullYear() === thisYear;
+    }).length;
 
-  // Primary action cards
-  const actionCards = [
+    return [
+      {
+        id: 1,
+        label: "Total Bookings",
+        value: totalBookings.toString(),
+        change: `+${thisMonthBookings} this month`,
+        icon: CalendarCheck,
+        color: "from-blue-500 to-blue-600",
+      },
+      {
+        id: 2,
+        label: "Active Bookings",
+        value: activeBookings.toString(),
+        change: `${customerBookings.filter(b => b.status === "pending").length} pending`,
+        icon: Calendar,
+        color: "from-green-500 to-green-600",
+      },
+      {
+        id: 3,
+        label: "Total Spent",
+        value: `$${totalSpent.toLocaleString()}`,
+        change: "All time",
+        icon: DollarSign,
+        color: "from-purple-500 to-purple-600",
+      },
+      {
+        id: 4,
+        label: "Saved Spaces",
+        value: "8",
+        change: "Favorites",
+        icon: Star,
+        color: "from-orange-500 to-orange-600",
+      },
+    ];
+  }, []);
+
+  // Calculate booking counts by type
+  const bookingCounts = useMemo(() => {
+    return {
+      Coworking: customerBookings.filter(b => b.type === "Coworking").length,
+      "Meeting Room": customerBookings.filter(b => b.type === "Meeting Room").length,
+      "Private Office": customerBookings.filter(b => b.type === "Private Office").length,
+      "Virtual Office": customerBookings.filter(b => b.type === "Virtual Office").length,
+    };
+  }, []);
+
+  // My Bookings cards - filter by type with counts
+  const actionCards = useMemo(() => [
     {
       id: 1,
-      title: "Book Cowork Space",
-      description: "Find and book flexible coworking spaces",
+      title: "Coworking Spaces",
+      description: `${bookingCounts.Coworking} booking${bookingCounts.Coworking !== 1 ? "s" : ""}`,
+      count: bookingCounts.Coworking,
       icon: Building2,
-      href: "/customer/bookings/new?type=cowork",
+      href: "/customer/bookings?type=Coworking",
       bgColor: "bg-blue-50",
       iconColor: "text-blue-600",
       darkBgColor: "bg-blue-500/10",
@@ -76,10 +107,11 @@ export default function CustomerDashboardPage() {
     },
     {
       id: 2,
-      title: "Book Meeting Room",
-      description: "Reserve meeting rooms for your team",
+      title: "Meeting Rooms",
+      description: `${bookingCounts["Meeting Room"]} booking${bookingCounts["Meeting Room"] !== 1 ? "s" : ""}`,
+      count: bookingCounts["Meeting Room"],
       icon: Calendar,
-      href: "/customer/bookings/new?type=meeting",
+      href: "/customer/bookings?type=Meeting Room",
       bgColor: "bg-purple-50",
       iconColor: "text-purple-600",
       darkBgColor: "bg-purple-500/10",
@@ -87,10 +119,11 @@ export default function CustomerDashboardPage() {
     },
     {
       id: 3,
-      title: "Book Private Office",
-      description: "Get your own dedicated workspace",
+      title: "Private Offices",
+      description: `${bookingCounts["Private Office"]} booking${bookingCounts["Private Office"] !== 1 ? "s" : ""}`,
+      count: bookingCounts["Private Office"],
       icon: Briefcase,
-      href: "/customer/bookings/new?type=office",
+      href: "/customer/bookings?type=Private Office",
       bgColor: "bg-green-50",
       iconColor: "text-green-600",
       darkBgColor: "bg-green-500/10",
@@ -98,58 +131,83 @@ export default function CustomerDashboardPage() {
     },
     {
       id: 4,
-      title: "Virtual Office",
-      description: "Professional address and mail handling",
+      title: "Virtual Offices",
+      description: `${bookingCounts["Virtual Office"]} booking${bookingCounts["Virtual Office"] !== 1 ? "s" : ""}`,
+      count: bookingCounts["Virtual Office"],
       icon: Globe,
-      href: "/customer/bookings/new?type=virtual",
+      href: "/customer/bookings?type=Virtual Office",
       bgColor: "bg-orange-50",
       iconColor: "text-orange-600",
       darkBgColor: "bg-orange-500/10",
       darkIconColor: "text-orange-400",
     },
-  ];
+  ], [bookingCounts]);
 
-  // Next upcoming booking
-  const nextBooking = {
-    id: 1,
-    property: "Downtown Cowork Space",
-    location: "New York, NY",
-    date: "Tomorrow, Jan 15",
-    time: "9:00 AM - 5:00 PM",
-    type: "Coworking Space",
-    amount: "$150",
-    status: "confirmed",
-  };
+  // Get next upcoming booking (pending or confirmed, sorted by date)
+  const nextBooking = useMemo(() => {
+    const upcoming = customerBookings
+      .filter(b => b.status === "pending" || b.status === "confirmed")
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+    
+    if (!upcoming) return null;
 
-  // Recent bookings
-  const recentBookings = [
-    {
-      id: 2,
-      property: "Meeting Room A",
-      location: "San Francisco, CA",
-      date: "Jan 16",
-      time: "2:00 PM - 4:00 PM",
-      type: "Meeting Room",
-      amount: "$80",
-      status: "confirmed",
-    },
-    {
-      id: 3,
-      property: "Private Office Suite",
-      location: "Los Angeles, CA",
-      date: "Jan 17",
-      time: "Full Day",
-      type: "Private Office",
-      amount: "$200",
-      status: "confirmed",
-    },
-  ];
+    const bookingDate = new Date(upcoming.date);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    let dateDisplay = "";
+    if (bookingDate.toDateString() === today.toDateString()) {
+      dateDisplay = "Today";
+    } else if (bookingDate.toDateString() === tomorrow.toDateString()) {
+      dateDisplay = "Tomorrow";
+    } else {
+      dateDisplay = bookingDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    }
 
-  // Payment reminder
-  const pendingPayment = {
-    amount: "$1,250",
-    invoices: 2,
-  };
+    return {
+      id: upcoming.id,
+      property: upcoming.property,
+      location: upcoming.location,
+      date: dateDisplay,
+      time: upcoming.time,
+      type: upcoming.type,
+      amount: upcoming.amount,
+      status: upcoming.status,
+    };
+  }, []);
+
+  // Get recent bookings (last 2 confirmed bookings)
+  const recentBookings = useMemo(() => {
+    return customerBookings
+      .filter(b => b.status === "confirmed")
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 2)
+      .map(b => {
+        const bookingDate = new Date(b.date);
+        return {
+          id: b.id,
+          property: b.property,
+          location: b.location,
+          date: bookingDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          time: b.time,
+          type: b.type,
+          amount: b.amount,
+          status: b.status,
+        };
+      });
+  }, []);
+
+  // Calculate pending payment from invoices
+  const pendingPayment = useMemo(() => {
+    const pendingInvoices = customerInvoices.filter(inv => inv.status === "pending");
+    const totalAmount = pendingInvoices.reduce((sum, inv) => sum + inv.totalAmount, 0);
+    
+    return pendingInvoices.length > 0 ? {
+      amount: `$${totalAmount.toLocaleString()}`,
+      invoices: pendingInvoices.length,
+    } : null;
+  }, []);
 
   // Quick actions
   const quickActions = [
@@ -244,14 +302,14 @@ export default function CustomerDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Main Content */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Quick Booking Actions */}
+          {/* My Bookings Actions */}
           <div className={`rounded-xl p-5 ${
             isDarkMode
               ? "bg-gray-900/50 border border-gray-800"
               : "bg-gradient-to-br from-gray-50 to-blue-50/30 border border-gray-200"
           }`}>
             <h2 className={`text-xl font-bold mb-5 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-              Quick Booking
+              My Bookings
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {actionCards.map((card, index) => {
@@ -293,104 +351,111 @@ export default function CustomerDashboardPage() {
           </div>
 
           {/* Next Upcoming Booking */}
-          <div className={`rounded-xl p-5 ${
-            isDarkMode
-              ? "bg-gray-900/50 border border-gray-800"
-              : "bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border border-blue-100"
-          }`}>
-            <div className="flex items-center justify-between mb-5">
-              <h2 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                Next Booking
-              </h2>
-              <Link
-                href={`/customer/bookings/${nextBooking.id}`}
-                className={`text-sm font-semibold flex items-center gap-1.5 transition-colors text-[#FF5A22] hover:text-[#FF5A22]/80`}
-              >
-                View Details
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className={`rounded-xl border p-6 transition-all hover:shadow-lg ${
-                isDarkMode
-                  ? "bg-gray-800 border-gray-700"
-                  : "bg-white border-gray-200 shadow-sm"
-              }`}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`p-3 rounded-xl ${isDarkMode ? "bg-blue-500/20" : "bg-blue-100"}`}>
-                      <Calendar className={`w-5 h-5 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} />
-                    </div>
-                    <span className={`text-sm font-semibold px-3 py-1.5 rounded-lg ${
-                      isDarkMode
-                        ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                        : "bg-blue-100 text-blue-700 border border-blue-200"
-                    }`}>
-                      {nextBooking.type}
-                    </span>
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${
-                      isDarkMode
-                        ? "bg-green-500/10 text-green-400 border border-green-500/30"
-                        : "bg-green-50 text-green-600 border border-green-200"
-                    }`}>
-                      <CheckCircle className="w-4 h-4" />
-                      {nextBooking.status}
-                    </span>
-                  </div>
-                  <h3 className={`text-xl font-bold mb-3 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                    {nextBooking.property}
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-4 text-sm">
-                    <div className={`flex items-center gap-2 font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                      <MapPin className={`w-4 h-4 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} />
-                      <span>{nextBooking.location}</span>
-                    </div>
-                    <div className={`flex items-center gap-2 font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                      <Clock className={`w-4 h-4 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} />
-                      <span>{nextBooking.date} • {nextBooking.time}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className={`text-2xl font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                    {nextBooking.amount}
-                  </p>
-                  <Link
-                    href={`/customer/bookings/${nextBooking.id}`}
-                    className={`text-sm font-semibold text-[#FF5A22] hover:underline`}
-                  >
-                    View →
-                  </Link>
-                </div>
+          {nextBooking && (
+            <div className={`rounded-xl p-5 ${
+              isDarkMode
+                ? "bg-gray-900/50 border border-gray-800"
+                : "bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border border-blue-100"
+            }`}>
+              <div className="flex items-center justify-between mb-5">
+                <h2 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                  Next Booking
+                </h2>
+                <Link
+                  href={`/customer/bookings/${nextBooking.id}`}
+                  className={`text-sm font-semibold flex items-center gap-1.5 transition-colors text-[#FF5A22] hover:text-[#FF5A22]/80`}
+                >
+                  View Details
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
-            </motion.div>
-          </div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className={`rounded-xl border p-6 transition-all hover:shadow-lg ${
+                  isDarkMode
+                    ? "bg-gray-800 border-gray-700"
+                    : "bg-white border-gray-200 shadow-sm"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className={`p-3 rounded-xl ${isDarkMode ? "bg-blue-500/20" : "bg-blue-100"}`}>
+                        <Calendar className={`w-5 h-5 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} />
+                      </div>
+                      <span className={`text-sm font-semibold px-3 py-1.5 rounded-lg ${
+                        isDarkMode
+                          ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                          : "bg-blue-100 text-blue-700 border border-blue-200"
+                      }`}>
+                        {nextBooking.type}
+                      </span>
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${
+                        nextBooking.status === "confirmed"
+                          ? isDarkMode
+                            ? "bg-green-500/10 text-green-400 border border-green-500/30"
+                            : "bg-green-50 text-green-600 border border-green-200"
+                          : isDarkMode
+                          ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30"
+                          : "bg-yellow-50 text-yellow-600 border border-yellow-200"
+                      }`}>
+                        <CheckCircle className="w-4 h-4" />
+                        {nextBooking.status}
+                      </span>
+                    </div>
+                    <h3 className={`text-xl font-bold mb-3 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                      {nextBooking.property}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-4 text-sm">
+                      <div className={`flex items-center gap-2 font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                        <MapPin className={`w-4 h-4 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} />
+                        <span>{nextBooking.location}</span>
+                      </div>
+                      <div className={`flex items-center gap-2 font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                        <Clock className={`w-4 h-4 ${isDarkMode ? "text-blue-400" : "text-blue-600"}`} />
+                        <span>{nextBooking.date} • {nextBooking.time}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-2xl font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                      {nextBooking.amount}
+                    </p>
+                    <Link
+                      href={`/customer/bookings/${nextBooking.id}`}
+                      className={`text-sm font-semibold text-[#FF5A22] hover:underline`}
+                    >
+                      View →
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
 
           {/* Recent Bookings */}
-          <div className={`rounded-xl p-5 ${
-            isDarkMode
-              ? "bg-gray-900/50 border border-gray-800"
-              : "bg-gradient-to-br from-gray-50 to-purple-50/30 border border-gray-200"
-          }`}>
-            <div className="flex items-center justify-between mb-5">
-              <h2 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                Recent Bookings
-              </h2>
-              <Link
-                href="/customer/bookings"
-                className={`text-sm font-semibold flex items-center gap-1.5 transition-colors text-[#FF5A22] hover:text-[#FF5A22]/80`}
-              >
-                View All
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <div className="space-y-4">
-              {recentBookings.map((booking, index) => (
+          {recentBookings.length > 0 && (
+            <div className={`rounded-xl p-5 ${
+              isDarkMode
+                ? "bg-gray-900/50 border border-gray-800"
+                : "bg-gradient-to-br from-gray-50 to-purple-50/30 border border-gray-200"
+            }`}>
+              <div className="flex items-center justify-between mb-5">
+                <h2 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                  Recent Bookings
+                </h2>
+                <Link
+                  href="/customer/bookings"
+                  className={`text-sm font-semibold flex items-center gap-1.5 transition-colors text-[#FF5A22] hover:text-[#FF5A22]/80`}
+                >
+                  View All
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+              <div className="space-y-4">
+                {recentBookings.map((booking, index) => (
                 <motion.div
                   key={booking.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -446,9 +511,10 @@ export default function CustomerDashboardPage() {
                     </div>
                   </Link>
                 </motion.div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Right Column - Quick Actions & Payment */}
