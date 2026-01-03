@@ -1,10 +1,26 @@
 "use client";
 
-import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
+
+const workspaceImages = [
+  { id: 1, image: "/assets/cowork.jpg", title: "Coworking Spaces" },
+  { id: 2, image: "/assets/privateoffice.jpg", title: "Private Offices" },
+  { id: 3, image: "/assets/monthly.webp", title: "Meeting Rooms" },
+  { id: 4, image: "/assets/eventspace.webp", title: "Virtual Offices" },
+  { id: 5, image: "/assets/cowork.jpg", title: "Flexible Workspaces" },
+  { id: 6, image: "/assets/privateoffice.jpg", title: "Dedicated Desks" },
+  { id: 7, image: "/assets/monthly.webp", title: "Event Spaces" },
+  { id: 8, image: "/assets/eventspace.webp", title: "Training Rooms" },
+  { id: 9, image: "/assets/cowork.jpg", title: "Modern Offices" },
+  { id: 10, image: "/assets/privateoffice.jpg", title: "Premium Spaces" },
+  { id: 11, image: "/assets/monthly.webp", title: "Collaborative Areas" },
+  { id: 12, image: "/assets/eventspace.webp", title: "Business Centers" },
+];
 
 export default function SigninPage() {
   const router = useRouter();
@@ -15,6 +31,9 @@ export default function SigninPage() {
   const [loading, setLoading] = useState(false);
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000/api";
+
+  // Duplicate images for seamless infinite scroll
+  const duplicatedImages = [...workspaceImages, ...workspaceImages, ...workspaceImages];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,128 +86,284 @@ export default function SigninPage() {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 relative overflow-hidden">
-      {/* Decorative SVGs */}
-      <svg
-        className="absolute left-0 top-0 w-64 h-64 opacity-20"
-        fill="none"
-        viewBox="0 0 400 400"
-      >
-        <circle cx="200" cy="200" r="200" fill="#a5b4fc" />
-      </svg>
-      <svg
-        className="absolute right-0 bottom-0 w-64 h-64 opacity-20"
-        fill="none"
-        viewBox="0 0 400 400"
-      >
-        <circle cx="200" cy="200" r="200" fill="#fbcfe8" />
-      </svg>
-
-      <div className="w-full max-w-md mx-auto bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 md:p-10 border border-white/40 relative z-10">
-        <div className="flex flex-col items-center mb-6">
-          <Link href="/">
-            <Image
-              src="/assets/coworkspace.png"
-              width={160}
-              height={48}
-              alt="CoworkSpace Logo"
-              className="h-12 w-auto"
-            />
-          </Link>
-          <h2 className="text-3xl font-extrabold text-gray-800 mb-2">Welcome Back</h2>
-          <p className="text-gray-500 mb-4 text-center">
-            Sign in to your account to continue
-          </p>
-        </div>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <strong>Error!</strong> {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Email Address
-            </label>
-            <input
-              id="email"
-              name="user_name"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-            />
-            <div className="mt-2 flex items-center justify-between">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={rememberme}
-                  onChange={(e) => setRememberme(e.target.checked)}
-                  className="mr-2"
-                />
-                <span className="text-sm text-gray-600">Remember me</span>
-              </label>
-              <Link href="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-700 underline">
-                Forgot password?
-              </Link>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+    <div className="h-screen flex overflow-hidden">
+      {/* Left Side - Workspace Grid Gallery (Bottom to Top Scroll) */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gray-900 h-screen">
+        {/* Infinite Scrolling Grid Container */}
+        <div className="relative w-full h-full overflow-hidden">
+          {/* Smooth Scrolling Grid - Bottom to Top */}
+          <motion.div
+            className="grid grid-cols-2"
+            initial={{ y: 0 }}
+            animate={{
+              y: "-33.333%",
+            }}
+            transition={{
+              duration: 50,
+              repeat: Infinity,
+              ease: "linear",
+              repeatType: "loop",
+            }}
+            style={{
+              willChange: "transform",
+            }}
           >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-        </form>
+            {duplicatedImages.map((item, index) => (
+              <div
+                key={`left-${item.id}-${index}`}
+                className="relative w-full overflow-hidden"
+              >
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={800}
+                  height={600}
+                  className="w-full h-auto object-cover block"
+                  sizes="50vw"
+                  unoptimized
+                />
+              </div>
+            ))}
+          </motion.div>
 
-        <div className="flex items-center my-6">
-          <div className="flex-grow border-t border-gray-300"></div>
-          <span className="mx-3 text-gray-400">OR</span>
-          <div className="flex-grow border-t border-gray-300"></div>
-        </div>
-
-        <div className="space-y-3">
-          <button className="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-semibold py-3 rounded-lg shadow-sm hover:bg-gray-50 transition">
-            Sign in with Google
-          </button>
-        </div>
-
-        <div className="text-xs text-gray-400 text-center mt-6">
-          ©2025 CoworkSpace, Inc. All Rights Reserved.
-          <br />
-          <a href="#" className="underline">
-            Privacy Policy
-          </a>
+          {/* Top Gradient Fade */}
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-gray-900 to-transparent z-20 pointer-events-none" />
+          
+          {/* Bottom Gradient Fade */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent z-20 pointer-events-none" />
         </div>
       </div>
-    </section>
+
+      {/* Right Side - Login Form with Image Scroll */}
+      <div className="w-full lg:w-1/2 flex flex-col bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden h-screen">
+        {/* Background Image Scroll - Top to Bottom */}
+        <div className="absolute inset-0 overflow-hidden opacity-[0.03]">
+          <motion.div
+            className="grid grid-cols-2"
+            initial={{ y: 0 }}
+            animate={{
+              y: "33.333%",
+            }}
+            transition={{
+              duration: 50,
+              repeat: Infinity,
+              ease: "linear",
+              repeatType: "loop",
+            }}
+            style={{
+              willChange: "transform",
+            }}
+          >
+            {duplicatedImages.map((item, index) => (
+              <div
+                key={`right-${item.id}-${index}`}
+                className="relative w-full overflow-hidden"
+              >
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={800}
+                  height={600}
+                  className="w-full h-auto object-cover grayscale block"
+                  sizes="50vw"
+                  unoptimized
+                />
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Subtle Background Pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.03] z-10"
+          style={{
+            backgroundImage: `radial-gradient(circle, #000 1px, transparent 1px)`,
+            backgroundSize: '32px 32px',
+          }}
+        />
+
+        {/* Decorative Gradient Blobs */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#FF5A22]/8 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 z-10" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#008385]/8 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 z-10" />
+        
+        {/* Additional Light Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-white/40 z-10 pointer-events-none" />
+
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md mx-auto px-6 sm:px-8 py-8 lg:py-5 relative z-20 flex flex-col h-full"
+        >
+          {/* Logo - Top */}
+          <div className="mb-8 lg:mb-10 mx-auto">
+            <Link href="/" className="inline-block">
+              <Image
+                src="/assets/coworkspace.png"
+                width={220}
+                height={66}
+                alt="CoworkSpace Logo"
+                className="h-16 w-auto lg:h-20"
+                priority
+              />
+            </Link>
+          </div>
+
+          {/* Scrollable Content Container - Centered */}
+          <div className="flex-1 flex flex-col justify-center">
+            {/* Header */}
+            {/* <div className="mb-8">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 font-display">
+                Welcome Back
+              </h1>
+              <p className="text-gray-600 text-base font-body">
+                Sign in to access your workspace dashboard
+              </p>
+            </div> */}
+
+          {/* Login Card */}
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+            {/* Error Message */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3"
+              >
+                <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-red-800 font-body">{error}</p>
+                </div>
+              </motion.div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Email Field */}
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-gray-700 mb-2 font-body"
+                >
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="email"
+                    name="user_name"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5A22] focus:border-[#FF5A22] outline-none transition-all font-body text-gray-900 placeholder-gray-400"
+                  />
+                </div>
+              </div>
+
+              {/* Password Field */}
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-gray-700 mb-2 font-body"
+                >
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5A22] focus:border-[#FF5A22] outline-none transition-all font-body text-gray-900 placeholder-gray-400"
+                  />
+                </div>
+                <div className="mt-3 flex items-center justify-between">
+                  <label className="flex items-center cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={rememberme}
+                      onChange={(e) => setRememberme(e.target.checked)}
+                      className="w-4 h-4 text-[#FF5A22] border-gray-300 rounded focus:ring-[#FF5A22] focus:ring-2 cursor-pointer"
+                    />
+                    <span className="ml-2 text-sm text-gray-600 font-body group-hover:text-gray-900 transition-colors">
+                      Remember me
+                    </span>
+                  </label>
+                  <Link 
+                    href="/forgot-password" 
+                    className="text-sm font-medium text-[#FF5A22] hover:text-[#FF5A22]/80 transition-colors font-body"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#FF5A22] text-white py-3.5 rounded-lg font-semibold hover:bg-[#FF5A22]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg shadow-[#FF5A22]/20 font-body flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Signing in...</span>
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </button>
+            </form>
+
+            {/* Divider */}
+            <div className="flex items-center my-6">
+              <div className="grow border-t border-gray-200"></div>
+              <span className="px-4 text-sm text-gray-500 font-body">OR</span>
+              <div className="grow border-t border-gray-200"></div>
+            </div>
+
+            {/* Social Login */}
+            <button 
+              type="button"
+              className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all font-body"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              <span>Sign in with Google</span>
+            </button>
+          </div>
+
+          </div>
+
+          {/* Footer */}
+          <div className="mt-8 text-center">
+            <p className="text-xs text-gray-500 font-body">
+              ©2026 CoworkSpace, Inc. All Rights Reserved.
+              <br />
+              <Link href="#" className="text-[#FF5A22] hover:text-[#FF5A22]/80 underline">
+                Privacy Policy
+              </Link>
+              {" · "}
+              <Link href="#" className="text-[#FF5A22] hover:text-[#FF5A22]/80 underline">
+                Terms of Service
+              </Link>
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    </div>
   );
 }
