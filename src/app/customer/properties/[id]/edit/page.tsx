@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Save, X, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { useTheme } from "../../../../admin/_components/ThemeProvider";
-import { PropertyFormData } from "@/types/property";
+import { PropertyFormData, PropertyStatus, VerificationStatus } from "@/types/property";
 import { customerProperties } from "@/data/customer-properties";
+import { CustomerPropertyStatus } from "@/types/customer-property";
 import BasicInfoSection from "@/app/admin/property-listings/add/components/BasicInfoSection";
 import LocationSection from "@/app/admin/property-listings/add/components/LocationSection";
 import MediaSection from "@/app/admin/property-listings/add/components/MediaSection";
@@ -192,8 +193,8 @@ export default function CustomerEditPropertyPage() {
           mailHandling: "no",
           virtualOfficeMonthlyPrice: property.pricing?.monthly?.toString() || "",
           yearlyPrice: property.pricing?.yearly?.toString() || "",
-          propertyStatus: property.status || "draft",
-          verificationStatus: property.verificationStatus || "pending",
+          propertyStatus: (property.status === "pending" ? "draft" : property.status) as PropertyStatus || "draft",
+          verificationStatus: (property.verificationStatus === "rejected" ? "pending" : property.verificationStatus) as VerificationStatus || "pending",
           featuredProperty: property.featuredProperty ? "yes" : "no",
           priorityRanking: "",
           seoTitle: "",

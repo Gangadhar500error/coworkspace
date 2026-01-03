@@ -127,7 +127,7 @@ export default function Pricing() {
                     )}
                     <span className="text-gray-900 text-sm leading-normal font-body flex-1">
                       {feature.text}
-                      {feature.price && (
+                      {"price" in feature && feature.price && (
                         <span className="text-[#008385] font-bold ml-1">
                           {" "}{feature.price}
                         </span>

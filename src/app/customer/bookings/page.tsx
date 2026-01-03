@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useTheme } from "../../admin/_components/ThemeProvider";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { customerBookings, filterCustomerBookings } from "@/data/customer-bookings";
 
-export default function CustomerBookingsPage() {
+function CustomerBookingsPageContent() {
   const { isDarkMode } = useTheme();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
@@ -333,5 +333,13 @@ export default function CustomerBookingsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function CustomerBookingsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+      <CustomerBookingsPageContent />
+    </Suspense>
   );
 }

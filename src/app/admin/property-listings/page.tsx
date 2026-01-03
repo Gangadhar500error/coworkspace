@@ -18,7 +18,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef, Fragment } from "react";
+import { useState, useEffect, useRef, Fragment, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../_components/ThemeProvider";
@@ -52,7 +52,7 @@ import { getCustomerCountByPropertyId } from "@/data/bookings";
 import { Pagination } from "@/components/pagination";
 import FilterDropdown from "./FilterDropdown";
 
-export default function PropertyListingsPage() {
+function PropertyListingsPageContent() {
   const { isDarkMode } = useTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -802,5 +802,13 @@ export default function PropertyListingsPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function PropertyListingsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+      <PropertyListingsPageContent />
+    </Suspense>
   );
 }

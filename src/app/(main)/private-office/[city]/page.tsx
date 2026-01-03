@@ -10,7 +10,7 @@ import SortDropdown, { SortOption } from "../../coworking/[city]/components/Sort
 import ComingSoon from "../../coworking/[city]/components/ComingSoon";
 import LoadingSkeleton from "../../coworking/[city]/components/LoadingSkeleton";
 import Pagination from "../../coworking/[city]/components/Pagination";
-import { getWorkspacesByCity } from "../../coworking/[city]/data/workspaces";
+import { getWorkspacesByCity, Workspace } from "../../coworking/[city]/data/workspaces";
 import { generateWorkspaceStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo";
 
 const ITEMS_PER_PAGE = 9;
@@ -187,8 +187,9 @@ export default function PrivateOfficeCityPage() {
     setCurrentPage(1);
   };
 
-  const handleGetQuote = (id: string) => {
-    console.log("Get quote for:", id);
+  const handleGetQuote = (workspace: Workspace) => {
+    console.log("Get quote for:", workspace.id);
+    // TODO: Add quote modal functionality similar to coworking page
   };
 
   // Generate structured data

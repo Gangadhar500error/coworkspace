@@ -47,10 +47,10 @@ export async function apiRequest<T>(
   }
 
   // Set default headers
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    ...fetchOptions.headers,
+    ...(fetchOptions.headers as Record<string, string>),
   };
 
   // Add authorization header if token exists

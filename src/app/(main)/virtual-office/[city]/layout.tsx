@@ -2,11 +2,12 @@ import { Metadata } from "next";
 import { generateSEOMetadata } from "@/lib/seo";
 
 type Props = {
-  params: { city: string };
+  params: Promise<{ city: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const citySlug = params?.city || "new-york";
+  const { city: cityParam } = await params;
+  const citySlug = cityParam || "new-york";
   const city = citySlug
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))

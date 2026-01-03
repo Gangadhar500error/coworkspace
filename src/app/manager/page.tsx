@@ -411,7 +411,7 @@ export default function ManagerDashboardPage() {
                 >
                   <div className="relative shrink-0">
                     <Image
-                      src={customer.image}
+                      src={customer.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(customer.name)}&background=6366f1&color=fff&size=128`}
                       alt={customer.name}
                       width={40}
                       height={40}

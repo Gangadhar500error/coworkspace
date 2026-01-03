@@ -17,7 +17,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef, Fragment } from "react";
+import { useState, useEffect, useRef, Fragment, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../_components/ThemeProvider";
@@ -45,7 +45,7 @@ import { mockCompletedBookings, filterBookings } from "@/data/bookings";
 import { Pagination } from "@/components/pagination";
 import FilterDropdown from "./FilterDropdown";
 
-export default function AdminBookingsPage() {
+function AdminBookingsPageContent() {
   const { isDarkMode } = useTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -639,5 +639,13 @@ export default function AdminBookingsPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function AdminBookingsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+      <AdminBookingsPageContent />
+    </Suspense>
   );
 }

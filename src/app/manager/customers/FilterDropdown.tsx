@@ -30,6 +30,7 @@ export default function FilterDropdown({
   onSearchChange,
   filters,
   onFilterChange,
+  properties,
   onClearFilters,
   activeFiltersCount,
   getStatusColor,
