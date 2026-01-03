@@ -393,26 +393,26 @@ export default function Services() {
 
       <div className="container-custom relative z-10 px-4 md:px-6 lg:px-8">
         {/* Section Layout */}
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+        <div className="flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-12">
           {/* Left Side - Horizontal Title with Clickable Service Titles */}
           <div className="lg:w-80 shrink-0 flex items-start justify-center lg:justify-start">
             <div className="text-center lg:text-left max-w-md lg:max-w-none w-full">
               
               {/* Clickable Service Titles */}
               <div className="space-y-3">
-                <h3 className="text-2xl font-semibold text-gray-700 mb-4 font-display">Explore Services</h3>
+                <h3 className="text-xl md:text-2xl font-semibold text-gray-700 mb-3 md:mb-4 font-display">Explore Services</h3>
                 <div className="space-y-2">
                   {services.map((service, index) => (
                     <button
                       key={service.id}
                       onClick={() => handleTitleClick(index)}
-                      className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-300 ease-in-out ${
+                      className={`w-full text-left px-3 md:px-4 py-2.5 md:py-3 rounded-lg transition-all duration-300 ease-in-out ${
                         activeTitle === index
-                          ? 'bg-orange-500 text-white shadow-md transform scale-105'
+                          ? 'bg-[#FF5A22] text-white shadow-md transform scale-[1.02] md:scale-105'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
                       }`}
                     >
-                      <p className={`text-sm md:text-base font-medium leading-tight ${
+                      <p className={`text-xs md:text-sm lg:text-base font-medium leading-tight ${
                         activeTitle === index ? 'text-white' : 'text-gray-800'
                       }`}>
                         {service.title}
@@ -442,10 +442,10 @@ export default function Services() {
             onMouseUp={handleMouseUp}
           >
             {/* Cards Container */}
-            <div className="relative overflow-hidden min-h-[600px]">
+            <div className="relative overflow-hidden min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
               <div 
                 ref={containerRef}
-                className="cards-container flex gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 scrollbar-hide" 
+                className="cards-container flex gap-3 md:gap-4 lg:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 scrollbar-hide" 
                 style={{ scrollBehavior: 'smooth' }}
               >
                 {services.map((service, index) => {
@@ -455,10 +455,10 @@ export default function Services() {
                       ref={(el) => {
                         cardRefs.current[index] = el;
                       }}
-                      className="bg-white transition-all duration-700 ease-in-out overflow-hidden group cursor-pointer snap-center shrink-0 w-[calc(50%-8px)] md:w-[calc(50%-12px)] min-w-[calc(50%-8px)] md:min-w-[calc(50%-12px)]"
+                      className="bg-white transition-all duration-700 ease-in-out overflow-hidden group cursor-pointer snap-center shrink-0 w-[85%] sm:w-[75%] md:w-[calc(50%-12px)] min-w-[85%] sm:min-w-[75%] md:min-w-[calc(50%-12px)]"
                     >
                       {/* Image - Rounded corners on all 4 sides */}
-                      <div className="relative w-full h-56 md:h-64 lg:h-72 overflow-hidden rounded-xl">
+                      <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden rounded-xl">
                         <Image
                           src={service.image}
                           alt={service.title}
@@ -468,16 +468,16 @@ export default function Services() {
                               ? 'scale-110' 
                               : 'scale-100 group-hover:scale-105'
                           }`}
-                          sizes="(max-width: 768px) 50vw, 50vw"
+                          sizes="(max-width: 640px) 85vw, (max-width: 768px) 75vw, 50vw"
                         />
                       </div>
 
                       {/* Content */}
-                      <div className="py-5 md:py-6">
-                        <h3 className="text-lg md:text-xl lg:text-xl font-bold text-gray-900 mb-3 leading-tight font-display">
+                      <div className="py-4 md:py-5 lg:py-6">
+                        <h3 className="text-base md:text-lg lg:text-xl font-bold text-gray-900 mb-2 md:mb-3 leading-tight font-display">
                           {service.title}
                         </h3>
-                        <p className="text-sm md:text-base text-gray-700 leading-relaxed font-body">
+                        <p className="text-xs md:text-sm lg:text-base text-gray-700 leading-relaxed font-body">
                           {service.description}
                         </p>
                       </div>

@@ -75,14 +75,19 @@ export default function AboutUs() {
             return (
               <div
                 key={index}
-                className="bg-white border border-gray-200 rounded-lg p-5 md:p-6 hover:border-yellow-500 hover:shadow-md transition-all duration-300 text-start"
+                className="bg-white border border-gray-200 rounded-lg p-5 md:p-6 hover:border-yellow-500 hover:shadow-md transition-all duration-300"
               >
-                <div className={`w-12 h-12 ${feature.iconBg} rounded-lg flex items-center justify-center mb-4`}>
-                  <IconComponent className={`h-6 w-6 ${feature.iconColor}`} strokeWidth={2} />
+                {/* Mobile Layout - Icon and Heading Side by Side */}
+                <div className="flex md:flex-col items-start md:items-start gap-3 md:gap-0 mb-3 md:mb-4">
+                  <div className={`w-10 h-10 md:w-12 md:h-12 ${feature.iconBg} rounded-lg flex items-center justify-center shrink-0`}>
+                    <IconComponent className={`h-5 w-5 md:h-6 md:w-6 ${feature.iconColor}`} strokeWidth={2} />
+                  </div>
+                  <h3 className="text-base md:text-lg font-bold text-gray-800 md:mb-2 md:inline-block border-b-2 border-gray-500 pb-1">
+                    {feature.title}
+                  </h3>
                 </div>
-                <h3 className="text-base md:text-lg font-bold text-gray-800 mb-2 inline-block border-b-2 border-gray-500 pb-1">
-                  {feature.title}
-                </h3>
+                
+                {/* Description - Below on both mobile and desktop */}
                 <p className="text-sm text-gray-600 leading-relaxed">
                   {feature.description}
                 </p>
