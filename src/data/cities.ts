@@ -5,7 +5,7 @@ export interface City {
 }
 
 export const allCities: City[] = [
-  { name: "New York", image: "/assets/city-logos/Newyork.png", slug: "new-york" },
+  { name: "New York", image: "/assets/city-logos/newyork.png", slug: "new-york" },
   { name: "Los Angeles", image: "/assets/city-logos/losangels.png", slug: "los-angeles" },
   { name: "Chicago", image: "/assets/city-logos/Chicago.png", slug: "chicago" },
   { name: "Miami", image: "/assets/city-logos/miami.png", slug: "miami" },
