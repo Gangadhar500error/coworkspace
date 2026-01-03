@@ -23,7 +23,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative w-full bg-white pt-0 pb-5 md:py-10 lg:pt-20 lg:pb-14 overflow-hidden">
+    <section className="relative w-full bg-white pt-0 md:py-10 lg:pt-20 lg:pb-14 overflow-hidden">
       {/* Dotted Grid Background Pattern */}
       <div 
         className="absolute inset-0 opacity-20"
@@ -158,7 +158,7 @@ export default function HeroSection() {
           </div>
 
           {/* Separator Line */}
-          <div className="w-full border-t border-gray-300 my-8"></div>
+          <div className="w-full border-t border-gray-300 my-8 hidden lg:block"></div>
 
           {/* Feature Cards Component */}
           <FeatureCards />
