@@ -63,23 +63,29 @@ const featureCards: FeatureCard[] = [
 
 export default function FeatureCards() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-6">
+    <div className="lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-6 hidden">
       {featureCards.map((card) => (
-        <div key={card.id} className="flex flex-col md:flex-row gap-4">
-          <div className="relative w-full md:w-2/5 h-48 md:h-28 shrink-0 rounded-xl overflow-hidden">
+        <div 
+          key={card.id} 
+          className="flex flex-row md:flex-row gap-3 md:gap-4 items-start"
+        >
+          {/* Image - Small on left for mobile, larger on desktop */}
+          <div className="relative w-24 h-24 md:w-2/5 md:h-28 shrink-0 rounded-xl overflow-hidden">
             <Image
               src={card.image}
               alt={card.heading}
               fill
               className="object-cover rounded-xl"
-              sizes="(max-width: 768px) 100vw, 40vw"
+              sizes="(max-width: 768px) 96px, 40vw"
             />
           </div>
-          <div className="flex-1 p-0 flex flex-col justify-start">
-            <h3 className="text-xl md:text-xl font-bold text-black mb-2 font-display">
+          
+          {/* Content - Text on right */}
+          <div className="flex-1 p-0 flex flex-col justify-start min-w-0">
+            <h3 className="text-lg md:text-xl font-bold text-black mb-1.5 md:mb-2 font-display">
               {card.heading}
             </h3>
-            <p className="text-gray-700 mb-0 text-[15px] leading-relaxed font-body">
+            <p className="text-gray-700 mb-0 text-sm md:text-[15px] leading-relaxed font-body">
               {card.paragraph}{" "}
               <a 
                 href={card.linkHref} 

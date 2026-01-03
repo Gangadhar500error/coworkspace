@@ -1,11 +1,29 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import FeatureCards from "./FeatureCards";
+import WorkspaceTypeModal from "../WorkspaceTypeModal";
+import { allCities } from "@/data/cities";
 
 export default function HeroSection() {
+  const [selectedCity, setSelectedCity] = useState<{ name: string; slug: string } | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const citySlug = e.target.value;
+    if (citySlug) {
+      const city = allCities.find((c) => c.slug === citySlug);
+      if (city) {
+        setSelectedCity({ name: city.name, slug: city.slug });
+        setModalOpen(true);
+      }
+    }
+  };
+
   return (
-    <section className="relative w-full bg-white py-12 md:py-10 lg:pt-20 lg:pb-14 overflow-hidden">
+    <section className="relative w-full bg-white pt-0 pb-5 md:py-10 lg:pt-20 lg:pb-14 overflow-hidden">
       {/* Dotted Grid Background Pattern */}
       <div 
         className="absolute inset-0 opacity-20"
@@ -15,10 +33,153 @@ export default function HeroSection() {
         }}
       />
 
+      {/* Mobile Hero Banner - Full Width, Outside Container */}
+      <div className="block lg:hidden">
+        {/* Hero Section with Background Image - Full Width */}
+        <div className="relative w-full h-[320px] sm:h-[380px] overflow-hidden">
+          {/* Background Image */}
+          <Image
+            src="/assets/coworking-space-design-03.jpg"
+            alt="Modern Coworking Space"
+            fill
+            className="object-cover"
+            priority
+          />
+          
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
+          
+          {/* Content Overlay - Centered */}
+          <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
+            {/* Heading */}
+            <h1 className="text-3xl sm:text-4xl font-heading text-white leading-tight mb-3">
+              Find Your Perfect Workspace
+            </h1>
+            
+            {/* Subheading */}
+            <p className="text-white/80 text-sm mb-6 max-w-md">
+              Discover flexible workspaces designed for productivity and collaboration
+            </p>
+            
+            {/* City Dropdown - Centered */}
+            <div className="relative w-full max-w-sm">
+              <select
+                value={selectedCity?.slug || ""}
+                onChange={handleCityChange}
+                className="w-full px-4 py-3.5 pr-10 bg-white border-2 border-white/30 rounded-xl text-gray-900 font-semibold text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5A22] focus:border-[#FF5A22] shadow-xl hover:bg-gray-50 transition-colors"
+              >
+                <option value="">Select Your City</option>
+                {allCities.map((city) => (
+                  <option key={city.slug} value={city.slug}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-600 pointer-events-none" />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="container-custom relative z-10 px-4 md:px-6 lg:px-8">
-        {/* Full Width Main Headline with Embedded Elements */}
-        <div className="w-full">
-          <h1 className="text-2xl lg:text-[113px] leading-[1.1] font-heading">
+        {/* Mobile Design - Only visible on small screens */}
+        <div className="block lg:hidden">
+
+          {/* Workspace Types Section */}
+          <div className="space-y-3 mb-6 mt-5">
+            <h2 className="text-lg font-bold text-gray-900">Explore Workspace Types</h2>
+            <div className="w-full overflow-x-auto scrollbar-hide scroll-smooth -mx-4 px-4">
+              <div className="flex gap-3 min-w-max">
+                {/* 1. Cowork Space */}
+                <a href="/coworking" className="shrink-0 group">
+                  <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden shadow-lg mb-2 transition-transform group-hover:scale-105">
+                    <Image
+                      src="/assets/cowork.jpg"
+                      alt="Cowork Space"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <p className="text-white text-sm font-bold drop-shadow-lg">Cowork Space</p>
+                    </div>
+                  </div>
+                </a>
+
+                {/* 2. Meeting */}
+                <a href="/meeting-room" className="shrink-0 group">
+                  <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden shadow-lg mb-2 transition-transform group-hover:scale-105">
+                    <Image
+                      src="/assets/eventspace.webp"
+                      alt="Meeting Room"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <p className="text-white text-sm font-bold drop-shadow-lg">Meeting Rooms</p>
+                    </div>
+                  </div>
+                </a>
+
+                {/* 3. Virtual Office */}
+                <a href="/virtual-office" className="shrink-0 group">
+                  <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden shadow-lg mb-2 transition-transform group-hover:scale-105">
+                    <Image
+                      src="/assets/virtual.webp"
+                      alt="Virtual Office"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <p className="text-white text-sm font-bold drop-shadow-lg">Virtual Office</p>
+                    </div>
+                  </div>
+                </a>
+
+                {/* 4. Private Office */}
+                <a href="/private-office" className="shrink-0 group">
+                  <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden shadow-lg mb-2 transition-transform group-hover:scale-105">
+                    <Image
+                      src="/assets/privateoffice.jpg"
+                      alt="Private Office"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <p className="text-white text-sm font-bold drop-shadow-lg">Private Office</p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Separator Line */}
+          <div className="w-full border-t border-gray-300 my-8"></div>
+
+          {/* Feature Cards Component */}
+          <FeatureCards />
+
+          {/* Workspace Type Modal */}
+          {selectedCity && (
+            <WorkspaceTypeModal
+              isOpen={modalOpen}
+              onClose={() => {
+                setModalOpen(false);
+                setSelectedCity(null);
+              }}
+              cityName={selectedCity.name}
+              citySlug={selectedCity.slug}
+            />
+          )}
+        </div>
+
+        {/* Desktop Design - Only visible on large screens */}
+        <div className="hidden lg:block w-full">
+          <h1 className="text-[113px] leading-[1.1] font-heading">
               {/* First Line */}
               <span className="block">
               <span className="text-gradient-animate">Future-Ready Work.</span>
@@ -117,11 +278,11 @@ export default function HeroSection() {
               </span>
             </h1>
 
-        {/* Separator Line */}
-        <div className="w-full border-t border-gray-300 my-10 md:my-12 lg:my-10"></div>
+          {/* Separator Line */}
+          <div className="w-full border-t border-gray-300 my-10 md:my-12 lg:my-10 "></div>
 
-        {/* Feature Cards Component */}
-        <FeatureCards />
+          {/* Feature Cards Component */}
+          <FeatureCards />
         </div>
       </div>
     </section>
