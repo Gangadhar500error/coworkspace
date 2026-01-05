@@ -269,6 +269,7 @@ export default function MeetingRoomCityPage() {
                 <>
                   <ListingGrid
                     workspaces={paginatedWorkspaces}
+                    city={formattedCity}
                     onGetQuote={handleGetQuote}
                   />
                   <Pagination

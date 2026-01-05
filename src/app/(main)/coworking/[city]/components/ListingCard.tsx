@@ -57,10 +57,13 @@ export default function ListingCard({ workspace, city, onGetQuote }: ListingCard
     const cityName = city;
     const formattedCity = cityName.toLowerCase().replace(/\s+/g, '-');
 
-    // Only navigate for coworking spaces and meeting rooms
-    if (workspace.type === "Coworking Space" || workspace.type === "Meeting Room") {
+    // Navigate to appropriate detail page based on workspace type
+    if (workspace.type === "Coworking Space") {
       router.push(`/coworking/${formattedCity}/${workspace.id}`);
+    } else if (workspace.type === "Meeting Room") {
+      router.push(`/meeting-room/${formattedCity}/${workspace.id}`);
     }
+    // Private Office and Virtual Office don't navigate to detail pages
   };
 
   return (

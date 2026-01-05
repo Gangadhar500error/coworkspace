@@ -268,6 +268,7 @@ export default function PrivateOfficeCityPage() {
                 <>
                   <ListingGrid
                     workspaces={paginatedWorkspaces}
+                    city={formattedCity}
                     onGetQuote={handleGetQuote}
                   />
                   <Pagination
