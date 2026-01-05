@@ -49,7 +49,9 @@ export default function VirtualOfficeCard({ office, onGetQuote }: VirtualOfficeC
         <div className="md:w-3/5 p-4 flex flex-col">
           {/* Header */}
           <div className="mb-3">
-            <h3 className="text-lg font-bold text-gray-900 mb-1.5 line-clamp-1">{office.name}</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-1.5 line-clamp-1">
+              {office.name}
+            </h3>
             <div className="flex items-center gap-3 flex-wrap">
               {/* Rating */}
               <div className="flex items-center gap-1">

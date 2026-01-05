@@ -52,9 +52,15 @@ export default function ListingCard({ workspace, city, onGetQuote }: ListingCard
   };
 
   const handleTitleClick = () => {
-    const cityName = city || "new-york"; // Fallback to default city
+    if (!city) return; // Prevent error if city is undefined
+
+    const cityName = city;
     const formattedCity = cityName.toLowerCase().replace(/\s+/g, '-');
-    router.push(`/coworking/${formattedCity}/${workspace.id}`);
+
+    // Only navigate for coworking spaces and meeting rooms
+    if (workspace.type === "Coworking Space" || workspace.type === "Meeting Room") {
+      router.push(`/coworking/${formattedCity}/${workspace.id}`);
+    }
   };
 
   return (
@@ -136,7 +142,11 @@ export default function ListingCard({ workspace, city, onGetQuote }: ListingCard
         {/* Title and Location */}
         <div className="mb-2">
           <h3
-            className="text-lg font-bold text-gray-900 mb-1 line-clamp-1 font-display cursor-pointer hover:text-blue-600 transition-colors"
+            className={`text-lg font-bold text-gray-900 mb-1 line-clamp-1 font-display ${
+              (workspace.type === "Coworking Space" || workspace.type === "Meeting Room")
+                ? "cursor-pointer hover:text-blue-600 transition-colors"
+                : ""
+            }`}
             onClick={handleTitleClick}
           >
             {workspace.name}
