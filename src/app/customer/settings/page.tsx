@@ -23,9 +23,9 @@ export default function CustomerSettingsPage() {
   const { isDarkMode } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: "Madan",
+    firstName: "Madhan",
     lastName: "",
-    email: "madan@example.com",
+    email: "madhan@example.com",
     phone: "+1 (555) 123-4567",
     address: "123 Main Street",
     city: "New York",

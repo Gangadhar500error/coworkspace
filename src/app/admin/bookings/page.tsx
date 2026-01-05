@@ -56,18 +56,25 @@ function AdminBookingsPageContent() {
   const filterButtonRef = useRef<HTMLButtonElement>(null);
   const itemsPerPage = 10;
 
-  // Get customerId from URL params if present
+  // Get filters from URL params if present
   const customerIdFromUrl = searchParams.get("customerId");
+  const propertyIdFromUrl = searchParams.get("propertyId");
+  const propertyNameFromUrl = searchParams.get("propertyName");
+  const workspaceTypeFromUrl = searchParams.get("workspaceType");
+  const cityFromUrl = searchParams.get("city");
 
   // Filter states
   const [filters, setFilters] = useState({
     status: "" as "" | "completed" | "cancelled" | "pending" | "confirmed",
-    propertyType: "" as "" | "Coworking" | "Private Office" | "Meeting Room" | "Virtual Office",
+    propertyType: (workspaceTypeFromUrl as "" | "Coworking" | "Private Office" | "Meeting Room" | "Virtual Office") || "",
     paymentStatus: "" as "" | "paid" | "pending" | "failed" | "refunded",
     customerId: customerIdFromUrl || "",
+    propertyId: propertyIdFromUrl || "",
+    propertyName: propertyNameFromUrl || "",
+    city: cityFromUrl || "",
   });
 
-  // Update filters when URL param changes
+  // Update filters when URL params change
   useEffect(() => {
     if (customerIdFromUrl) {
       setFilters((prev) => ({
@@ -75,7 +82,16 @@ function AdminBookingsPageContent() {
         customerId: customerIdFromUrl,
       }));
     }
-  }, [customerIdFromUrl]);
+    if (propertyIdFromUrl) {
+      setFilters((prev) => ({
+        ...prev,
+        propertyId: propertyIdFromUrl,
+        propertyName: propertyNameFromUrl || "",
+        propertyType: (workspaceTypeFromUrl as "" | "Coworking" | "Private Office" | "Meeting Room" | "Virtual Office") || prev.propertyType,
+        city: cityFromUrl || "",
+      }));
+    }
+  }, [customerIdFromUrl, propertyIdFromUrl, propertyNameFromUrl, workspaceTypeFromUrl, cityFromUrl]);
 
   const toggleRow = (id: number) => {
     setExpandedRows((prev) => {
@@ -122,6 +138,26 @@ function AdminBookingsPageContent() {
       filtered = filtered.filter((booking) => booking.seeker.id.toString() === filters.customerId);
     }
 
+    // Apply property filter (by propertyId, propertyName, workspaceType, and city)
+    if (filters.propertyId || filters.propertyName || filters.city) {
+      filtered = filtered.filter((booking) => {
+        // Match by workspace type and city (most reliable)
+        if (filters.propertyType && filters.city) {
+          return booking.property.type === filters.propertyType && 
+                 booking.property.city.toLowerCase().trim() === filters.city.toLowerCase().trim();
+        }
+        // Fallback: Match by property name
+        if (filters.propertyName) {
+          const nameLower = filters.propertyName.toLowerCase().trim();
+          const bookingNameLower = booking.property.name.toLowerCase().trim();
+          return bookingNameLower === nameLower || 
+                 bookingNameLower.includes(nameLower.split(' ')[0]) ||
+                 nameLower.includes(bookingNameLower.split(' ')[0]);
+        }
+        return true;
+      });
+    }
+
     return filtered;
   };
 
@@ -154,9 +190,12 @@ function AdminBookingsPageContent() {
       propertyType: "",
       paymentStatus: "",
       customerId: "",
+      propertyId: "",
+      propertyName: "",
+      city: "",
     });
-    // Remove customerId from URL if clearing filters
-    if (customerIdFromUrl) {
+    // Remove URL params if clearing filters
+    if (customerIdFromUrl || propertyIdFromUrl) {
       router.push("/admin/bookings");
     }
   };
@@ -241,6 +280,9 @@ function AdminBookingsPageContent() {
               Manage all bookings across the platform
               {filters.customerId && (
                 <span className="ml-2 text-[#FF5A22]">(Filtered by Customer ID: {filters.customerId})</span>
+              )}
+              {filters.propertyId && filters.propertyName && (
+                <span className="ml-2 text-[#FF5A22]">(Filtered by Property: {filters.propertyName})</span>
               )}
             </p>
           </div>

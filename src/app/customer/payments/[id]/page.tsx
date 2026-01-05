@@ -301,10 +301,10 @@ export default function PaymentReceiptPage() {
               </h3>
               <div className={`p-4 rounded-lg border ${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-gray-50 border-gray-200"}`}>
                 <p className={`font-semibold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                  Madan
+                  Madhan
                 </p>
                 <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                  madan@example.com
+                  madhan@example.com
                 </p>
               </div>
             </div>

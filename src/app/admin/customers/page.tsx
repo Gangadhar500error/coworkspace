@@ -38,6 +38,9 @@ import {
   Clock,
   FileText,
   X,
+  Edit,
+  Trash2,
+  MoreVertical,
 } from "lucide-react";
 import Image from "next/image";
 import { Customer } from "@/types/customer";
@@ -52,10 +55,12 @@ function AdminCustomersPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const [actionDropdownOpen, setActionDropdownOpen] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const filterButtonRef = useRef<HTMLButtonElement>(null);
+  const actionDropdownRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const itemsPerPage = 10;
   const [propertyFilter, setPropertyFilter] = useState<{ id: number; name: string } | null>(null);
 
@@ -94,6 +99,36 @@ function AdminCustomersPageContent() {
   const handleView = (customer: Customer) => {
     router.push(`/admin/customers/${customer.id}`);
   };
+
+  const handleEdit = (customer: Customer) => {
+    router.push(`/admin/customers/${customer.id}/edit`);
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm("Are you sure you want to delete this customer? This action cannot be undone.")) {
+      console.log("Delete customer:", id);
+      // Implement delete functionality
+      // After deletion, you might want to refresh the list or redirect
+    }
+  };
+
+  const toggleActionDropdown = (id: number) => {
+    setActionDropdownOpen((prev) => (prev === id ? null : id));
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (actionDropdownOpen !== null) {
+        const ref = actionDropdownRefs.current[actionDropdownOpen];
+        if (ref && !ref.contains(event.target as Node)) {
+          setActionDropdownOpen(null);
+        }
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [actionDropdownOpen]);
 
   // Apply filters
   const applyFilters = (customers: Customer[]) => {
@@ -179,6 +214,7 @@ function AdminCustomersPageContent() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     setExpandedRows(new Set());
+    setActionDropdownOpen(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -330,7 +366,7 @@ function AdminCustomersPageContent() {
                 <th className={`hidden lg:table-cell px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                   Total Spent
                 </th>
-                <th className={`hidden md:table-cell px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                <th className={`px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider w-20 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                   Actions
                 </th>
                 <th className={`px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider w-12 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
@@ -463,20 +499,80 @@ function AdminCustomersPageContent() {
                           </div>
                         </td>
 
-                        {/* Actions - Hidden on mobile */}
-                        <td className="hidden md:table-cell px-4 py-4">
-                          <div className="flex items-center justify-center gap-1">
-                            <button
-                              onClick={() => handleView(customer)}
-                              className={`p-1.5 rounded-lg transition-all ${
-                                isDarkMode
-                                  ? "text-blue-400 hover:bg-blue-500/10"
-                                  : "text-blue-600 hover:bg-blue-100"
-                              }`}
-                              title="View Details"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
+                        {/* Actions Dropdown */}
+                        <td className="px-4 py-4">
+                          <div className="flex items-center justify-center relative">
+                            <div ref={(el) => { actionDropdownRefs.current[customer.id] = el; }} className="relative">
+                              <button
+                                onClick={() => toggleActionDropdown(customer.id)}
+                                className={`p-1.5 rounded-lg transition-all ${
+                                  isDarkMode
+                                    ? "text-gray-400 hover:bg-gray-800 hover:text-white"
+                                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                                }`}
+                                title="Actions"
+                              >
+                                <MoreVertical className="w-4 h-4" />
+                              </button>
+                              {actionDropdownOpen === customer.id && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: -10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -10 }}
+                                  className={`absolute right-0 top-full mt-1 z-50 min-w-[160px] rounded-lg border shadow-lg ${
+                                    isDarkMode
+                                      ? "bg-gray-800 border-gray-700"
+                                      : "bg-white border-gray-200"
+                                  }`}
+                                >
+                                  <div className="py-1">
+                                    <button
+                                      onClick={() => {
+                                        handleView(customer);
+                                        setActionDropdownOpen(null);
+                                      }}
+                                      className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                        isDarkMode
+                                          ? "text-gray-300 hover:bg-gray-700"
+                                          : "text-gray-700 hover:bg-gray-50"
+                                      }`}
+                                    >
+                                      <Eye className="w-4 h-4" />
+                                      View Details
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        handleEdit(customer);
+                                        setActionDropdownOpen(null);
+                                      }}
+                                      className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                        isDarkMode
+                                          ? "text-gray-300 hover:bg-gray-700"
+                                          : "text-gray-700 hover:bg-gray-50"
+                                      }`}
+                                    >
+                                      <Edit className="w-4 h-4" />
+                                      Edit Customer
+                                    </button>
+                                    <div className={`border-t my-1 ${isDarkMode ? "border-gray-700" : "border-gray-200"}`} />
+                                    <button
+                                      onClick={() => {
+                                        handleDelete(customer.id);
+                                        setActionDropdownOpen(null);
+                                      }}
+                                      className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                                        isDarkMode
+                                          ? "text-red-400 hover:bg-red-500/10"
+                                          : "text-red-600 hover:bg-red-50"
+                                      }`}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                      Delete Customer
+                                    </button>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </div>
                           </div>
                         </td>
 
@@ -650,7 +746,7 @@ function AdminCustomersPageContent() {
                                 </div>
 
                                 {/* Action Buttons */}
-                                <div className="flex items-center justify-center gap-2 pt-4 border-t border-gray-200 dark:border-gray-800">
+                                <div className="flex items-center justify-center gap-2 pt-4 border-t border-gray-200 dark:border-gray-800 flex-wrap">
                                   <button
                                     onClick={() => handleView(customer)}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -661,6 +757,28 @@ function AdminCustomersPageContent() {
                                   >
                                     <Eye className="w-4 h-4" />
                                     View Details
+                                  </button>
+                                  <button
+                                    onClick={() => handleEdit(customer)}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                      isDarkMode
+                                        ? "bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 border border-yellow-500/30"
+                                        : "bg-yellow-50 text-yellow-600 hover:bg-yellow-100 border border-yellow-200"
+                                    }`}
+                                  >
+                                    <Edit className="w-4 h-4" />
+                                    Edit Customer
+                                  </button>
+                                  <button
+                                    onClick={() => handleDelete(customer.id)}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                      isDarkMode
+                                        ? "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30"
+                                        : "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                                    }`}
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                    Delete Customer
                                   </button>
                                 </div>
                               </motion.div>

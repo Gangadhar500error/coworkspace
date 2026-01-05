@@ -13,6 +13,9 @@ interface FilterDropdownProps {
     propertyType: "" | "Coworking" | "Private Office" | "Meeting Room" | "Virtual Office";
     paymentStatus: "" | "paid" | "pending" | "failed" | "refunded";
     customerId: string;
+    propertyId: string;
+    propertyName: string;
+    city: string;
   };
   onFilterChange: (key: keyof FilterDropdownProps["filters"], value: string) => void;
   onClearFilters: () => void;
@@ -212,6 +215,38 @@ export default function FilterDropdown({
                   )}
                 </div>
               </div>
+
+              {/* Property Filter Info */}
+              {filters.propertyId && filters.propertyName && (
+                <div className={`p-3 rounded-lg border ${
+                  isDarkMode ? "bg-blue-500/10 border-blue-500/30" : "bg-blue-50 border-blue-200"
+                }`}>
+                  <label className={`block text-xs font-semibold mb-1 ${isDarkMode ? "text-blue-300" : "text-blue-700"}`}>
+                    Property Filter (Active)
+                  </label>
+                  <div className={`text-xs ${isDarkMode ? "text-blue-400" : "text-blue-600"}`}>
+                    <div>Property: {filters.propertyName}</div>
+                    {filters.propertyType && <div>Type: {filters.propertyType}</div>}
+                    {filters.city && <div>City: {filters.city}</div>}
+                  </div>
+                  <button
+                    onClick={() => {
+                      onFilterChange("propertyId", "");
+                      onFilterChange("propertyName", "");
+                      onFilterChange("city", "");
+                      onFilterChange("propertyType", "");
+                    }}
+                    className={`mt-2 px-2 py-1 rounded text-xs font-medium transition-colors ${
+                      isDarkMode
+                        ? "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30"
+                        : "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                    }`}
+                    title="Clear property filter"
+                  >
+                    Clear Property Filter
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Footer */}

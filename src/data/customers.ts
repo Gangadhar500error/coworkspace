@@ -552,3 +552,8 @@ export const filterCustomers = (customers: Customer[], searchTerm: string): Cust
   );
 };
 
+// Helper function to get customer by ID
+export const getCustomerById = (id: number): Customer | undefined => {
+  return mockCustomers.find((customer) => customer.id === id);
+};
+
