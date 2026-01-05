@@ -1,17 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Star, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { Workspace } from "../data/workspaces";
 
 interface ListingCardProps {
   workspace: Workspace;
+  city?: string;
   onGetQuote: (workspace: Workspace) => void;
 }
 
-export default function ListingCard({ workspace, onGetQuote }: ListingCardProps) {
+export default function ListingCard({ workspace, city, onGetQuote }: ListingCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const router = useRouter();
   
   // Generate 3 images for each workspace (using the same image or variations)
   const workspaceImages = 'images' in workspace ? (workspace as any).images : undefined;
@@ -46,6 +49,12 @@ export default function ListingCard({ workspace, onGetQuote }: ListingCardProps)
 
   const goToImage = (index: number) => {
     setCurrentImageIndex(index);
+  };
+
+  const handleTitleClick = () => {
+    const cityName = city || "new-york"; // Fallback to default city
+    const formattedCity = cityName.toLowerCase().replace(/\s+/g, '-');
+    router.push(`/coworking/${formattedCity}/${workspace.id}`);
   };
 
   return (
@@ -126,7 +135,10 @@ export default function ListingCard({ workspace, onGetQuote }: ListingCardProps)
       <div className="p-4">
         {/* Title and Location */}
         <div className="mb-2">
-          <h3 className="text-lg font-bold text-gray-900 mb-1 line-clamp-1 font-display">
+          <h3
+            className="text-lg font-bold text-gray-900 mb-1 line-clamp-1 font-display cursor-pointer hover:text-blue-600 transition-colors"
+            onClick={handleTitleClick}
+          >
             {workspace.name}
           </h3>
           <div className="flex items-center gap-1 text-sm text-gray-600">

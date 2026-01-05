@@ -5,10 +5,11 @@ import ListingCard from "./ListingCard";
 
 interface ListingGridProps {
   workspaces: Workspace[];
+  city?: string;
   onGetQuote: (workspace: Workspace) => void;
 }
 
-export default function ListingGrid({ workspaces, onGetQuote }: ListingGridProps) {
+export default function ListingGrid({ workspaces, city, onGetQuote }: ListingGridProps) {
   if (workspaces.length === 0) {
     return null; // EmptyState will be handled by parent
   }
@@ -19,6 +20,7 @@ export default function ListingGrid({ workspaces, onGetQuote }: ListingGridProps
         <ListingCard
           key={workspace.id}
           workspace={workspace}
+          city={city}
           onGetQuote={onGetQuote}
         />
       ))}

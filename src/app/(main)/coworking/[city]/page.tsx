@@ -67,9 +67,9 @@ export default function CoworkingCityPage() {
     if (selectedTypesFromUrl.length > 0) {
       return workspaces.filter(ws => selectedTypesFromUrl.includes(ws.type));
     }
-    
-    // Default: show only Coworking Space if no types specified
-    return workspaces.filter(ws => ws.type === "Coworking Space");
+
+    // Default: show Coworking Spaces and Meeting Rooms if no types specified
+    return workspaces.filter(ws => ws.type === "Coworking Space" || ws.type === "Meeting Room");
   }, [formattedCity, selectedTypesFromUrl]);
 
   // Get available areas
@@ -288,7 +288,7 @@ export default function CoworkingCityPage() {
             </>
           ) : (
             <>
-              Coworking Spaces in <span className="text-orange-500">{formattedCity}</span>
+              Coworking Spaces & Meeting Rooms in <span className="text-orange-500">{formattedCity}</span>
             </>
           )}
         </h1>
@@ -359,6 +359,7 @@ export default function CoworkingCityPage() {
                 <>
                   <ListingGrid
                     workspaces={paginatedWorkspaces}
+                    city={formattedCity}
                     onGetQuote={handleGetQuote}
                   />
                   <Pagination
