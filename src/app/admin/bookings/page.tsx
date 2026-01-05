@@ -64,10 +64,18 @@ function AdminBookingsPageContent() {
   const cityFromUrl = searchParams.get("city");
 
   // Filter states
-  const [filters, setFilters] = useState({
-    status: "" as "" | "completed" | "cancelled" | "pending" | "confirmed",
+  const [filters, setFilters] = useState<{
+    status: "" | "completed" | "cancelled" | "pending" | "confirmed";
+    propertyType: "" | "Coworking" | "Private Office" | "Meeting Room" | "Virtual Office";
+    paymentStatus: "" | "paid" | "pending" | "failed" | "refunded";
+    customerId: string;
+    propertyId: string;
+    propertyName: string;
+    city: string;
+  }>({
+    status: "",
     propertyType: (workspaceTypeFromUrl as "" | "Coworking" | "Private Office" | "Meeting Room" | "Virtual Office") || "",
-    paymentStatus: "" as "" | "paid" | "pending" | "failed" | "refunded",
+    paymentStatus: "",
     customerId: customerIdFromUrl || "",
     propertyId: propertyIdFromUrl || "",
     propertyName: propertyNameFromUrl || "",

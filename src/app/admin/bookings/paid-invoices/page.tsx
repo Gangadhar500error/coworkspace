@@ -58,8 +58,13 @@ function PaidInvoicesPageContent() {
 
   // Filter states
   const [filters, setFilters] = useState({
+    status: "" as "" | "completed" | "cancelled" | "pending" | "confirmed",
     propertyType: "" as "" | "Coworking" | "Private Office" | "Meeting Room" | "Virtual Office",
+    paymentStatus: "" as "" | "paid" | "pending" | "failed" | "refunded",
     customerId: customerIdFromUrl || "",
+    propertyId: "",
+    propertyName: "",
+    city: "",
   });
 
   // Update filters when URL param changes
@@ -146,8 +151,13 @@ function PaidInvoicesPageContent() {
 
   const clearFilters = () => {
     setFilters({
+      status: "",
       propertyType: "",
+      paymentStatus: "",
       customerId: "",
+      propertyId: "",
+      propertyName: "",
+      city: "",
     });
     if (customerIdFromUrl) {
       router.push("/admin/bookings/paid-invoices");
@@ -242,10 +252,13 @@ function PaidInvoicesPageContent() {
                 isOpen={showFilterDropdown}
                 onClose={() => setShowFilterDropdown(false)}
                 filters={{
-                  status: "",
+                  status: filters.status,
                   propertyType: filters.propertyType,
-                  paymentStatus: "paid",
+                  paymentStatus: filters.paymentStatus,
                   customerId: filters.customerId,
+                  propertyId: filters.propertyId,
+                  propertyName: filters.propertyName,
+                  city: filters.city,
                 }}
                 onFilterChange={(key, value) => {
                   if (key === "propertyType" || key === "customerId") {
